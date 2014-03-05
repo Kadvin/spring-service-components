@@ -1,7 +1,0 @@
-infrastructure
-config
-cache_service
-message_bus
-redis
-remoting
-ftp_server
