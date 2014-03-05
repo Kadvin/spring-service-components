@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="cache-service-provider.xml"/>
+
+    <bean name="invokeExecutor" class="java.util.concurrent.Executors"
+          factory-method="newCachedThreadPool"/>
+    <bean name="timeoutScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="1"/>
+        <property name="threadGroupName"  value="TimeoutScheduler"/>
+        <property name="threadNamePrefix" value="TimeoutScheduler-"/>
+    </bean>
+
+    <context:property-placeholder location="test.properties"/>
+
+    <context:component-scan base-package="dnt.test.provider"/>
+
+    <bean name="demoExporter" class="dnt.remoting.InvokerServiceExporter">
+        <property name="serviceInterface" value="dnt.test.DemoRemoteService" />
+        <property name="service" ref="demoRemoteServiceProvider" />
+        <property name="taskExecutor" ref="invokeExecutor"/>
+        <property name="cleanScheduler" ref="timeoutScheduler"/>
+    </bean>
+
+</beans>

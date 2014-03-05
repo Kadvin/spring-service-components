@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>root</artifactId>
+        <version>1.0.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>components</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>Spring Components</name>
+    <url>http://git.happyonroad.net/spring-components/root</url>
+
+    <properties>
+        <release.root>/opt/releases/components/${version.components}</release.root>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>with-children</id>
+            <modules>
+              <module>infrastructure</module>
+              <module>message_bus</module>
+              <module>cache_service</module>
+              <module>config</module>
+              <module>redis</module>
+              <module>ftp_server</module>
+              <module>remoting</module>
+          </modules>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${version.springframework}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${version.springframework}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${version.springframework}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${version.commons.lang}</version>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/root.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/root.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+</project>

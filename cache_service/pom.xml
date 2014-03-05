@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dnt.components</groupId>
+    <artifactId>cache_service</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>Cache Service</name>
+    <url>http://git.happyonroad.net/spring-components/cache_service</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>infrastructure</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+    <description>
+        Cache服务的接口定义
+    </description>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/cache_service.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/cache_service.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+</project>

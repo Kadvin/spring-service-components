@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dnt.components</groupId>
+    <artifactId>ftp_server</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>FTP Server Component</name>
+    <url>http://git.happyonroad.net/spring-components/ftp_server</url>
+    <description>
+        FTP服务器组件
+    </description>
+
+    <properties>
+        <release.dir>${release.root}/ftp_server-${project.version}</release.dir>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/ftp_server.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/ftp_server.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release-ftp_server</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>${version.maven.antrun}</version>
+                        <executions>
+                            <execution>
+                                <id>clean-previous-release-dir</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                                <configuration>
+                                    <target>
+                                        <delete dir="${release.dir}" />
+                                    </target>
+                                </configuration>
+
+                            </execution>
+
+                            <execution>
+                                <id>construct-release-dir</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                                <configuration>
+                                    <target>
+                                        <copy todir="${release.dir}" overwrite="true">
+                                            <fileset dir="${project.basedir}/release">
+                                                <exclude name="**/*/.gitkeep" />
+                                            </fileset>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>ant-contrib</groupId>
+                                <artifactId>ant-contrib</artifactId>
+                                <version>20020829</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
+
+</project>

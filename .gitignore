@@ -1,0 +1,8 @@
+.jetbrains
+.modules
+target
+release*
+*.swp
+pom.xml.*
+.DS_Store
+.idea

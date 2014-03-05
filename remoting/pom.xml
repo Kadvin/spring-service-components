@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>dnt.components</groupId>
+    <artifactId>remoting</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>Remoting Service</name>
+    <url>http://git.happyonroad.net/spring-components/remoting</url>
+    <description>
+        Remoting服务
+    </description>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/remoting.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/remoting.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>cache_service</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-proxy</artifactId>
+            <version>${version.commons.proxy}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${version.json-smart}</version>
+        </dependency>
+    </dependencies>
+</project>

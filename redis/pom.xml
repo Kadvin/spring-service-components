@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>dnt.components</groupId>
+    <artifactId>redis</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>Redis Component</name>
+    <url>http://git.happyonroad.net/spring-components/redis</url>
+
+    <properties>
+        <release.dir>${release.root}/redis-${project.version}</release.dir>
+        <version.redis>2.2.1</version.redis>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/redis.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/redis.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>message_bus</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>cache_service</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>infrastructure</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${version.redis}</version>
+        </dependency>
+    </dependencies>
+
+</project>

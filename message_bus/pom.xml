@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.2-SNAPSHOT</version>
+    </parent>
+
+    <groupId>dnt.components</groupId>
+    <artifactId>message_bus</artifactId>
+    <version>0.1.2-SNAPSHOT</version>
+
+    <name>Message Bus Component</name>
+    <url>http://git.happyonroad.net/spring-components/message_bus</url>
+
+    <scm>
+        <connection>scm:git:git@happyonroad.net:spring-components/message_bus.git</connection>
+        <developerConnection>scm:git:git@happyonroad.net:spring-components/message_bus.git</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>infrastructure</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+</project>
