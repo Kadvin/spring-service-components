@@ -3,14 +3,14 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>components</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dnt.components</groupId>
     <artifactId>remoting</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
 
     <name>Remoting Service</name>
     <url>http://git.happyonroad.net/spring-components/remoting</url>

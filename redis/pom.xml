@@ -5,12 +5,12 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>components</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.2</version>
     </parent>
 
     <groupId>dnt.components</groupId>
     <artifactId>redis</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
 
     <name>Redis Component</name>
     <url>http://git.happyonroad.net/spring-components/redis</url>
