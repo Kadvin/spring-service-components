@@ -7,7 +7,7 @@ package dnt.enumeration;
  * 事件优先级
  */
 public enum Priority {
-    Emergent,
+    Normal,
     Urgent,
-    Normal
+    VeryUrgent,
 }

@@ -3,14 +3,14 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>components</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dnt.components</groupId>
     <artifactId>ftp_server</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3-SNAPSHOT</version>
 
     <name>FTP Server Component</name>
     <url>http://git.happyonroad.net/spring-components/ftp_server</url>

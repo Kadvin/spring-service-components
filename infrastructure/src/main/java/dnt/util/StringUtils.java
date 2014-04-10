@@ -113,7 +113,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Sample:
-     * <p><b> beta_soft => BetaSoft </b></p>
+     * <p><b> china_company => ChinaCompany</b></p>
      *
      * @param name the string formed in underscore
      * @return camel string
@@ -125,6 +125,25 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                    .append(part.substring(1));
         }
         return builder.toString();
+    }
+
+
+    /**
+     * Sample:
+     * <p><b> china_company => China Company</b></p>
+     *
+     * @param name the string formed in underscore
+     * @return camel string
+     */
+    public static String titlize(final String name){
+        final StringBuilder builder = new StringBuilder();
+        for (final String part : name.split("_")) {
+            builder.append(Character.toTitleCase(part.charAt(0)))
+                   .append(" ")
+                   .append(part.substring(1));
+        }
+        return builder.toString();
+
     }
 
     /**
@@ -198,7 +217,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     /**
      * Underscore a word, such as:
      * <p/>
-     * <p><b>BetaSoft -> beta_soft</b></p>
+     * <p><b>ChinaCompany-> china_company</b></p>
      *
      * @param camelCasedWord the camel case word
      * @return the underscored word
@@ -215,7 +234,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Return a tableized word for class name, such as:
-     * <p><b>BetaSoft -> beta_softs </b></p>
+     * <p><b>ChinaCompany-> china_companies</b></p>
      *
      * @param className the class name
      * @return the underscored and plural words
@@ -226,7 +245,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     /**
      * Return a tableized word for class name, such as:
-     * <p><b>BetaSoft.class -> beta_softs </b></p>
+     * <p><b>ChinaCompany.class -> china_companies</b></p>
      *
      * @param klass the class
      * @return the underscored and plural words

@@ -50,8 +50,9 @@ public class HttpCallback{
             event.append(payload);
             event.append("\n\n");
         }
-        entity.setContentLength(event.length());
-        entity.setContent(new ByteArrayInputStream(event.toString().getBytes()));
+        byte[] bytes = event.toString().getBytes();
+        entity.setContentLength(bytes.length);
+        entity.setContent(new ByteArrayInputStream(bytes));
         HttpPost post = new HttpPost(this.endpoint);
         post.setEntity(entity);
         post.setEntity(entity);

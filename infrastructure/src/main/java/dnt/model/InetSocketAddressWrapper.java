@@ -24,10 +24,8 @@ public class InetSocketAddressWrapper extends InetSocketAddress implements JSONA
         return "{\"host\":\"" + getHost() + "\",\"port\":" + getPort() + "}";
     }
 
-    @SuppressWarnings("UnusedDeclaration for reflection")
     public String getHost(){
-        //TODO ensure return host address
-        return getHostName();
+        return getAddress().getHostAddress();
     }
 
     @Override

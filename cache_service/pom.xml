@@ -3,14 +3,14 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>components</artifactId>
-        <version>0.1.2</version>
+        <version>0.1.3-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dnt.components</groupId>
     <artifactId>cache_service</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3-SNAPSHOT</version>
 
     <name>Cache Service</name>
     <url>http://git.happyonroad.net/spring-components/cache_service</url>
