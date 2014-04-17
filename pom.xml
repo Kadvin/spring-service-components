@@ -30,6 +30,7 @@
               <module>redis</module>
               <module>ftp_server</module>
               <module>remoting</module>
+              <module>neo4j</module>
           </modules>
         </profile>
     </profiles>
