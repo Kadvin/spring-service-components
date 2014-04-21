@@ -15,6 +15,10 @@
     <name>Cache Service</name>
     <url>http://git.happyonroad.net/spring-components/cache_service</url>
 
+    <description>
+        Cache服务的接口定义
+    </description>
+
     <dependencies>
         <dependency>
             <groupId>dnt.components</groupId>
@@ -28,13 +32,5 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <description>
-        Cache服务的接口定义
-    </description>
 
-    <scm>
-        <connection>scm:git:git@happyonroad.net:spring-components/cache_service.git</connection>
-        <developerConnection>scm:git:git@happyonroad.net:spring-components/cache_service.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
 </project>

@@ -79,4 +79,9 @@ public class Category extends JsonSupport {
         }
         children.add(category);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + getName() + ")";
+    }
 }

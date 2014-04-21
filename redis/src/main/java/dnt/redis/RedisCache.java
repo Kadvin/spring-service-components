@@ -49,7 +49,28 @@ public class RedisCache extends Bean implements MutableCacheService {
 
     @Override
     protected void performStart() {
+        super.performStart();
         pool = new RedisPool(config);
+        ensureConnected();
+    }
+
+    private void ensureConnected() {
+        Jedis resource = null;
+        while(isRunning() && resource == null){
+            try {
+                logger.info("Try to connect to redis: {}:{}/{}",
+                            config.getHost(), config.getPort(), config.getIndex());
+                resource = pool.getResource();
+                logger.info("Connected to redis");
+            } catch (Exception e) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    //skip
+                }
+            }
+        }
+        if( resource != null ) pool.returnResource(resource);
     }
 
     @Override
