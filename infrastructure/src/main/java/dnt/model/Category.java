@@ -4,6 +4,8 @@
 package dnt.model;
 
 import dnt.support.JsonSupport;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +13,8 @@ import java.util.List;
 /**
  * 对象类型
  */
-public class Category extends JsonSupport {
+@ManagedResource(description = "系统模型分类")
+public class Category extends JsonSupport{
     private String         name;
     private String         alias;
     private String         label;
@@ -19,40 +22,49 @@ public class Category extends JsonSupport {
     private transient Category       parent;
     private transient List<Category> children;
 
+    @ManagedAttribute
     public String getType() {
         if (getParent() != null)
-            return getParent().getType() + "." + name;
+            return getParent().getType() + "." + getName();
         return getName();
     }
 
+    @ManagedAttribute
     public String getName() {
         return name;
     }
 
+    @ManagedAttribute
     public void setName(String name) {
         this.name = name;
     }
 
+    @ManagedAttribute
     public String getAlias() {
         return alias;
     }
 
+    @ManagedAttribute
     public void setAlias(String alias) {
         this.alias = alias;
     }
 
+    @ManagedAttribute
     public String getLabel() {
         return label;
     }
 
+    @ManagedAttribute
     public void setLabel(String label) {
         this.label = label;
     }
 
+    @ManagedAttribute
     public String getDescription() {
         return description;
     }
 
+    @ManagedAttribute
     public void setDescription(String description) {
         this.description = description;
     }
@@ -67,6 +79,11 @@ public class Category extends JsonSupport {
 
     public List<Category> getChildren() {
         return children;
+    }
+
+    @ManagedAttribute
+    public int getChildrenSize(){
+        return children == null ? 0 : children.size();
     }
 
     public void setChildren(List<Category> children) {

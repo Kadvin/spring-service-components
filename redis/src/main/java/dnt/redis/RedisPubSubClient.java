@@ -126,21 +126,21 @@ class RedisPubSubClient extends JedisPubSub implements Runnable, PubSubClient {
 
     @Override
     public void onPSubscribe(String pattern, int subscribedChannels) {
-        logger.info("Pattern {} subscribe callback with channel id = {}", pattern, subscribedChannels);
+        logger.debug("Pattern {} subscribe with channel id = {}", pattern, subscribedChannels);
     }
 
     @Override
     public void onPUnsubscribe(String pattern, int subscribedChannels) {
-        logger.info("Pattern {} unsubscribe with channel id {}!", pattern, subscribedChannels);
+        logger.debug("Pattern {} unsubscribe with channel id {}!", pattern, subscribedChannels);
     }
 
     @Override
     public void onSubscribe(String channel, int subscribedChannels) {
-        logger.info("Subscribe to channel {} with channel id = {}", channel, subscribedChannels);
+        logger.debug("Subscribe to channel {} with channel id = {}", channel, subscribedChannels);
     }
 
     @Override
     public void onUnsubscribe(String channel, int subscribedChannels) {
-        logger.info("Unsubscribe channel {} with id {}!", channel, subscribedChannels);
+        logger.debug("Unsubscribe from channel {} with id {}!", channel, subscribedChannels);
     }
 }

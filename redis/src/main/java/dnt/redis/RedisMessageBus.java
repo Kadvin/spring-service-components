@@ -75,9 +75,9 @@ public class RedisMessageBus implements MessageBus {
 
     @Override
     public void subscribe(String listenerId, String[] channels, MessageListener listener) {
-        logger.info("Subscribe listener {} with id = "+listenerId+" on channels: {}",
+        logger.info("Subscribe listener {} with id = `" + listenerId + "` on channels: {}",
                     listener.getClass().getSimpleName(),
-                    StringUtils.join(channels));
+                    StringUtils.join(channels, ","));
         PubSubClient client;
         if(listener.isBinary()){
             client = new BinaryPubSubClient(factory, cache, channels, listener);

@@ -28,7 +28,7 @@ public class Bean implements SmartLifecycle {
 
     /** 子类应该覆盖的启动工作方法 */
     protected void performStart() {
-
+        logger.trace("performing start");
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Bean implements SmartLifecycle {
 
     /** 子类应该覆盖的停止工作方法 */
     protected void performStop() {
-
+        logger.trace("performing stop");
     }
 
     @Override
