@@ -101,4 +101,21 @@ public class Category extends JsonSupport{
     public String toString() {
         return getClass().getSimpleName() + "(" + getName() + ")";
     }
+
+    /**
+     * 判断某个资源类别是不是在该分类之下
+     * <pre>
+     * category = host
+     *  resource model = host.linux
+     *  resource model = host.windows
+     * category = network.router
+     *  resource model = network
+     *  resource model = network.router
+     * </pre>
+     * @param name 资源类别
+     * @return 是否包含
+     */
+    public boolean includes(String name) {
+        return name.startsWith(getType());
+    }
 }
