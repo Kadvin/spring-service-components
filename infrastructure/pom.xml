@@ -16,18 +16,19 @@
     <name>Infrastructure</name>
     <url>http://git.happyonroad.net/spring-components/infrastructure</url>
 
-    <scm>
-        <connection>scm:git:git@happyonroad.net:spring-components/infrastructure.git</connection>
-        <developerConnection>scm:git:git@happyonroad.net:spring-components/infrastructure.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-
     <dependencies>
         <dependency>
             <groupId>dnt</groupId>
             <artifactId>basic</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>dnt.components</groupId>
+            <artifactId>config</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>

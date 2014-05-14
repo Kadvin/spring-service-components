@@ -13,25 +13,12 @@
     <version>0.1.3-SNAPSHOT</version>
 
     <name>Message Bus Component</name>
-    <url>http://git.happyonroad.net/spring-components/message_bus</url>
-
-    <scm>
-        <connection>scm:git:git@happyonroad.net:spring-components/message_bus.git</connection>
-        <developerConnection>scm:git:git@happyonroad.net:spring-components/message_bus.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
 
     <dependencies>
         <dependency>
             <groupId>dnt.components</groupId>
             <artifactId>infrastructure</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>dnt.components</groupId>
-            <artifactId>config</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

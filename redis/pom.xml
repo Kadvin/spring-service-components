@@ -40,12 +40,6 @@
         </dependency>
 
         <dependency>
-            <groupId>dnt.components</groupId>
-            <artifactId>infrastructure</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${version.redis}</version>

@@ -4,16 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>components</artifactId>
+        <version>0.1.3-SNAPSHOT</version>
+    </parent>
+
     <groupId>dnt.components</groupId>
     <artifactId>basic</artifactId>
     <version>0.1.3-SNAPSHOT</version>
 
     <name>Basic Data Types</name>
     <description>Basic data types be used in any module</description>
-
-    <properties>
-        <version.json-smart>2.0-RC3</version.json-smart>
-    </properties>
 
     <dependencies>
         <dependency>

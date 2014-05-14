@@ -13,7 +13,7 @@
     <version>0.1.3-SNAPSHOT</version>
 
     <name>FTP Server Component</name>
-    <url>http://git.happyonroad.net/spring-components/ftp_server</url>
+
     <description>
         FTP服务器组件
     </description>
@@ -21,12 +21,6 @@
     <properties>
         <release.dir>${release.root}/ftp_server-${project.version}</release.dir>
     </properties>
-
-    <scm>
-        <connection>scm:git:git@happyonroad.net:spring-components/ftp_server.git</connection>
-        <developerConnection>scm:git:git@happyonroad.net:spring-components/ftp_server.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
 
     <dependencies>
         <dependency>
