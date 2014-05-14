@@ -10,33 +10,25 @@
 
     <groupId>dnt.components</groupId>
     <artifactId>redis</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
 
     <name>Redis Component</name>
-    <url>http://git.happyonroad.net/spring-components/redis</url>
 
     <properties>
         <release.dir>${release.root}/redis-${project.version}</release.dir>
         <version.redis>2.2.1</version.redis>
     </properties>
 
-    <scm>
-        <connection>scm:git:git@happyonroad.net:spring-components/redis.git</connection>
-        <developerConnection>scm:git:git@happyonroad.net:spring-components/redis.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
-
     <dependencies>
         <dependency>
             <groupId>dnt.components</groupId>
             <artifactId>message_bus</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>dnt.components</groupId>
             <artifactId>cache_service</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

@@ -10,8 +10,6 @@
 
     <groupId>dnt.components</groupId>
     <artifactId>infrastructure</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
-
 
     <name>Infrastructure</name>
     <url>http://git.happyonroad.net/spring-components/infrastructure</url>
@@ -26,7 +24,7 @@
         <dependency>
             <groupId>dnt.components</groupId>
             <artifactId>config</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

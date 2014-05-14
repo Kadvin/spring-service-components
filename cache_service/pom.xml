@@ -10,7 +10,6 @@
 
     <groupId>dnt.components</groupId>
     <artifactId>cache_service</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
 
     <name>Cache Service</name>
 
