@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-3-3 下午1:32
  */
-package dnt.enumeration;
+package dnt.type;
 
 /**
  * 事件级别

@@ -11,7 +11,7 @@ import dnt.cache.remote.RemoteCacheEvent;
 import dnt.concurrent.OnceTrigger;
 import dnt.concurrent.ZombieKiller;
 import dnt.util.NamedThreadFactory;
-import dnt.util.TimeInterval;
+import dnt.type.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;

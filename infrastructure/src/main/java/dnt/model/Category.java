@@ -14,7 +14,7 @@ import java.util.List;
  * 对象类型
  */
 @ManagedResource(description = "系统模型分类")
-public class Category extends JsonSupport{
+public class Category extends JsonSupport {
     private String         name;
     private String         alias;
     private String         label;

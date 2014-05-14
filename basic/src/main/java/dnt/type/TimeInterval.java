@@ -1,7 +1,7 @@
 /**
  * @author XiongJie, Date: 13-10-24
  */
-package dnt.util;
+package dnt.type;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

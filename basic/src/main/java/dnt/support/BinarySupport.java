@@ -3,12 +3,13 @@
  */
 package dnt.support;
 
+import dnt.model.Binable;
 import dnt.util.CustomizedObjectInputStream;
 
 import java.io.*;
 
 /** toBinary, parseBinary */
-public class BinarySupport implements Serializable, Cloneable {
+public class BinarySupport implements Serializable, Cloneable, Binable {
     private static final long serialVersionUID = -4654269599121002776L;
 
     public static <T> T parseBinary(byte[] content) {

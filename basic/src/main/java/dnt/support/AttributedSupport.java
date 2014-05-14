@@ -3,11 +3,13 @@
  */
 package dnt.support;
 
+import dnt.model.Attributed;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /** The attributed object*/
-public class AttributedSupport extends KeyedSupport  {
+public class AttributedSupport extends KeyedSupport implements Attributed {
 
     private static final long serialVersionUID = 4194674101273999992L;
     /** 对象的属性 */

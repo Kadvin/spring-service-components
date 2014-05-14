@@ -3,10 +3,11 @@
  */
 package dnt.support;
 
+import dnt.model.Jsonable;
 import net.minidev.json.JSONValue;
 
 /** Description */
-public class JsonSupport extends BinarySupport {
+public class JsonSupport extends BinarySupport implements Jsonable {
     private static final long serialVersionUID = -5873792929187680622L;
 
     /**

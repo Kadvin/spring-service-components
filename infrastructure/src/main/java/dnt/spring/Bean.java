@@ -95,7 +95,7 @@ public class Bean implements SmartLifecycle {
         running = false;
     }
 
-    /** 默认的 stopped 方法，主要就是说明自身已经停止完成 */
+    /** 默认的 Stopped 方法，主要就是说明自身已经停止完成 */
     protected void stopped() {
         logger.debug("{} Stopped!", this);
     }

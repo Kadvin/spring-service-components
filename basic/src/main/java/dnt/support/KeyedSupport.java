@@ -3,10 +3,12 @@
  */
 package dnt.support;
 
+import dnt.model.Keyed;
+
 import java.util.UUID;
 
 /** Json支持性接口 */
-public abstract class KeyedSupport extends JsonSupport {
+public abstract class KeyedSupport extends JsonSupport implements Keyed {
 
     private static final long serialVersionUID = 1597815290802309384L;
     /*private*/ String key;

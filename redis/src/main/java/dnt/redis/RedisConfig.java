@@ -3,11 +3,10 @@
  */
 package dnt.redis;
 
-import dnt.util.TimeInterval;
+import dnt.type.TimeInterval;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.springframework.context.Lifecycle;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisPoolConfig;
 

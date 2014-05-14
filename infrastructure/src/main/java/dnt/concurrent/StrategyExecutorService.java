@@ -4,7 +4,7 @@
 package dnt.concurrent;
 
 import dnt.util.NamedThreadFactory;
-import dnt.util.TimeInterval;
+import dnt.type.TimeInterval;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;

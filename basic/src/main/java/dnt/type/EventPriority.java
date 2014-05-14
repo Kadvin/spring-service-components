@@ -1,12 +1,12 @@
 /**
  * Developer: Kadvin Date: 14-3-3 下午1:33
  */
-package dnt.enumeration;
+package dnt.type;
 
 /**
  * 事件优先级
  */
-public enum Priority {
+public enum EventPriority {
     Normal,
     Urgent,
     VeryUrgent,
