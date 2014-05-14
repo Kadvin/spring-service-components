@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>dnt</groupId>
+            <groupId>dnt.components</groupId>
             <artifactId>basic</artifactId>
             <version>${project.version}</version>
         </dependency>

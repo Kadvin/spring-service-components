@@ -48,15 +48,15 @@
         <profile>
             <id>with-children</id>
             <modules>
-              <module>infrastructure</module>
-              <module>message_bus</module>
-              <module>cache_service</module>
-              <module>config</module>
-              <module>redis</module>
-              <module>ftp_server</module>
-              <module>remoting</module>
-              <module>neo4j</module>
-              <module>basic</module>
+                <module>basic</module>
+                <module>infrastructure</module>
+                <module>message_bus</module>
+                <module>cache_service</module>
+                <module>config</module>
+                <module>redis</module>
+                <module>ftp_server</module>
+                <module>remoting</module>
+                <module>neo4j</module>
           </modules>
         </profile>
 
