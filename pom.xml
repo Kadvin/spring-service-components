@@ -149,8 +149,7 @@
     <scm>
         <connection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</connection>
         <developerConnection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</developerConnection>
-      <tag>Rel-0.1.4-SNAPSHOT</tag>
-  </scm>
+    </scm>
 
     <build>
         <resources>
