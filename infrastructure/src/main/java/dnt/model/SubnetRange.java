@@ -3,10 +3,13 @@
  */
 package dnt.model;
 
+import net.minidev.json.JSONAware;
 import org.apache.commons.net.util.SubnetUtils;
 
-/** The subnetwork range */
-public class SubnetRange extends IpRange {
+/**
+ * The subnetwork range
+ */
+public class SubnetRange extends IpRange implements JSONAware{
 
     private final SubnetUtils.SubnetInfo info;
 
@@ -29,11 +32,11 @@ public class SubnetRange extends IpRange {
     public SubnetRange(String range) {
         String[] dots = range.split("\\.");
         if (dots.length != 4) throw new IllegalArgumentException("Wrong range format " + range);
-        int mask = 0;
+        int mask = 32;
         for (int i = 3; i > 0; i--) {
             int value = Integer.parseInt(dots[i]);
             if (value != 0) break;
-            mask += 8;
+            mask -= 8;
         }
         if (mask == 0) throw new IllegalArgumentException("The ip should end with one .0 at least");
         this.info = new SubnetUtils(range + "/" + mask).getInfo();
@@ -42,5 +45,23 @@ public class SubnetRange extends IpRange {
     @Override
     public boolean include(String ip) {
         return info.isInRange(ip);
+    }
+
+    public String getAddress(){
+        return info.getAddress();
+    }
+
+    public String getMask(){
+        return info.getNetmask();
+    }
+
+    @Override
+    public String toJSONString() {
+        return "{\"address\" : \"" + getAddress() + "\", \"mask\" : \"" + getMask() + "\"}";
+    }
+
+    @Override
+    public String asParam() {
+        return info.getAddress();
     }
 }

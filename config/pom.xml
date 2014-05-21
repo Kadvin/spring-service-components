@@ -3,7 +3,7 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>components</artifactId>
-        <version>0.1.4-SNAPSHOT</version>
+        <version>0.1.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,12 +39,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${version.springframework}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${version.springframework}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

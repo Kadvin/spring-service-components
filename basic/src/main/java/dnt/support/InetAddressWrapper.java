@@ -1,8 +1,9 @@
 /**
  * @author XiongJie, Date: 14-1-14
  */
-package dnt.model;
+package dnt.support;
 
+import dnt.model.HostAddress;
 import net.minidev.json.JSONAware;
 
 import java.net.InetAddress;

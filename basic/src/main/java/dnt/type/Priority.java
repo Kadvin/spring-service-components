@@ -7,7 +7,7 @@ package dnt.type;
  * Common Device Priority
  */
 public enum Priority {
-    VeryLow(-2), Low(-1), Middle(0), High(1), VeryHigh(2);
+    VeryLow(-2), Low(-1), Normal(0), High(1), VeryHigh(2);
 
     private int value;
 

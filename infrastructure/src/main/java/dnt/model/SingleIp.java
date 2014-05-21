@@ -3,8 +3,10 @@
  */
 package dnt.model;
 
+import net.minidev.json.JSONAware;
+
 /** A single ip range*/
-public class SingleIp extends IpRange {
+public class SingleIp extends IpRange implements JSONAware{
 
     private final String ip;
 
@@ -15,5 +17,19 @@ public class SingleIp extends IpRange {
     @Override
     public boolean include(String ip) {
         return this.ip.equals(ip);
+    }
+
+    @Override
+    public String toJSONString() {
+        return ip;
+    }
+
+    public String getAddress() {
+        return ip;
+    }
+
+    @Override
+    public String asParam() {
+        return getAddress();
     }
 }

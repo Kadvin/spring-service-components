@@ -3,10 +3,12 @@
  */
 package dnt.model;
 
+import net.minidev.json.JSONAware;
+
 /**
  * The ip range
  */
-public class StartAndEndRange extends IpRange {
+public class StartAndEndRange extends IpRange implements JSONAware {
     /* the start ip, can be null*/
     private String startIp;
     /* the end ip, can be null*/
@@ -15,19 +17,37 @@ public class StartAndEndRange extends IpRange {
     public StartAndEndRange(String startIp, String endIp) {
         this.startIp = startIp;
         this.endIp = endIp;
-        if(this.startIp == null && this.endIp == null)
+        if (this.startIp == null && this.endIp == null)
             throw new IllegalArgumentException("You must specify a start or end ip for the range");
     }
 
     @Override
     public boolean include(String ip) {
         //TODO, it shouldn't depends on string compare, we should split ip in dotted
-        if( this.startIp != null ){
-            if(ip.compareTo(startIp) < 0 )return  false;
+        if (this.startIp != null) {
+            if (ip.compareTo(startIp) < 0) return false;
         }
-        if( this.endIp != null ){
-            if(ip.compareTo(endIp) > 0 )return  false;
+        if (this.endIp != null) {
+            if (ip.compareTo(endIp) > 0) return false;
         }
         return true;
+    }
+
+    @Override
+    public String toJSONString() {
+        return "{\"start\" : \"" + startIp + "\", \"end\" : \"" + endIp + "\"}";
+    }
+
+    public String getStart() {
+        return startIp;
+    }
+
+    public String getEnd() {
+        return endIp;
+    }
+
+    @Override
+    public String asParam() {
+        return getStart() + "-" + getEnd();
     }
 }
