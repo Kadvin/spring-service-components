@@ -6,7 +6,7 @@ package dnt.type;
 /**
  * 事件状态
  */
-public enum EventState {
+public enum AckStatus {
     Unacked,
     Acked,
     Cleared
