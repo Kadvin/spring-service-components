@@ -3,33 +3,21 @@
  */
 package dnt.spring;
 
+import dnt.util.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-
-import java.util.Locale;
 
 /**
  * The bean support translate
  */
-public class TranslateSupportBean extends Bean implements MessageSourceAware {
-
+public class TranslateSupportBean extends Bean implements MessageSourceAware{
     private MessageSource messageSource;
-    private Locale locale =  Locale.getDefault();
 
-    @Override
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
     protected String translate(String code, Object... args){
-        return messageSource.getMessage(code, args, locale);
+        return StringUtils.translate(messageSource, code, args);
     }
 }

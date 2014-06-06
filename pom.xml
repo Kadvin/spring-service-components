@@ -24,8 +24,8 @@
         <version.maven.release>2.4.1</version.maven.release>
 
         <version.junit>4.8.2</version.junit>
-        <version.slf4j>1.7.6</version.slf4j>
-        <version.springframework>3.2.8.RELEASE</version.springframework>
+        <version.slf4j>1.7.7</version.slf4j>
+        <version.springframework>4.0.5.RELEASE</version.springframework>
         <version.logback>1.0.13</version.logback>
         <version.jcl-core>2.4</version.jcl-core>
         <version.json-smart>2.0-RC3</version.json-smart>
@@ -193,19 +193,16 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${version.maven.antrun}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${version.maven.jar}</version>
                 <executions>
                     <execution>
-                        <id>copy-pom-xml</id>
-                        <phase>process-resources</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <target>
-                                <copy file="${project.basedir}/pom.xml" tofile="${project.basedir}/target/classes/META-INF/pom.xml" overwrite="true" />
-                            </target>
+                            <jarName>${project.groupId}.${project.artifactId}-${project.version}</jarName>
                         </configuration>
                     </execution>
                 </executions>

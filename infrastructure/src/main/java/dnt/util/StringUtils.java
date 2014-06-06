@@ -3,6 +3,10 @@
  */
 package dnt.util;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
@@ -422,6 +426,25 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         }
         return args.toArray(new String[args.size()]);
     }
+
+    public static String translate(MessageSource msg, String code, Object... args){
+        try {
+            Locale locale = Locale.getDefault();
+            String message = msg.getMessage(code, args, locale);
+            if( locale.equals(Locale.CHINA) ){
+                try {
+                    return new String(message.getBytes("iso8859-1"), "utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    return message;
+                }
+            }else{
+                return message;
+            }
+        } catch (NoSuchMessageException e) {
+            return null;
+        }
+    }
+
 
     /**
      * Resolve a 6-length code from the message

@@ -18,6 +18,7 @@ public class Bean implements SmartLifecycle {
 
     protected int phase = DEFAULT_PHASE;
     protected boolean running;
+    protected boolean autoStartup = false;
 
     @Override
     public void start() {
@@ -45,7 +46,7 @@ public class Bean implements SmartLifecycle {
 
     @Override
     public boolean isAutoStartup() {
-        return true;
+        return autoStartup;
     }
 
     @Override
