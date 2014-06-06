@@ -5,7 +5,7 @@
 
     <groupId>dnt</groupId>
     <artifactId>components</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5-SNAPSHOT</version>
 
     <name>Spring Components</name>
     <url>http://git.happyonroad.net/spring-components</url>
@@ -40,7 +40,7 @@
         <version.commons.proxy>1.0</version.commons.proxy>
         <version.httpclient>4.3</version.httpclient>
 
-        <version.component-framework>0.0.7</version.component-framework>
+        <version.component-framework>0.0.8-SNAPSHOT</version.component-framework>
 
         <release.root>/opt/releases/components/${project.version}</release.root>
     </properties>
