@@ -18,7 +18,7 @@ import javax.management.ObjectName;
 public class ApplicationSupportBean extends TranslateSupportBean implements ApplicationContextAware{
     protected ApplicationContext applicationContext;
 
-    protected MBeanExportOperations mbeanExporter;
+    private MBeanExportOperations mbeanExporter;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

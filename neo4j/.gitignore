@@ -1,7 +1,0 @@
-.jetbrains
-.modules
-target
-release*
-pom.xml.*
-.DS_Store
-.idea
