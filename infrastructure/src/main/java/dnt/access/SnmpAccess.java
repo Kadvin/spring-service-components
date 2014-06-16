@@ -3,13 +3,15 @@
  */
 package dnt.access;
 
+import dnt.model.Access;
 import dnt.support.JsonSupport;
 
 import java.util.Collections;
 import java.util.Map;
 
 /** SNMP Access Parameters */
-public class SnmpAccess extends JsonSupport {
+public class SnmpAccess extends JsonSupport implements Access{
+
     private static final long serialVersionUID = -2413039242630188845L;
 
     private int timeout; // milliseconds
@@ -39,11 +41,6 @@ public class SnmpAccess extends JsonSupport {
             setWrite(new SnmpPassport(passport));
         else
             setWrite(new SnmpPassport());
-    }
-
-    private int parseInt(Object string, int defaultValue) {
-        if( string == null ) return defaultValue;
-        return Integer.valueOf(string.toString());
     }
 
     public int getTimeout() {

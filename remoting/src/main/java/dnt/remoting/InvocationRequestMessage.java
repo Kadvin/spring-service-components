@@ -3,7 +3,9 @@
  */
 package dnt.remoting;
 
-import net.minidev.json.JSONValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
+import dnt.support.JsonSupport;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -104,6 +106,7 @@ public class InvocationRequestMessage extends InvocationMessage {
         return this.attributes.get(key);
     }
 
+    @JsonDeserialize(contentUsing = UntypedObjectDeserializer.class)
     public void setAttributes(Map<String, Serializable> attributes) {
         this.attributes = attributes;
     }
@@ -130,7 +133,7 @@ public class InvocationRequestMessage extends InvocationMessage {
     }
 
     public String toJson() {
-        return JSONValue.toJSONString(this);
+        return JsonSupport.toJSONString(this);
     }
 
     @Override
@@ -162,6 +165,6 @@ public class InvocationRequestMessage extends InvocationMessage {
     }
 
     public static InvocationRequestMessage parse(String json) {
-        return JSONValue.parse(json, InvocationRequestMessage.class);
+        return JsonSupport.parseJson(json, InvocationRequestMessage.class);
     }
 }

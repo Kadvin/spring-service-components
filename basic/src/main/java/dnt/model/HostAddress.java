@@ -4,11 +4,9 @@
 
 package dnt.model;
 
-import java.io.Serializable;
-
 /**
- * The interface for define a host address
+ * 主机地址
  */
-public interface HostAddress extends Serializable, Cloneable {
+public interface HostAddress extends Address {
     String getHost();
 }

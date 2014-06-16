@@ -3,13 +3,12 @@
  */
 package dnt.model;
 
-import net.minidev.json.JSONAware;
 import org.apache.commons.net.util.SubnetUtils;
 
 /**
  * The subnetwork range
  */
-public class SubnetRange extends IpRange implements JSONAware{
+public class SubnetRange extends IpRange{
 
     private final SubnetUtils.SubnetInfo info;
 
@@ -53,11 +52,6 @@ public class SubnetRange extends IpRange implements JSONAware{
 
     public String getMask(){
         return info.getNetmask();
-    }
-
-    @Override
-    public String toJSONString() {
-        return "{\"address\" : \"" + getAddress() + "\", \"mask\" : \"" + getMask() + "\"}";
     }
 
     @Override

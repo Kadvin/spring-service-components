@@ -4,6 +4,7 @@
 package dnt.remoting;
 
 import junit.framework.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -12,6 +13,23 @@ import java.util.HashMap;
 
 /** Test the json serialize */
 public class InvocationRequestMessageTest {
+    public static final String JSON =
+            "{\"replyTo\":\"Queue/Replies\",\"methodName\":\"work\"," +
+            "\"parameterTypes\":[\"java.lang.String\",\"java.lang.Integer\"],\"arguments\":[\"hello\",123]," +
+            "\"attributes\":{\"hello\":\"world\"}}";
+    private InvocationRequestMessage msg;
+
+    @Before
+    public void setUp() throws Exception {
+        msg = new InvocationRequestMessage();
+        msg.setMethodName("work");
+        msg.setParameterTypes(new String[]{"java.lang.String", "java.lang.Integer"});
+        msg.setArguments(new Object[]{"hello", 123});
+        msg.setReplyTo("Queue/Replies");
+        msg.setAttributes(new HashMap<String, Serializable>());
+        msg.getAttributes().put("hello", "world");
+    }
+
     /**
      * <dl>
      * <dt>测试目的:</dt>
@@ -24,17 +42,15 @@ public class InvocationRequestMessageTest {
      * @throws Exception Any Exception
      */
     @Test
-    public void testSerialize() throws Exception {
-        InvocationRequestMessage msg = new InvocationRequestMessage();
-        msg.setMethodName("work");
-        msg.setParameterTypes(new String[]{"java.lang.String", "java.lang.Integer"});
-        msg.setArguments(new Object[]{"hello", 123});
-        msg.setReplyTo("Queue/Replies");
-        msg.setAttributes(new HashMap<String, Serializable>());
-        msg.getAttributes().put("hello", "world");
+    public void testToJson() throws Exception {
         String json = msg.toJson();
         System.out.println(json);
-        InvocationRequestMessage another = InvocationRequestMessage.parse(json);
+        Assert.assertEquals(JSON, json);
+    }
+
+    @Test
+    public void testFromJson() throws Exception {
+        InvocationRequestMessage another = InvocationRequestMessage.parse(JSON);
         Assert.assertEquals(msg, another);
     }
 

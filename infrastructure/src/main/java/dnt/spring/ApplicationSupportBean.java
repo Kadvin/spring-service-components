@@ -23,6 +23,7 @@ public class ApplicationSupportBean extends TranslateSupportBean implements Appl
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        super.setMessageSource(applicationContext);
         try{
             mbeanExporter = applicationContext.getBean(MBeanExportOperations.class);
         }catch (NoSuchBeanDefinitionException ex){

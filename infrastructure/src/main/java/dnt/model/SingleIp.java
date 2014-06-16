@@ -3,13 +3,14 @@
  */
 package dnt.model;
 
-import net.minidev.json.JSONAware;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 /** A single ip range*/
-public class SingleIp extends IpRange implements JSONAware{
+public class SingleIp extends IpRange{
 
     private final String ip;
 
+    @JsonCreator
     public SingleIp(String ip) {
         this.ip = ip;
     }
@@ -19,11 +20,6 @@ public class SingleIp extends IpRange implements JSONAware{
         return this.ip.equals(ip);
     }
 
-    @Override
-    public String toJSONString() {
-        return ip;
-    }
-
     public String getAddress() {
         return ip;
     }
@@ -31,5 +27,10 @@ public class SingleIp extends IpRange implements JSONAware{
     @Override
     public String asParam() {
         return getAddress();
+    }
+
+    @Override
+    public String toJson() {
+        return ip;
     }
 }

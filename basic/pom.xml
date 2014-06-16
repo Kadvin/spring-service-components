@@ -17,11 +17,16 @@
     <description>Basic data types be used in any module</description>
 
     <dependencies>
+        <!--Replace json smart with jackson-->
         <dependency>
-            <groupId>net.minidev</groupId>
-            <artifactId>json-smart</artifactId>
-            <version>${version.json-smart}</version>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>${version.jackson}</version>
         </dependency>
-
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+          <version>${version.jackson}</version>
+        </dependency>
     </dependencies>
 </project>

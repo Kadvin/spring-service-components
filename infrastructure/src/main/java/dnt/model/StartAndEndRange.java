@@ -3,12 +3,10 @@
  */
 package dnt.model;
 
-import net.minidev.json.JSONAware;
-
 /**
  * The ip range
  */
-public class StartAndEndRange extends IpRange implements JSONAware {
+public class StartAndEndRange extends IpRange {
     /* the start ip, can be null*/
     private String startIp;
     /* the end ip, can be null*/
@@ -31,11 +29,6 @@ public class StartAndEndRange extends IpRange implements JSONAware {
             if (ip.compareTo(endIp) > 0) return false;
         }
         return true;
-    }
-
-    @Override
-    public String toJSONString() {
-        return "{\"start\" : \"" + startIp + "\", \"end\" : \"" + endIp + "\"}";
     }
 
     public String getStart() {
