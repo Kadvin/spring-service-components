@@ -3,15 +3,16 @@
  */
 package dnt.access;
 
+import dnt.credential.SshCredential;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试 Ssh Access to/from Json
+ * 测试 Ssh Credential to/from Json
  */
-public class SshAccessTest {
+public class SshCredentialTest {
     public static final String JSON = "{\"user\":\"root\",\"password\":\"secret\",\"timeout\":100}";
-    SshAccess SSH = new SshAccess("root", "secret", 100);
+    SshCredential SSH = new SshCredential("root", "secret", 100);
 
     @Test
     public void testSerializeJson() throws Exception {
@@ -22,7 +23,7 @@ public class SshAccessTest {
 
     @Test
     public void testDeserializeJson() throws Exception {
-        SshAccess parsed = SshAccess.parseJson(JSON, SshAccess.class);
+        SshCredential parsed = SshCredential.parseJson(JSON, SshCredential.class);
         Assert.assertEquals(SSH, parsed);
     }
 

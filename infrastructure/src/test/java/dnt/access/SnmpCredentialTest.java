@@ -3,22 +3,24 @@
  */
 package dnt.access;
 
+import dnt.credential.SnmpCredential;
+import dnt.credential.SnmpPassport;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试 Snmp Access to/from Json
+ * 测试 Snmp Credential to/from Json
  */
-public class SnmpAccessTest {
+public class SnmpCredentialTest {
     public static final String JSON =
-            "{\"timeout\":100,\"retries\":3,\"port\":161,\"read\":{\"version\":\"v2c\",\"community\":\"public\",\"securityName\":null,\"authPassword\":null,\"privatePassword\":null},\"write\":{\"version\":\"v1\",\"community\":null,\"securityName\":null,\"authPassword\":null,\"privatePassword\":null}}";
-    private static SnmpAccess SNMP;
+            "{\"timeout\":100,\"retries\":3,\"port\":161,\"read\":{\"version\":\"v2c\",\"community\":\"public\",\"securityName\":null,\"authPassword\":null,\"privatePassword\":null},\"write\":{\"version\":\"v2c\",\"community\":\"public\",\"securityName\":null,\"authPassword\":null,\"privatePassword\":null}}";
+    private static SnmpCredential SNMP;
 
     static {
         SnmpPassport readPassport = new SnmpPassport();
         readPassport.setCommunity("public");
         readPassport.setVersion("v2c");
-        SNMP = new SnmpAccess();
+        SNMP = new SnmpCredential();
         SNMP.setTimeout(100);
         SNMP.setPort(161);
         SNMP.setRetries(3);
@@ -34,7 +36,7 @@ public class SnmpAccessTest {
 
     @Test
     public void testDeserializeJson() throws Exception {
-        SnmpAccess parsed = SnmpAccess.parseJson(JSON, SnmpAccess.class);
+        SnmpCredential parsed = SnmpCredential.parseJson(JSON, SnmpCredential.class);
         Assert.assertEquals(SNMP, parsed);
     }
 }

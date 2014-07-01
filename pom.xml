@@ -30,6 +30,8 @@
         <version.jcl-core>2.4</version.jcl-core>
         <version.jackson>2.4.0</version.jackson>
         <version.xstream>1.4.4</version.xstream>
+        <version.mybatis>3.2.7</version.mybatis>
+        <version.mybatis-spring>1.2.2</version.mybatis-spring>
 
         <version.commons.lang>2.6</version.commons.lang>
         <version.commons.collections>3.2.1</version.commons.collections>
@@ -57,6 +59,7 @@
                 <module>redis</module>
                 <module>ftp_server</module>
                 <module>remoting</module>
+                <module>meta_system</module>
           </modules>
         </profile>
 

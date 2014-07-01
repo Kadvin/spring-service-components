@@ -1,16 +1,16 @@
 /**
  * @author XiongJie, Date: 13-11-20
  */
-package dnt.access;
+package dnt.credential;
 
-import dnt.model.Access;
+import dnt.model.Credential;
 import dnt.support.JsonSupport;
 
 import java.util.Collections;
 import java.util.Map;
 
-/** SNMP Access Parameters */
-public class SnmpAccess extends JsonSupport implements Access{
+/** SNMP Credential Parameters */
+public class SnmpCredential extends JsonSupport implements Credential {
 
     private static final long serialVersionUID = -2413039242630188845L;
 
@@ -21,12 +21,12 @@ public class SnmpAccess extends JsonSupport implements Access{
     private SnmpPassport read;
     private SnmpPassport write;
 
-    public SnmpAccess() {
+    public SnmpCredential() {
         this(Collections.emptyMap());
     }
 
     @SuppressWarnings("unchecked")
-    public SnmpAccess(Map map) {
+    public SnmpCredential(Map map) {
         setTimeout(parseInt(map.get("timeout"), 60000));
         setRetries(parseInt(map.get("retries"), 3));
         setPort(parseInt(map.get("port"), 161));
@@ -88,7 +88,7 @@ public class SnmpAccess extends JsonSupport implements Access{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SnmpAccess that = (SnmpAccess) o;
+        SnmpCredential that = (SnmpCredential) o;
 
         if (port != that.port) return false;
         if (retries != that.retries) return false;

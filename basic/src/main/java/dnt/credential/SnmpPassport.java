@@ -1,7 +1,7 @@
 /**
  * @author XiongJie, Date: 13-11-20
  */
-package dnt.access;
+package dnt.credential;
 
 import dnt.support.JsonSupport;
 
@@ -19,7 +19,8 @@ public class SnmpPassport extends JsonSupport{
     private String privatePassword;
 
     public SnmpPassport() {
-        this.version = "v1";
+        this.version = "v2c";
+        this.community = "public";
     }
 
     public SnmpPassport(Map<String, String> passport) {
