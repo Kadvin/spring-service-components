@@ -3,7 +3,11 @@
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>dnt</groupId>
+    <parent>
+        <groupId>dnt</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.1</version>
+    </parent>
     <artifactId>components</artifactId>
     <version>0.1.6-SNAPSHOT</version>
 
@@ -11,139 +15,31 @@
     <url>http://git.happyonroad.net/spring-components</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <version.maven.compiler>2.5.1</version.maven.compiler>
-        <version.maven.source>2.2.1</version.maven.source>
-        <version.maven.resources>2.6</version.maven.resources>
-        <version.maven.antrun>1.7</version.maven.antrun>
-        <version.maven.dependency>2.8</version.maven.dependency>
-        <version.maven.versions>2.1</version.maven.versions>
-        <version.maven.jar>2.4</version.maven.jar>
-        <version.maven.release>2.4.1</version.maven.release>
-
-        <version.junit>4.8.2</version.junit>
-        <version.slf4j>1.7.7</version.slf4j>
-        <version.springframework>4.0.5.RELEASE</version.springframework>
-        <version.logback>1.0.13</version.logback>
-        <version.jcl-core>2.4</version.jcl-core>
-        <version.jackson>2.4.0</version.jackson>
-        <version.xstream>1.4.4</version.xstream>
-        <version.mybatis>3.2.7</version.mybatis>
-        <version.mybatis-spring>1.2.2</version.mybatis-spring>
-
-        <version.commons.lang>2.6</version.commons.lang>
-        <version.commons.collections>3.2.1</version.commons.collections>
-        <version.commons.beanutils>1.8.0</version.commons.beanutils>
-        <version.commons.io>2.4</version.commons.io>
-        <version.commons.net>3.3</version.commons.net>
-        <version.commons.pool>1.6</version.commons.pool>
-        <version.commons.proxy>1.0</version.commons.proxy>
-        <version.httpclient>4.3</version.httpclient>
-
-        <version.component-framework>0.0.8-SNAPSHOT</version.component-framework>
-
-        <release.root>/opt/releases/components/${project.version}</release.root>
+        <version.component-framework>0.1.0</version.component-framework>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>with-children</id>
-            <modules>
-                <module>basic</module>
-                <module>infrastructure</module>
-                <module>message_bus</module>
-                <module>cache_service</module>
-                <module>config</module>
-                <module>redis</module>
-                <module>ftp_server</module>
-                <module>remoting</module>
-                <module>meta_system</module>
-          </modules>
-        </profile>
-
-        <profile>
-            <id>dnt</id>
-            <repositories>
-                <repository>
-                    <id>dnt-releases</id>
-                    <url>http://nexus.dnt.com.cn/nexus/content/groups/public</url>
-                </repository>
-
-                <repository>
-                    <id>dnt-snapshots</id>
-                    <url>http://nexus.dnt.com.cn/nexus/content/groups/public-snapshots/</url>
-                </repository>
-
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>dnt-releases</id>
-                    <url>http://nexus.dnt.com.cn/nexus/content/groups/public</url>
-                </pluginRepository>
-            </pluginRepositories>
-
-            <distributionManagement>
-                <repository>
-                    <id>dnt-releases</id>
-                    <name>Nexus Release Repository</name>
-                    <url>http://nexus.dnt.com.cn/nexus/content/repositories/releases</url>
-                </repository>
-                <snapshotRepository>
-                    <id>dnt-snapshots</id>
-                    <name>Nexus Snapshot Repository</name>
-                    <url>http://nexus.dnt.com.cn/nexus/content/repositories/snapshots</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-
-        <profile>
-            <id>nexus</id>
-            <repositories>
-                <repository>
-                    <id>nexus-releases</id>
-                    <url>http://oss.sonatype.org/content/groups/public</url>
-                </repository>
-            </repositories>
-
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>nexus-releases</id>
-                    <url>http://oss.sonatype.org/content/groups/public</url>
-                </pluginRepository>
-            </pluginRepositories>
-
-            <distributionManagement>
-                <repository>
-                    <id>nexus-releases</id>
-                    <name>Nexus Release Repository</name>
-                    <url>http://oss.sonatype.org/content/repositories/releases</url>
-                </repository>
-                <snapshotRepository>
-                    <id>nexus-snapshots</id>
-                    <name>Nexus Snapshot Repository</name>
-                    <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-    </profiles>
+    <modules>
+        <module>basic</module>
+        <module>infrastructure</module>
+        <module>message_bus</module>
+        <module>cache_service</module>
+        <module>config</module>
+        <module>redis</module>
+        <module>ftp_server</module>
+        <module>remoting</module>
+        <module>meta_system</module>
+    </modules>
 
     <dependencies>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${version.springframework}</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -152,83 +48,5 @@
         <connection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</connection>
         <developerConnection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</developerConnection>
     </scm>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${version.maven.source}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.maven.compiler}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <meminitial>128M</meminitial>
-                    <maxmem>512M</maxmem>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                    <compilerVersion>1.6</compilerVersion>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${version.maven.resources}</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${version.maven.jar}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <jarName>${project.groupId}.${project.artifactId}-${project.version}</jarName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${version.maven.versions}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>${version.maven.release}</version>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>Rel-@{project.version}</tagNameFormat>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <arguments>-P dnt -DskipTests</arguments>
-                </configuration>
-            </plugin>
-
-        </plugins>
-
-    </build>
 
 </project>
