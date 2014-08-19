@@ -47,22 +47,19 @@
         <release.root>/opt/releases/components/${project.version}</release.root>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>with-children</id>
-            <modules>
-                <module>basic</module>
-                <module>infrastructure</module>
-                <module>message_bus</module>
-                <module>cache_service</module>
-                <module>config</module>
-                <module>redis</module>
-                <module>ftp_server</module>
-                <module>remoting</module>
-                <module>meta_system</module>
-          </modules>
-        </profile>
+    <modules>
+        <module>basic</module>
+        <module>infrastructure</module>
+        <module>message_bus</module>
+        <module>cache_service</module>
+        <module>config</module>
+        <module>redis</module>
+        <module>ftp_server</module>
+        <module>remoting</module>
+        <module>meta_system</module>
+    </modules>
 
+    <profiles>
         <profile>
             <id>dnt</id>
             <repositories>
