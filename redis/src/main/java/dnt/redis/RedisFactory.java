@@ -33,7 +33,7 @@ public class RedisFactory extends BasePoolableObjectFactory {
     public Object makeObject() throws Exception {
         final Jedis jedis = new Jedis(this.host, this.port, this.timeout);
         jedis.connect();
-        if (!StringUtils.isNotBlank(password)) {
+        if (StringUtils.isNotBlank(password)) {
             jedis.auth(this.password);
         }
         if( database != 0 ) {
