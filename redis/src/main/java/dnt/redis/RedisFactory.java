@@ -3,6 +3,7 @@
  */
 package dnt.redis;
 
+import dnt.util.StringUtils;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import redis.clients.jedis.Jedis;
 
@@ -20,7 +21,7 @@ public class RedisFactory extends BasePoolableObjectFactory {
     private final int database;
 
     public RedisFactory(final String host, final int port,
-            final int timeout, final String password, final int database) {
+                        final int timeout, final String password, final int database) {
         super();
         this.host = host;
         this.port = port;
@@ -32,25 +33,30 @@ public class RedisFactory extends BasePoolableObjectFactory {
     public Object makeObject() throws Exception {
         final Jedis jedis = new Jedis(this.host, this.port, this.timeout);
         jedis.connect();
-        if (null != this.password && this.password != "") {
+        if (StringUtils.isNotBlank(password)) {
             jedis.auth(this.password);
         }
         if( database != 0 ) {
             jedis.select(database);
         }
-        jedis.clientSetname(System.getProperty("app.name") + "#" + index++);
+        try {
+            jedis.clientSetname(System.getProperty("app.name") + "#" + index++);
+        } catch (Exception e) {
+            //the redis version is too lower to set name, we ignore it
+            System.err.println("the redis version is too lower to set client name");
+        }
 
         return jedis;
     }
 
     @Override
     public void activateObject(Object obj) throws Exception {
-		if (obj instanceof Jedis) {
+        if (obj instanceof Jedis) {
             final Jedis jedis = (Jedis)obj;
             if (jedis.getDB() != database) {
-            	jedis.select(database);
+                jedis.select(database);
             }
-		}
+        }
     }
 
     public void destroyObject(final Object obj) throws Exception {
