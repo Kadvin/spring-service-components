@@ -28,7 +28,6 @@
         <module>redis</module>
         <module>ftp_server</module>
         <module>remoting</module>
-        <module>meta_system</module>
     </modules>
 
     <dependencies>
