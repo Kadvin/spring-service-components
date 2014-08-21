@@ -10,7 +10,7 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>components</artifactId>
-    <version>0.1.7-SNAPSHOT</version>
+    <version>0.1.7</version>
 
     <name>Spring Components</name>
     <url>http://git.happyonroad.net/spring-components</url>
