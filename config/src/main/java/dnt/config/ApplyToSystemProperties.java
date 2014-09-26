@@ -12,14 +12,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Apply configured properties to system property
  */
 @Component
 public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
+    private static final Pattern INTERPOLATE_PTN = Pattern.compile("[#|$]\\{([^}]+)\\}");
     Logger logger = LoggerFactory.getLogger(ApplyToSystemProperties.class);
     private boolean running;
 
@@ -27,6 +31,14 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
     public void start() {
         running = true;
         Properties properties = listProperties(System.getProperty("app.home"));
+        // support value with ${variable} or #{variable}
+        Enumeration<?> en = properties.propertyNames();
+        while (en.hasMoreElements()) {
+          String key = (String) en.nextElement();
+          String value = properties.getProperty(key);
+          String newValue = interpolate(value, properties);
+            properties.setProperty(key, newValue);
+        }
         applyProperties(properties);
     }
 
@@ -82,4 +94,31 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
         return running;
     }
 
+    public String interpolate(String origin, Properties props) {
+        Matcher m = INTERPOLATE_PTN.matcher(origin);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String variable = m.group(1);
+            String replacement = props.getProperty(variable);
+            if (replacement == null) replacement = System.getProperty(variable);
+            if (replacement == null) replacement = System.getenv(variable);
+            if (replacement == null) {
+                System.err.println("Undefined variable ${" + variable + "} " +
+                                   " in current properties file or system properties/evn" );
+                continue;
+            }
+            //解析出来的变量可能还需要再解析
+            if (INTERPOLATE_PTN.matcher(replacement).find()) {
+                replacement = interpolate(replacement, props);
+            }
+            try {
+                m.appendReplacement(sb, replacement);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();//just for catch it to debug
+                throw e;
+            }
+        }
+        m.appendTail(sb);
+        return sb.toString().trim();
+    }
 }
