@@ -9,7 +9,10 @@ import dnt.util.NamedThreadFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -19,15 +22,28 @@ import java.util.Map;
 
 /** Redis消息总线 */
 @Component
-public class RedisMessageBus implements MessageBus {
+public class RedisMessageBus implements MessageBus, ApplicationContextAware {
     private static Logger logger = LoggerFactory.getLogger(RedisMessageBus.class);
 
     private final Map<String, PubSubClient> listeners = new HashMap<String, PubSubClient>();
 
     private static NamedThreadFactory factory = new NamedThreadFactory("RedisQueue", "16K");
 
-    @Autowired
     private RedisCache cache;
+
+    public RedisMessageBus() {
+    }
+
+    public RedisMessageBus(RedisCache cache) {
+        this.cache = cache;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if(this.cache == null){
+            this.cache = applicationContext.getBean("redisCache", RedisCache.class);
+        }
+    }
 
     @Override
     public void publish(final String channel, final String event) {

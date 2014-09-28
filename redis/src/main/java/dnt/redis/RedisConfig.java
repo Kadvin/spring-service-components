@@ -5,9 +5,7 @@ package dnt.redis;
 
 import dnt.type.TimeInterval;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.springframework.context.Lifecycle;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Properties;
@@ -16,8 +14,7 @@ import java.util.Set;
 /**
  * Redis configuration
  */
-@Component
-public class RedisConfig extends JedisPoolConfig implements Lifecycle {
+public class RedisConfig extends JedisPoolConfig {
     ////////////////////////////////////////////////////////////////////////////////////
     //静态成员变量
     ////////////////////////////////////////////////////////////////////////////////////
@@ -33,14 +30,16 @@ public class RedisConfig extends JedisPoolConfig implements Lifecycle {
 
     public static String DEFAULT_HOST    = "localhost";
     public static String DEFAULT_PORT    = "6379";
-    public static String DEFAULT_INDEX    = "0";
+    public static String DEFAULT_INDEX   = "0";
     public static String DEFAULT_TIMEOUT = "10s";
 
-    private String  host;
-    private int     port;
-    private String  password;
-    private int     index;
-    private int     timeout;
+    private String redisName;
+
+    private String host;
+    private int    port;
+    private String password;
+    private int    index;
+    private int    timeout;
 
     private boolean running;
 
@@ -49,7 +48,12 @@ public class RedisConfig extends JedisPoolConfig implements Lifecycle {
     ////////////////////////////////////////////////////////////////////////////////////
 
     public RedisConfig() {
+        this(System.getProperty("redis.name", "redis"));
+    }
+
+    public RedisConfig(String redisName ) {
         super();
+        this.redisName = redisName;
         //当某个Key下面的资源不足时，应该采取的动作
         // block: 等待; grow: 增长(这将会突破MaxActive限制); fail：抛出异常
         //当资源不够用时，严格按照 Max Active的限制，不越雷池半步，调用者会一直block到超时(maxWaitTime)
@@ -67,6 +71,7 @@ public class RedisConfig extends JedisPoolConfig implements Lifecycle {
         setTimeBetweenEvictionRunsMillis(
                 DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);//清理Idle资源的线程应该每隔多少毫秒清理一遍（如果需要测试idle资源，也顺便测试下）
         setNumTestsPerEvictionRun(DEFAULT_NUM_TESTS_PER_EVICTION_RUN); //清理idle资源的线程每轮最多清理多少个
+        apply(System.getProperties());
     }
 
     @ManagedAttribute
@@ -94,25 +99,11 @@ public class RedisConfig extends JedisPoolConfig implements Lifecycle {
         return index;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Lifecycle
-    ////////////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public void start() {
-        apply(System.getProperties());
-        running = true;
+    @ManagedAttribute
+    public String getRedisName() {
+        return redisName;
     }
 
-    @Override
-    public void stop() {
-        running = false;//do nothing
-    }
-
-    @Override
-    public boolean isRunning() {
-        return running;
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////
     // Getter/Setter as managed attribute
@@ -280,52 +271,52 @@ public class RedisConfig extends JedisPoolConfig implements Lifecycle {
      * @param configurations 配置项
      */
     public void apply(Properties configurations) {
-        host = configurations.getProperty("redis.host", DEFAULT_HOST);
-        port = Integer.valueOf(configurations.getProperty("redis.port", DEFAULT_PORT));
-        password = configurations.getProperty("redis.password");
-        index = Integer.valueOf(configurations.getProperty("redis.index", DEFAULT_INDEX));
-        timeout = TimeInterval.parseInt(configurations.getProperty("redis.timeout", DEFAULT_TIMEOUT));
+        host = configurations.getProperty( redisName + ".host", DEFAULT_HOST);
+        port = Integer.valueOf(configurations.getProperty(redisName + ".port", DEFAULT_PORT));
+        password = configurations.getProperty(redisName + ".password");
+        index = Integer.valueOf(configurations.getProperty(redisName + ".index", DEFAULT_INDEX));
+        timeout = TimeInterval.parseInt(configurations.getProperty(redisName + ".timeout", DEFAULT_TIMEOUT));
 
         Set<String> strings = configurations.stringPropertyNames();
         for (String property : strings) {
-            if (!property.startsWith("redis.")) continue;
+            if (!property.startsWith(redisName + ".")) continue;
             if (property.endsWith("maxActive")) {
-                int maxActive = TimeInterval.parseInt(configurations.getProperty("redis.maxActive"));
+                int maxActive = TimeInterval.parseInt(configurations.getProperty(redisName + ".maxActive"));
                 setMaxActive(maxActive);
 
             } else if (property.endsWith("maxIdle")) {
-                int maxIdle = Integer.valueOf(configurations.getProperty("redis.maxIdle"));
+                int maxIdle = Integer.valueOf(configurations.getProperty(redisName + ".maxIdle"));
                 setMaxIdle(maxIdle);
 
             } else if (property.endsWith("maxWait")) {
-                int maxWait = Integer.valueOf(configurations.getProperty("redis.maxWait"));
+                int maxWait = Integer.valueOf(configurations.getProperty(redisName + ".maxWait"));
                 setMaxWait(maxWait);
 
             } else if (property.endsWith("testOnBorrow")) {
-                boolean testOnBorrow = Boolean.valueOf(configurations.getProperty("redis.testOnBorrow"));
+                boolean testOnBorrow = Boolean.valueOf(configurations.getProperty(redisName + ".testOnBorrow"));
                 setTestOnBorrow(testOnBorrow);
 
             } else if (property.endsWith("testOnReturn")) {
-                boolean testOnReturn = Boolean.valueOf(configurations.getProperty("redis.testOnReturn"));
+                boolean testOnReturn = Boolean.valueOf(configurations.getProperty(redisName + ".testOnReturn"));
                 setTestOnReturn(testOnReturn);
 
             } else if (property.endsWith("testWhileIdle")) {
-                boolean testWhileIdle = Boolean.valueOf(configurations.getProperty("redis.testWhileIdle"));
+                boolean testWhileIdle = Boolean.valueOf(configurations.getProperty(redisName + ".testWhileIdle"));
                 setTestWhileIdle(testWhileIdle);
 
             } else if (property.endsWith("minEvictableIdleTime")) {
                 long minEvictableIdleTime =
-                        new TimeInterval(configurations.getProperty("redis.minEvictableIdleTime")).getMilliseconds();
+                        new TimeInterval(configurations.getProperty(redisName + ".minEvictableIdleTime")).getMilliseconds();
                 setMinEvictableIdleTimeMillis(minEvictableIdleTime);
 
             } else if (property.endsWith("timeBetweenEvictionRuns")) {
                 long timeBetweenEvictionRuns =
-                        new TimeInterval(configurations.getProperty("redis.timeBetweenEvictionRuns")).getMilliseconds();
+                        new TimeInterval(configurations.getProperty(redisName + ".timeBetweenEvictionRuns")).getMilliseconds();
                 setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRuns);
 
             } else if (property.endsWith("numTestsPerEvictionRun")) {
                 int numTestsPerEvictionRun =
-                        Integer.valueOf(configurations.getProperty("redis.numTestsPerEvictionRun"));
+                        Integer.valueOf(configurations.getProperty(redisName + ".numTestsPerEvictionRun"));
                 setNumTestsPerEvictionRun(numTestsPerEvictionRun);
 
             }

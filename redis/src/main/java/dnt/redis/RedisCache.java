@@ -9,13 +9,11 @@ import dnt.cache.MutableCacheService;
 import dnt.spring.Bean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.util.Pool;
 
 import java.util.HashSet;
@@ -31,7 +29,6 @@ import java.util.Set;
 public class RedisCache extends Bean implements MutableCacheService {
     protected static Logger logger = LoggerFactory.getLogger(RedisCache.class);
 
-    @Autowired
     private RedisConfig config;
 
     private RedisPool             pool;
@@ -40,6 +37,11 @@ public class RedisCache extends Bean implements MutableCacheService {
 
 
     public RedisCache() {
+        this(new RedisConfig());
+    }
+
+    public RedisCache(RedisConfig config) {
+        this.config = config;
         this.resources = new ThreadLocal<JedisWithLock>();
         this.listeners = new HashSet<CacheListener>();
     }
@@ -59,10 +61,11 @@ public class RedisCache extends Bean implements MutableCacheService {
         Jedis resource = null;
         while(isRunning() && resource == null){
             try {
-                logger.info("Try to connect to redis: {}:{}/{}",
+                logger.info("Try to connect to {}: {}:{}/{}",
+                            config.getRedisName(),
                             config.getHost(), config.getPort(), config.getIndex());
                 resource = pool.getResource();
-                logger.info("Connected to redis");
+                logger.info("Connected to {}", config.getRedisName());
             } catch (Exception e) {
                 try {
                     Thread.sleep(1000);
