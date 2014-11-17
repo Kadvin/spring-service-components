@@ -6,17 +6,17 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <artifactId>components</artifactId>
-    <version>0.1.9</version>
+    <version>0.2.0</version>
 
     <name>Spring Components</name>
     <url>http://git.happyonroad.net/spring-components</url>
 
     <properties>
-        <version.component-framework>0.1.0</version.component-framework>
+        <version.component-framework>1.0.0</version.component-framework>
     </properties>
 
     <modules>
@@ -48,5 +48,20 @@
         <connection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</connection>
         <developerConnection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</developerConnection>
     </scm>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>spring-component-builder</artifactId>
+                <version>${version.component-framework}</version>
+                <executions>
+                    <execution>
+                        <id>index-detail</id>
+                        <goals><goal>detail</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
