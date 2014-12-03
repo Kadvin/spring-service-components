@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <packaging>pom</packaging>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>dnt</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <groupId>net.happyonroad</groupId>
@@ -17,7 +18,7 @@
     <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
-        <version.component-framework>1.0.0</version.component-framework>
+        <version.component-framework>1.0.3</version.component-framework>
     </properties>
 
     <modules>
@@ -28,6 +29,7 @@
         <module>config</module>
         <module>redis</module>
         <module>remoting</module>
+        <module>platform</module>
     </modules>
 
     <dependencies>
@@ -48,6 +50,49 @@
         <connection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</connection>
         <developerConnection>scm:git:git@happyonroad.net:happyonroad/spring-components.git</developerConnection>
     </scm>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Framework DEPENDENCIES -->
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>spring-component-builder</artifactId>
+                <version>${version.component-framework}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>spring-component-framework</artifactId>
+                <version>${version.component-framework}</version>
+            </dependency>
+
+            <!-- Components DEPENDENCIES -->
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>infrastructure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>message_bus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>cache_service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
@@ -57,7 +102,9 @@
                 <executions>
                     <execution>
                         <id>index-detail</id>
-                        <goals><goal>detail</goal></goals>
+                        <goals>
+                            <goal>detail</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

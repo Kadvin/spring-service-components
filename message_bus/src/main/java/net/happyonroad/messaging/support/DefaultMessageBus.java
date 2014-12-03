@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 
 @Component
-@ManagedResource(objectName = "dnt.components:name=messageBus")
+@ManagedResource(objectName = "net.happyonroad:name=messageBus")
 public class DefaultMessageBus implements MessageBus {
     private static Logger                       logger        = LoggerFactory.getLogger(DefaultMessageBus.class);
     private Map<String, MessageListener> listeners     = new HashMap<String, MessageListener>();

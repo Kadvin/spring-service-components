@@ -8,7 +8,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.happyonroad.components</groupId>
     <artifactId>config</artifactId>
 
     <name>Configuration</name>

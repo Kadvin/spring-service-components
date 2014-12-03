@@ -7,7 +7,7 @@
 
     <context:property-placeholder location="file://${app.home}/config/*.properties" file-encoding="utf-8"/>
 
-    <context:component-scan base-package="dnt.config"/>
+    <context:component-scan base-package="net.happyonroad.config"/>
 
     <bean name="timeoutScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
         <property name="poolSize" value="2"/>

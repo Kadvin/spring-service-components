@@ -8,21 +8,19 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>net.happyonroad.components</groupId>
     <artifactId>infrastructure</artifactId>
 
     <name>Infrastructure</name>
-    <url>http://git.happyonroad.net/spring-components/infrastructure</url>
 
     <dependencies>
         <dependency>
-            <groupId>net.happyonroad.components</groupId>
+            <groupId>net.happyonroad</groupId>
             <artifactId>basic</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>net.happyonroad.components</groupId>
+            <groupId>net.happyonroad</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -8,18 +8,16 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.happyonroad.components</groupId>
     <artifactId>remoting</artifactId>
 
     <name>Remoting Service</name>
-    <url>http://git.happyonroad.net/spring-components/remoting</url>
     <description>
         Remoting服务
     </description>
 
     <dependencies>
         <dependency>
-            <groupId>net.happyonroad.components</groupId>
+            <groupId>net.happyonroad</groupId>
             <artifactId>cache_service</artifactId>
             <version>${project.version}</version>
         </dependency>

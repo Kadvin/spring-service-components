@@ -25,7 +25,7 @@ import java.util.Set;
  *
  */
 @Component
-@ManagedResource(objectName = "dnt.components:name=redisCache")
+@ManagedResource(objectName = "net.happyonroad:name=redisCache")
 public class RedisCache extends Bean implements MutableCacheService {
     protected static Logger logger = LoggerFactory.getLogger(RedisCache.class);
 

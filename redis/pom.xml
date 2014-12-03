@@ -8,7 +8,6 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>net.happyonroad.components</groupId>
     <artifactId>redis</artifactId>
 
     <name>Redis Component</name>
@@ -19,13 +18,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.happyonroad.components</groupId>
+            <groupId>net.happyonroad</groupId>
             <artifactId>message_bus</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>net.happyonroad.components</groupId>
+            <groupId>net.happyonroad</groupId>
             <artifactId>cache_service</artifactId>
             <version>${project.version}</version>
         </dependency>

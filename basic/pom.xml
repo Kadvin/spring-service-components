@@ -10,7 +10,6 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>net.happyonroad.components</groupId>
     <artifactId>basic</artifactId>
 
     <name>Basic Data Types</name>
