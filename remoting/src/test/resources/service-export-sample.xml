@@ -16,10 +16,10 @@
 
     <context:property-placeholder location="test.properties"/>
 
-    <context:component-scan base-package="dnt.test.provider"/>
+    <context:component-scan base-package="net.happyonroad.test.provider"/>
 
-    <bean name="demoExporter" class="dnt.remoting.InvokerServiceExporter">
-        <property name="serviceInterface" value="dnt.test.DemoRemoteService" />
+    <bean name="demoExporter" class="net.happyonroad.remoting.InvokerServiceExporter">
+        <property name="serviceInterface" value="net.happyonroad.test.DemoRemoteService" />
         <property name="service" ref="demoRemoteServiceProvider" />
         <property name="taskExecutor" ref="invokeExecutor"/>
         <property name="cleanScheduler" ref="timeoutScheduler"/>

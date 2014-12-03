@@ -5,7 +5,7 @@
        http://www.happyonroad.net/schema/service.xsd">
 
     <export>
-        <role>dnt.messaging.MessageBus</role>
+        <role>net.happyonroad.messaging.MessageBus</role>
         <hint>default</hint>
         <ref>defaultMessageBus</ref>
     </export>

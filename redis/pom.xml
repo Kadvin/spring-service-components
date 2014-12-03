@@ -3,30 +3,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dnt</groupId>
+        <groupId>net.happyonroad</groupId>
         <artifactId>components</artifactId>
-        <version>0.2.1</version>
+        <version>1.0.0</version>
     </parent>
 
-    <groupId>dnt.components</groupId>
+    <groupId>net.happyonroad.components</groupId>
     <artifactId>redis</artifactId>
 
     <name>Redis Component</name>
 
     <properties>
-        <release.dir>${release.root}/redis-${project.version}</release.dir>
         <version.redis>2.2.1</version.redis>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>dnt.components</groupId>
+            <groupId>net.happyonroad.components</groupId>
             <artifactId>message_bus</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>dnt.components</groupId>
+            <groupId>net.happyonroad.components</groupId>
             <artifactId>cache_service</artifactId>
             <version>${project.version}</version>
         </dependency>

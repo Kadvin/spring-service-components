@@ -29,5 +29,5 @@
     <logger name="com.mchange.v2.resourcepool.BasicResourcePool" level="ERROR"/>
     <logger name="com.mchange.v2.c3p0" level="ERROR"/>
 
-    <logger name="dnt" level="INFO"/>
+    <logger name="net.happyonroad" level="INFO"/>
 </included>

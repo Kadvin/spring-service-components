@@ -7,11 +7,11 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean name="messagingPoolExecutor" class="dnt.concurrent.StrategyExecutorService">
+    <bean name="messagingPoolExecutor" class="net.happyonroad.concurrent.StrategyExecutorService">
         <constructor-arg value="messaging"/>
     </bean>
 
-    <context:component-scan base-package="dnt.messaging"/>
+    <context:component-scan base-package="net.happyonroad.messaging"/>
 
     <context:mbean-export registration="ignoreExisting"/>
 </beans>

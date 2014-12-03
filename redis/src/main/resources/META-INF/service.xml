@@ -5,17 +5,17 @@
        http://www.happyonroad.net/schema/service.xsd">
 
     <export>
-        <role>dnt.messaging.MessageBus</role>
+        <role>net.happyonroad.messaging.MessageBus</role>
         <hint>redis</hint>
     </export>
 
     <export>
-        <role>dnt.cache.CacheService</role>
+        <role>net.happyonroad.cache.CacheService</role>
         <hint>redis</hint>
     </export>
 
     <export>
-        <role>dnt.cache.MutableCacheService</role>
+        <role>net.happyonroad.cache.MutableCacheService</role>
         <hint>redis</hint>
     </export>
 

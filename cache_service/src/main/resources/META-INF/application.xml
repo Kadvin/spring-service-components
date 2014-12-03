@@ -6,7 +6,7 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean name="defaultCache"
-          class="dnt.cache.support.DefaultCache"
+          class="net.happyonroad.cache.support.DefaultCache"
           factory-method="getSharedInstance"/>
 
     <context:mbean-export registration="ignoreExisting"/>

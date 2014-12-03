@@ -5,12 +5,12 @@
        http://www.happyonroad.net/schema/service.xsd">
 
     <export>
-        <role>dnt.cache.CacheService</role>
+        <role>net.happyonroad.cache.CacheService</role>
         <hint>default</hint>
     </export>
 
     <export>
-        <role>dnt.cache.MutableCacheService</role>
+        <role>net.happyonroad.cache.MutableCacheService</role>
         <hint>default</hint>
     </export>
 

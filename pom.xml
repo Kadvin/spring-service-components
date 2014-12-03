@@ -9,11 +9,12 @@
         <version>1.0.6</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
+    <groupId>net.happyonroad</groupId>
     <artifactId>components</artifactId>
-    <version>0.2.1</version>
+    <version>1.0.0</version>
 
-    <name>Spring Components</name>
-    <url>http://git.happyonroad.net/spring-components</url>
+    <name>Spring Service Components</name>
+    <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
         <version.component-framework>1.0.0</version.component-framework>
@@ -26,7 +27,6 @@
         <module>cache_service</module>
         <module>config</module>
         <module>redis</module>
-        <module>ftp_server</module>
         <module>remoting</module>
     </modules>
 

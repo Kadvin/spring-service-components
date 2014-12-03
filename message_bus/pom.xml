@@ -3,19 +3,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>dnt</groupId>
+        <groupId>net.happyonroad</groupId>
         <artifactId>components</artifactId>
-        <version>0.2.1</version>
+        <version>1.0.0</version>
     </parent>
 
-    <groupId>dnt.components</groupId>
+    <groupId>net.happyonroad.components</groupId>
     <artifactId>message_bus</artifactId>
 
     <name>Message Bus Component</name>
 
     <dependencies>
         <dependency>
-            <groupId>dnt.components</groupId>
+            <groupId>net.happyonroad.components</groupId>
             <artifactId>infrastructure</artifactId>
             <version>${project.version}</version>
         </dependency>

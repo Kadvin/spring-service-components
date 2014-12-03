@@ -9,12 +9,12 @@
 
     <import resource="service-export-sample.xml"/>
 
-    <context:component-scan base-package="dnt.test.user"/>
+    <context:component-scan base-package="net.happyonroad.test.user"/>
 
-    <bean name="demoRemoteServiceFactoryBean" class="dnt.remoting.InvokerProxyFactoryBean">
+    <bean name="demoRemoteServiceFactoryBean" class="net.happyonroad.remoting.InvokerProxyFactoryBean">
         <constructor-arg name="cacheService" ref="defaultCache" />
-        <property name="serviceInterface" value="dnt.test.DemoRemoteService" />
-        <property name="queueName" value="TestEngine/dnt.test.DemoRemoteService"/>
+        <property name="serviceInterface" value="net.happyonroad.test.DemoRemoteService" />
+        <property name="queueName" value="TestEngine/net.happyonroad.test.DemoRemoteService"/>
     </bean>
 
 

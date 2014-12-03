@@ -1,5 +1,0 @@
-.jetbrains
-.modules
-target
-release.*
-pom.xml.*
