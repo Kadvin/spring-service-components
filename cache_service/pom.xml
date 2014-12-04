@@ -2,8 +2,8 @@
 
     <parent>
         <groupId>net.happyonroad</groupId>
-        <artifactId>components</artifactId>
-        <version>1.0.0</version>
+        <artifactId>spring-service-components</artifactId>
+        <version>1.0.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>

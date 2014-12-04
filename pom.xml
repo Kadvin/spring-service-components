@@ -11,14 +11,14 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <groupId>net.happyonroad</groupId>
-    <artifactId>components</artifactId>
-    <version>1.0.0</version>
+    <artifactId>spring-service-components</artifactId>
+    <version>1.0.1</version>
 
     <name>Spring Service Components</name>
     <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
-        <version.component-framework>1.0.3</version.component-framework>
+        <version.component-framework>1.0.4</version.component-framework>
     </properties>
 
     <modules>
