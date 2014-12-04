@@ -1,0 +1,10 @@
+//- include the form mixins
+include /lib/mixins/form
+h2 编辑 角色
+
++form("editRoleForm")(ng-submit="update()")
+  include /index/system/roles/_form.jade
+
+  +action_bar
+    +action_submit("更新")
+    +action_cancel("取消")(ui-sref="roles.list")

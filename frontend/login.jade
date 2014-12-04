@@ -1,0 +1,37 @@
+-var sysName = '<%=sysName%>'
+-var styles = [<% styles.forEach( function(file){ print('"' + file + '",') }); %>]
+-var scripts = [<% scripts.forEach( function(file){ print('"' + file + '",') }); %>]
+!!! 5
+html(lang="zh-CN", ng-app="Itsnow.#{sysName}Login")
+  head
+    meta(charset="utf-8")
+    meta(name="description", content="用户登录前应用")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="icon", type="image/icon", href="/assets/favicon.ico")
+    each style in styles
+      link(rel="stylesheet", type="text/css", href=style)
+    each js in scripts
+      script(type="text/javascript", src=js)
+    title(ng-bind="pageTitle")
+  body.login-layout(ng-controller="LoginCtrl", ng-class="system.skin")
+    .main-container
+      .main-content
+        .row
+          .col-sm-10.col-sm-offset-1
+            .login-container
+              .center
+                h1
+                  i.icon-leaf.green
+                  span.white ItsNow 
+                  span.red  {{system.label}}系统
+                h4.blue
+                  | &copy; ItsNow co.,ltd &nbsp;
+                  small.yellow {{system.version}}
+                  small.yellow @{{system.builtAt}}
+              .space-6
+              .position-relative
+                div(ui-view="login")
+    .feedback.alert.alert-block#feedback(style="display:none")
+      button.close(type="button")
+        i.icon-remove
+      span#feedback_content {{feedback.message}}

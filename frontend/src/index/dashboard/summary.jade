@@ -1,0 +1,14 @@
+//   Dashboard parts: summary
+mixin infobox(color, icon, stat, number, content)
+  .infobox(class="infobox-#{color}")
+    .infobox-icon
+      i(class="icon-#{icon}")
+    .infobox-data
+      span.infobox-data-number= number
+      .infobox-content= content
+    .stat(class="stat-#{stat}") 8%
+
++infobox("green", "comments", "success", 32, "8%", "comments + 2 reviews")
++infobox("blue", "twitter", "success", 11, "32%", "new followers")
++infobox("pink", "shopping-cart", "important", 8, "4%", "new orders")
++infobox("red", "beaker", "warning", 3, "3%", "experiments")

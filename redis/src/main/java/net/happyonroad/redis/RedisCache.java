@@ -61,11 +61,11 @@ public class RedisCache extends Bean implements MutableCacheService {
         Jedis resource = null;
         while(isRunning() && resource == null){
             try {
-                logger.info("Try to connect to {}: {}:{}/{}",
-                            config.getRedisName(),
-                            config.getHost(), config.getPort(), config.getIndex());
+                logger.info("Connecting to {}: {}:{}/{}",
+                            config.getRedisName(), config.getHost(), config.getPort(), config.getIndex());
                 resource = pool.getResource();
-                logger.info("Connected to {}", config.getRedisName());
+                logger.info("Connected  to {}: {}:{}/{}",
+                            config.getRedisName(), config.getHost(), config.getPort(), config.getIndex());
             } catch (Exception e) {
                 try {
                     Thread.sleep(1000);

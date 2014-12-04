@@ -1,0 +1,1 @@
+window.system = <%=JSON.stringify(system)%>;

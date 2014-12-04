@@ -1,0 +1,13 @@
+//   Main container parts: breadcrumbs
+//-var show=true
+.breadcrumbs#breadcrumbs
+  +check_option('breadcrumbs', 'fixed')
+  ul.breadcrumb
+    li
+      i.icon-home.home-icon#home
+      i.home-icon#loading
+        img(src="assets/loading3.gif")
+      a(href="#") 首页
+    li(ng-repeat="breadcrumb in breadcrumbs")
+      a(ui-sref="{{breadcrumb.abstract ? breadcrumb.data.default || breadcrumb.name: breadcrumb.name}}") {{breadcrumb.data.pageTitle}}
+

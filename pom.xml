@@ -30,6 +30,7 @@
         <module>redis</module>
         <module>remoting</module>
         <module>platform</module>
+        <module>frontend</module>
     </modules>
 
     <dependencies>
