@@ -54,7 +54,7 @@ public class DefaultListContainer implements ListContainer {
             try {
                 this.wait(timeout*1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
 
             if (values.isEmpty())
