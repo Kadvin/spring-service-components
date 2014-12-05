@@ -1,6 +1,6 @@
 module.exports = function ( grunt ) {
-  
-  /** 
+
+  /**
    * Load required Grunt tasks. These are installed based on the versions listed
    * in `package.json` when you do `npm install` in this directory.
    */
@@ -29,7 +29,7 @@ module.exports = function ( grunt ) {
   var system = userConfig.system;
 
   /**
-   * This is the configuration object Grunt uses to give each plugin its 
+   * This is the configuration object Grunt uses to give each plugin its
    * instructions.
    */
   var taskConfig = {
@@ -38,16 +38,18 @@ module.exports = function ( grunt ) {
      * version. It's already there, so we don't repeat ourselves here.
      */
     pkg: grunt.file.readJSON("package.json"),
+    mappings: grunt.file.readJSON(".mappings"),
+    localMappings: grunt.file.readJSON("node_modules/.local_mappings"),
 
     target: system,
 
     /**
-     * The banner is the comment that is placed at the top of our compiled 
+     * The banner is the comment that is placed at the top of our compiled
      * source files. It is first processed as a Grunt template, where the `<%=`
      * pairs are evaluated based on this very configuration object.
      */
     meta: {
-      banner: 
+      banner:
         '/**\n' +
         ' * <%= target.name %> - v<%= target.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
         ' * <%= pkg.homepage %>\n' +
@@ -73,13 +75,13 @@ module.exports = function ( grunt ) {
     bump: {
       options: {
         files: [
-          "package.json", 
+          "package.json",
           "bower.json"
         ],
         commit: false,
         commitMessage: 'chore(release): v%VERSION%',
         commitFiles: [
-          "package.json", 
+          "package.json",
           "client/bower.json"
         ],
         createTag: false,
@@ -88,7 +90,7 @@ module.exports = function ( grunt ) {
         push: false,
         pushTo: 'origin'
       }
-    },    
+    },
 
     /**
      * The directories to delete when `grunt clean` is executed.
@@ -314,7 +316,7 @@ module.exports = function ( grunt ) {
             cwd: 'assets',
             expand: true
           }
-       ]
+        ]
       },
       build_vendor_assets: {
         files: [
@@ -324,7 +326,7 @@ module.exports = function ( grunt ) {
             expand: true,
             flatten: true
           }
-       ]
+        ]
       },
       build_jade: {
         files: [
@@ -706,13 +708,13 @@ module.exports = function ( grunt ) {
        */
       index_skeletons: {
         files: [
-            '../index.jade', 'lib/**/*.jade', 'index/**/*.jade', '!**/*.tpl.jade', 'general/**/*.jade'
+          '../index.jade', 'lib/**/*.jade', 'index/**/*.jade', '!**/*.tpl.jade', 'general/**/*.jade'
         ],
         tasks: ['copy:build_jade', 'index:build', 'jade:index']
       },
       login_skeletons: {
         files: [
-            '../login.jade', 'lib/**/*.jade', 'login/**/*.jade', '!**/*.tpl.jade', 'general/**/*.jade'
+          '../login.jade', 'lib/**/*.jade', 'login/**/*.jade', '!**/*.tpl.jade', 'general/**/*.jade'
         ],
         tasks: ['copy:build_jade', 'login:build', 'jade:login']
       },
@@ -780,6 +782,22 @@ module.exports = function ( grunt ) {
   };
 
   grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
+
+  grunt.event.on('watch', function(action, filepath, target) {
+    var mappings = taskConfig.mappings;
+    var localMappings = taskConfig.localMappings;
+    filepath = filepath.replace(/\\/g, "/");
+    var mid = mappings["frontend/src/" + filepath];
+    if (mid == null ) {return;}
+    var real = localMappings[mid] + filepath;
+    grunt.log.writeln("Watch RealPath: " + real);
+    if( real == null ) {return;}
+    if( action == "changed"){
+      grunt.file.write(real, grunt.file.read(filepath));
+    }else if (action == "deleted"){
+      grunt.file['delete'](real, {force: true});
+    }
+  });
 
   grunt.file.setBase("src");
   /**
