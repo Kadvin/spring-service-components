@@ -2,13 +2,26 @@
  * This file/module contains all configuration for the build process.
  */
 module.exports = {
+  system: {
+    "app":     "Common",
+    "name":    "platform",
+    "title":   "Platform",
+    "label":   "平台",
+    "version": "${project.version}",
+    "index":   "platform-index-${project.version}",
+    "login":   "platform-login-${project.version}",
+    "skin" :   "skin-1",
+    "defaultUser" : "admin",
+    "defaultPassword" : "secret",
+    "builtAt" : "${build.timestamp}"
+  },
   /**
    * The `build_dir` folder is where our projects are compiled during
    * development and the `compile_dir` folder is where our app resides once it's
    * completely built.
    */
-  build_dir: '../platform/build',
-  deploy_dir: '../platform/deploy',
+  build_dir: '../../build',
+  deploy_dir: '../../deploy',
 
   /**
    * This is a collection of file patterns that refer to our app code (the

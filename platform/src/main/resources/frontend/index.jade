@@ -1,9 +1,10 @@
 -var sysName = '<%=sysName%>'
+-var sysApp = '<%=sysApp%>'
 -var styles = [<% styles.forEach( function(file){ print('"' + file + '",') }); %>]
 -var scripts = [<% scripts.forEach( function(file){ print('"' + file + '",') }); %>]
 doctype html
 include /lib/mixins/global
-html(ng-app="Itsnow.#{sysName}Index")
+html(ng-app="#{sysApp}.#{sysName}Index")
   head(lang="zh-CN")
     title(ng-bind="pageTitle")
     meta(charset="utf-8")
@@ -21,7 +22,7 @@ html(ng-app="Itsnow.#{sysName}Index")
         .navbar-header.pull-left
           a.navbar-brand(href="javascript:void(0)")
             i.icon-leaf
-            | ItsNow {{system.label}}系统 &nbsp;
+            | {{system.app}} {{system.label}}系统 &nbsp;
             small V{{system.version}}
             small.yellow @{{system.builtAt}}
 

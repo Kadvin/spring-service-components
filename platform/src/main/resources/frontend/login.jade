@@ -1,8 +1,9 @@
 -var sysName = '<%=sysName%>'
+-var sysApp = '<%=sysApp%>'
 -var styles = [<% styles.forEach( function(file){ print('"' + file + '",') }); %>]
 -var scripts = [<% scripts.forEach( function(file){ print('"' + file + '",') }); %>]
 !!! 5
-html(lang="zh-CN", ng-app="Itsnow.#{sysName}Login")
+html(lang="zh-CN", ng-app="#{sysApp}.#{sysName}Login")
   head
     meta(charset="utf-8")
     meta(name="description", content="用户登录前应用")
@@ -22,10 +23,10 @@ html(lang="zh-CN", ng-app="Itsnow.#{sysName}Login")
               .center
                 h1
                   i.icon-leaf.green
-                  span.white ItsNow 
+                  span.white {{system.app}}
                   span.red  {{system.label}}系统
                 h4.blue
-                  | &copy; ItsNow co.,ltd &nbsp;
+                  | &copy; {{system.app}} co.,ltd &nbsp;
                   small.yellow {{system.version}}
                   small.yellow @{{system.builtAt}}
               .space-6

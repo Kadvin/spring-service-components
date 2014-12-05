@@ -19,6 +19,7 @@ angular.module('Lib.Filters', [])
 
   .filter 'formatProcessStatus', ->
     (status) ->
+      return "部署中"    if status == 'Deploying'
       return "已停止"    if status == 'Stopped'
       return "启动中"    if status == 'Starting'
       return "运行中"    if status == 'Running'

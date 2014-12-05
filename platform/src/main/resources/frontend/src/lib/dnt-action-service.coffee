@@ -137,7 +137,7 @@ angular.module('dnt.action.service', [
         selections = {datas: [], trs: []}
         for key, val of @options.watch when val
           selections.datas.push @options.mapping(key)
-          selections.trs.push $("[#{@CODE.TR_VALUE}=#{key}]")
+          selections.trs.push $("[#{@CODE.TR_VALUE}='#{key}']")
         return selections
 
       ### @function: getCss | get css

@@ -22,11 +22,11 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-cleanempty');
 
-  var system = grunt.file.readJSON('.target');
   /**
    * Load in our build configuration file.
    */
-  var userConfig = require( './' + system.name + '.config.js' );
+  var userConfig = require( './config.js' );
+  var system = userConfig.system;
 
   /**
    * This is the configuration object Grunt uses to give each plugin its 
@@ -918,7 +918,8 @@ module.exports = function ( grunt ) {
           data: {
             scripts: scripts,
             styles: styles,
-            sysName: system.title
+            sysName: system.title,
+            sysApp: system.app
           }
         });
       }
@@ -939,7 +940,8 @@ module.exports = function ( grunt ) {
           data: {
             scripts: scripts,
             styles:  styles,
-            sysName: system.title
+            sysName: system.title,
+            sysApp: system.app
           }
         });
       }
