@@ -84,19 +84,25 @@ public class ServicePackageManager extends ApplicationSupportBean
             packageJars = new File[0]; /*也可能在目录下没有jar*/
         logger.debug("Loading {} service packages from: {}", packageJars.length, repository.getAbsolutePath());
         // sort the model packages by them inner dependency
-        componentRepository.sortCandidates(packageJars);
+        //componentRepository.sortCandidates(packageJars);
+        //outputPackageJars(packageJars);
         // TODO  不知道为什么，排序结果中会出错
         // 临时规则，让系统能先正常的跑起来，以后再来解决
         Arrays.sort(packageJars, new ServicePackageComparator());
+        outputPackageJars(packageJars);
+        for (File jar : packageJars) {
+            loadServicePackage(jar);
+        }
+    }
+
+    private void outputPackageJars(File[] packageJars)
+            throws DependencyNotMeetException, InvalidComponentNameException {
         StringBuilder sb = new StringBuilder();
         for (File packageJar : packageJars) {
             Component pkg = componentRepository.resolveComponent(packageJar.getName());
             sb.append("\t").append(pkg.getBriefId()).append("\n");
         }
         logger.debug("Sorted service packages is list as: \n{}", sb);
-        for (File jar : packageJars) {
-            loadServicePackage(jar);
-        }
     }
 
     void loadServicePackage(File jar)
@@ -107,6 +113,10 @@ public class ServicePackageManager extends ApplicationSupportBean
             logger.info("Loading service package: {}", component);
             //仅发给容器
             publish(new ServicePackageEvent.LoadingEvent(component));
+            //TODO 这段全局附加特性放在这里存在问题；
+            // 当依赖排序出错时，如 net.happyonroad.menu 被依赖，但排序之后被最后一个加载
+            // 这样就会出现 在加载某个业务模型时，将 net.happyonroad.menu 视为无缺省配置的模型加载
+            // 而后这里将其视为服务模型加载时，系统认为其已经加载，而不继续加载
             applyDefaultConfig(component);
             componentLoader.load(component);
             loadedServicePackages.add(component);

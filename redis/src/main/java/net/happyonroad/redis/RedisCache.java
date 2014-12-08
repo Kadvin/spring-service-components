@@ -83,7 +83,11 @@ public class RedisCache extends Bean implements MutableCacheService {
         withRunnable(new RedisRunnable() {
             @Override
             public void run(Jedis jedis) {
-                jedis.bgsave();
+                try {
+                    jedis.bgsave();
+                } catch (Exception e) {
+                    logger.warn("Failed to bgsave redis will stop: " + e.getMessage());
+                }
             }
         });
         pool.destroy();

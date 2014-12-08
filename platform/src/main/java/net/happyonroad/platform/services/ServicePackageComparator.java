@@ -22,7 +22,9 @@ class ServicePackageComparator implements Comparator<File> {
     }
 
     private int baseOrder(String name){
-        if( name.contains("common-") ){
+        if( name.contains("net.happyonroad") ) {
+            return 5;
+        }else if( name.contains("common-") ){
             return 10;
         } else if( name.contains("activiti")) {
             return 30;

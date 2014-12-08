@@ -30,6 +30,7 @@
         <module>redis</module>
         <module>remoting</module>
         <module>platform</module>
+        <module>menu</module>
     </modules>
 
     <dependencies>
@@ -42,6 +43,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
         </dependency>
 
     </dependencies>
