@@ -31,16 +31,16 @@ mixin radio(object, field)
   +input(object,field)(type="radio")&attributes(attributes)
 //- a radio group
 mixin radio_group(object, field, datas)
-  label(ng-repeat="data in #{datas}")(class="radio-inline")
-    input(id="#{object}_#{field.replace('.','_')}", name="#{object}.#{field}", ng-model="$parent.#{object}.#{field}", type="radio", ng-value="data.value")&attributes(attributes)
+  label.radio-inline(ng-repeat="data in #{datas}")
+    +radio(object, field)(ng-model="$parent.#{object}.#{field}", ng-value="data.value", class="radio-group")&attributes(attributes)
     | {{data.label}}
 //- a checkbox input contains represents a input field
 mixin checkbox(object, field)
   +input(object,field)(type="checkbox")&attributes(attributes)
 //- a checkbox group
 mixin check_group(object, field, datas)
-  label(ng-repeat="data in #{datas}")(class="checkbox-inline")
-    input(id="#{object}_#{field.replace('.','_')}", name="#{object}.#{field}", ng-model="$parent.#{object}[data.model]", type="checkbox", ng-true-value="'{{data.value}}'", ng-false-value="''")&attributes(attributes)
+  label.checkbox-inline(ng-repeat="data in #{datas}")
+    +checkbox(object, field)(ng-model="$parent.#{object}[data.model]", ng-true-value="'{{data.value}}'", ng-false-value="''", class="check-group")&attributes(attributes)
     | {{data.label}}
 //- a file input contains represents a input field
 mixin file(object, field)

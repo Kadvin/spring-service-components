@@ -31,7 +31,7 @@ angular.module('Lib.Directives', ['Lib.Utils'])
             # GET /public/users/check/phone/$phone
             async.get(Utils.stringFormat attrs.ngCheck, val).success((data)->
               ctrl.$setValidity(errType, true);
-              scope.callback(data)
+              scope.callback(data) if scope.callback?
             ).error(->
               ctrl.$setValidity(errType, false)
             )
