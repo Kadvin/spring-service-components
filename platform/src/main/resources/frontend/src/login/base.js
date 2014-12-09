@@ -1,10 +1,11 @@
 /**
  * The shared login Application(SPA)
  */
-angular.module("Itsnow.Login", [
+angular.module("Platform.Login", [
     'ngResource',
     'ngLocale',
     'ui.router',
+    'ui.bootstrap',
     'jcs-autoValidate',
 
     'Lib.Feedback',
@@ -14,8 +15,9 @@ angular.module("Itsnow.Login", [
     'Lib.Templates',
     'Lib.Directives',
     'Lib.JcsEnhance',
+    'Lib.Security',
+
     'Login.Templates',
-    'Itsnow.Security',
     'Login.Authenticate',
     'Login.Forgot'
 ])

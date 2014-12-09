@@ -1,5 +1,5 @@
 angular
-  .module('Itsnow.Security', [])
+  .module('Lib.Security', [])
 
   .factory('SessionService', ['$resource',
     function ($resource) {
@@ -14,14 +14,6 @@ angular
       return $resource("api/password", {}, {
         forgot: {method: 'POST'},
         reset: {method: 'PUT'}
-      });
-    }]
-  )
-
-  .factory('UserService', ['$resource',
-    function($resource){
-      return $resource('api/users/:userId', {}, {
-        signup: {url: 'users', method: 'POST', params:{userId:'@userId'}}
       });
     }]
   );

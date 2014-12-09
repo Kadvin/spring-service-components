@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>menu</artifactId>
-    <version>1.0.1</version>
+    <name>Platform Menu Service</name>
 
     <dependencies>
         <dependency>

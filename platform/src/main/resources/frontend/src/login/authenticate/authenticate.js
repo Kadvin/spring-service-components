@@ -2,12 +2,7 @@
  * The authenticate module in Login
  */
 angular
-  .module('Login.Authenticate', [
-    'ui.router',
-    'ui.bootstrap',
-    'Lib.Feedback',
-    'Itsnow.Security'
-  ])
+  .module('Login.Authenticate', [])
 
   .config(function ($stateProvider) {
     $stateProvider.state('authenticate', {
@@ -30,7 +25,7 @@ angular
         sessionService.challenge($scope.credential, function(){
           window.location.href = '/index.html';
         }, function(resp){
-          $scope.error = resp.data;
+          $scope.error = resp.statusText;
           Feedback.error("登录失败", resp);
         });
       };

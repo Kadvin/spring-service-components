@@ -1,22 +1,24 @@
-angular.module('Itsnow.Index', [
+angular.module('Platform.Index', [
     'ui.router',
     'ngResource',
     'ngLocale',
     'ngSanitize',
     'ngTable',
-    'dnt.action.service',
     'jcs-autoValidate',
+
+    'dnt.action.service',
     'Lib.Interceptor',
     'Lib.Directives',
     'Lib.Templates',
-    'Index.Templates',
-    'Index.Menu',
-    'Index.Dialog',
     'Lib.JcsEnhance',
     'Lib.Filters',
     'Lib.Feedback',
     'Lib.Utils',
-    'Lib.Commons'
+    'Lib.Commons',
+
+    'Index.Templates',
+    'Index.Menu',
+    'Index.Dialog'
 ])
   .config(function ($httpProvider, $stateProvider, $urlRouterProvider) {
         $urlRouterProvider.otherwise('dashboard');

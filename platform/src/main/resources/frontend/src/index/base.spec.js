@@ -1,8 +1,8 @@
-describe( 'Itsnow Index', function() {
+describe( 'Platform Index', function() {
   describe( 'loading', function() {
     var AppCtrl, $scope;
 
-    beforeEach( module( 'Itsnow.Index' ) );
+    beforeEach( module( 'Platform.Index' ) );
 
     beforeEach( inject( function( $controller, $rootScope ) {
       $scope = $rootScope.$new();

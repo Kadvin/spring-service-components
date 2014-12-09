@@ -1,6 +1,6 @@
 {
-  "name": "itsnow",
-  "version": "0.1.8-SNAPSHOT",
+  "name": "frontend-platform",
+  "version": "1.0.1",
   "devDependencies": {
     "angular": "~1.3",
     "angular-resource": "~1.2",

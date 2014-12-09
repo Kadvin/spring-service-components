@@ -44,14 +44,15 @@ public class DatabaseConfig {
         String dbPort = System.getProperty("db.port", "3306");
         String dbUser = System.getProperty("db.user", "itsnow");
         String dbPass = System.getProperty("db.password", "secret");
-        String appId = System.getProperty("app.id");
+        String appId = System.getProperty("app.id", System.getProperty("app.name"));
         if(StringUtils.isBlank(appId) || "<undefined>".equalsIgnoreCase(appId)){
             throw new ApplicationContextException("the app id is not defined");
         }
 
         String dbName = System.getProperty("db.name", "itsnow_" + appId);
         System.setProperty("db.name", dbName);
-        String dbUrl = String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8", dbHost, dbPort, dbName);
+        String dbUrl = String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8",
+                                     dbHost, dbPort, dbName);
         dataSource.setUrl(dbUrl);
         dataSource.setUsername(dbUser);
         dataSource.setPassword(dbPass);

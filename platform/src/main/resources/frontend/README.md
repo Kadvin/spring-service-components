@@ -1,4 +1,4 @@
-# Itsnow 前端开发指南
+# 前端开发指南
 
 基于 [AngularJS](http://angularjs.org) 的WEB前端项目.
 

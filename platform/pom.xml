@@ -108,7 +108,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- message-bus,redis,cache-service -->
         <dependency>
             <groupId>net.happyonroad</groupId>
             <artifactId>message_bus</artifactId>
@@ -116,10 +115,6 @@
         <dependency>
             <groupId>net.happyonroad</groupId>
             <artifactId>cache_service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.happyonroad</groupId>
-            <artifactId>redis</artifactId>
         </dependency>
 
         <dependency>
