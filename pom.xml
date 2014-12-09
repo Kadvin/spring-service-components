@@ -78,7 +78,7 @@
             </dependency>
             <dependency>
                 <groupId>net.happyonroad</groupId>
-                <artifactId>infrastructure</artifactId>
+                <artifactId>utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

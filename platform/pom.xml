@@ -79,7 +79,7 @@
 
         <dependency>
             <groupId>net.happyonroad</groupId>
-            <artifactId>infrastructure</artifactId>
+            <artifactId>utils</artifactId>
         </dependency>
 
         <dependency>

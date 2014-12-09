@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>net.happyonroad</groupId>
-            <artifactId>infrastructure</artifactId>
+            <artifactId>utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
