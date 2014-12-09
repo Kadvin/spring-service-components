@@ -23,7 +23,7 @@
 
     <modules>
         <module>basic</module>
-        <module>infrastructure</module>
+        <module>utils</module>
         <module>message_bus</module>
         <module>cache_service</module>
         <module>config</module>
