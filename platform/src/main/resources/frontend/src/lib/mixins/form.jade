@@ -38,9 +38,15 @@ mixin radio_group(object, field, datas)
 mixin checkbox(object, field)
   +input(object,field)(type="checkbox")&attributes(attributes)
 //- a checkbox group
-mixin check_group(object, field, datas)
+mixin check_group_for_multi_models(object, field, datas)
   label.checkbox-inline(ng-repeat="data in #{datas}")
     +checkbox(object, field)(ng-model="$parent.#{object}[data.model]", ng-true-value="'{{data.value}}'", ng-false-value="''", class="check-group")&attributes(attributes)
+    | {{data.label}}
+
+mixin check_group(object, field, datas)
+  input.hidden(id="#{object}_#{field.replace('.','_')}_check", ng-model="#{object}.#{field}", type="text")
+  label.checkbox-inline(ng-repeat="data in #{datas}")
+    input(name="#{object}.#{field}", type="checkbox", value="{{data.value}}")
     | {{data.label}}
 //- a file input contains represents a input field
 mixin file(object, field)
