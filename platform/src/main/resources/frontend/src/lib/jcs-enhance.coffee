@@ -80,7 +80,7 @@ angular.module('Lib.JcsEnhance', [])
 
     skip = (el)->
       elem = el.context
-      return false if elem.nodeName is "TEXTAREA" or (elem.nodeName is "INPUT" and (elem.type isnt "radio" or elem.type isnt "checkbox"))
+      return false if elem.nodeName is "TEXTAREA" or (elem.nodeName is "INPUT" and (elem.type isnt "radio" and elem.type isnt "checkbox"))
       return true
 
     makeDefault = (el)->
