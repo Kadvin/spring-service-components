@@ -48,6 +48,16 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
     }
 
     @Override
+    public void applyDefaults(Component component) {
+        super.applyDefaults(component);
+        String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
+        if( dbRepository == null && readComponentDefaultConfig(component, "D").contains("D")){
+            dbRepository = System.getProperty("default.db.repository", "dnt.*.repository");
+        }
+        component.setManifestAttribute(DB_REPOSITORY, dbRepository);
+    }
+
+    @Override
     public boolean hasFeature(Component component) {
         //暂时仅根据组件的artifact id判断，也不根据内容判断
         return StringUtils.isNotBlank(component.getManifestAttribute(DB_REPOSITORY));

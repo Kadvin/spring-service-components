@@ -46,6 +46,16 @@ public class SpringMvcFeatureResolver extends AbstractFeatureResolver {
     }
 
     @Override
+    public void applyDefaults(Component component) {
+        super.applyDefaults(component);
+        String webRepository = component.getManifestAttribute(WEB_REPOSITORY);
+        if( webRepository == null && readComponentDefaultConfig(component, "W").contains("W")){
+            webRepository = System.getProperty("default.web.repository", "dnt.*.web.repository");
+        }
+        component.setManifestAttribute(WEB_REPOSITORY, webRepository);
+    }
+
+    @Override
     public boolean hasFeature(Component component) {
         //暂时仅根据组件的artifact id判断，也不根据内容判断
         return StringUtils.isNotBlank(component.getManifestAttribute(WEB_REPOSITORY));

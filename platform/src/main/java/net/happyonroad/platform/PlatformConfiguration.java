@@ -8,7 +8,7 @@ import net.happyonroad.platform.service.AutoNumberService;
 import net.happyonroad.platform.services.ServicePackageManager;
 import net.happyonroad.platform.support.AutoNumberInMemory;
 import net.happyonroad.platform.support.JettyServer;
-import net.happyonroad.platform.support.ServicePackageEventForwarder;
+import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.spring.DefaultAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -46,13 +46,13 @@ public class PlatformConfiguration {
     // 用于加载扩展服务模块
     @Bean
     public ServicePackageManager pkgManager(){
-        return new ServicePackageManager("dnt.itsnow.repository", "dnt.itsnow.web.controller");
+        return new ServicePackageManager();
     }
 
     //用于把平台context中的事件转发给 躲在dispatcher servlet 中的 Spring Mvc Context
     @Bean
-    public ServicePackageEventForwarder eventForwarder(){
-        return new ServicePackageEventForwarder();
+    public PlatformEventForwarder eventForwarder(){
+        return new PlatformEventForwarder();
     }
 
 
