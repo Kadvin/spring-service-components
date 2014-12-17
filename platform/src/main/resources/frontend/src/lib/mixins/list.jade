@@ -25,7 +25,7 @@ mixin more_buttons
 //- a drop button in the more buttons group
 mixin drop_button(action, icon, text, weight, rejectCss, requireCss)
   li
-    a(href="javascript:void(0)", ng-click="#{action}", weight="#{weight}", reject-css="#{rejectCss}", require-css="#{requireCss}")
+    a.btn.btn-primary.drop-button.no-border(href="javascript:void(0)", ng-click="#{action}", weight="#{weight}", reject-css="#{rejectCss}", require-css="#{requireCss}")
       i(class="icon-#{icon}")
       | #{text}
 

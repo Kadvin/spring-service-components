@@ -14,10 +14,10 @@ angular.module('Lib.JcsEnhance', [])
       if iconEl?
         originIcon = iconEl.attr('origin-class')
         iconEl.attr('origin-class', iconEl.attr('class')) unless originIcon?
-        iconEl.removeClass 'icon-ok icon-remove' 
+        iconEl.removeClass 'icon-ok icon-remove'
         iconEl.addClass originIcon
-
       helpEl = findWithClassElementDesc(el, 'help-block')
+
       if helpEl?
         originText = helpEl.attr('origin-text')
         successText = helpEl.attr('success-text')
@@ -59,6 +59,7 @@ angular.module('Lib.JcsEnhance', [])
 
     makeValid = (el)->
       frmGroupEl = findFormGroupElement(el)
+      return frmGroupEl.addClass('has-success has-feedback') if skip(el)
       reset(frmGroupEl)
       frmGroupEl.addClass('has-success has-feedback')
       iconEl = findElementDesc(frmGroupEl, 'i')
@@ -68,6 +69,7 @@ angular.module('Lib.JcsEnhance', [])
 
     makeInvalid = (el, errorMsg)->
       frmGroupEl = findFormGroupElement(el)
+      return frmGroupEl.addClass('has-error has-feedback') if skip(el)
       reset(frmGroupEl);
 
       frmGroupEl.addClass('has-error has-feedback')
@@ -75,6 +77,11 @@ angular.module('Lib.JcsEnhance', [])
       iconEl.attr('class', 'icon-remove') if iconEl?
       helpEl = findWithClassElementDesc(frmGroupEl, 'help-block')
       helpEl.text(errorMsg) if helpEl?
+
+    skip = (el)->
+      elem = el.context
+      return false if elem.nodeName is "TEXTAREA" or (elem.nodeName is "INPUT" and (elem.type isnt "radio" and elem.type isnt "checkbox"))
+      return true
 
     makeDefault = (el)->
       frmGroupEl = findFormGroupElement(el)

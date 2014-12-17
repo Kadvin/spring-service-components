@@ -41,6 +41,22 @@ angular.module('Lib.Commons', ['ngTable'])
           datas.push {id: "", text: "#{groupDataKeys[i]}", disabled: true, children: @formatSelectDatas(data[groupDataKeys[i]], displayField, customId)}
         return datas
 
+      checkGroup: (object, field, callback)->
+        $(document).ready(->
+          $("input[name='#{object}.#{field}']").change( ->
+            $this = $(this)
+            modelEl = $("#" + "{0}_{1}_check".interpolate(object, field))
+            values = []
+            values = modelEl.val().split(",") if modelEl.val()? and modelEl.val() isnt ""
+            if $this.is(":checked")
+              values.push($this.val())
+            else
+              index = values.indexOf($this.val())
+              values.splice(index, 1) if index >= 0
+            modelEl.val(values.toString())
+            callback(values.toString())
+          )
+        )
   ])
 
   .factory('CacheService', [->
@@ -97,8 +113,8 @@ angular.module('Lib.Commons', ['ngTable'])
         @checked = false
         @items = {}
         @watch()
-
-      watch: ->
+        @watchAll()
+      watchAll: ->
         instance = this
         $rootScope.$watch( ->
           return  instance.checked
@@ -107,6 +123,8 @@ angular.module('Lib.Commons', ['ngTable'])
             instance.items[data[instance.key]] = value if data[instance.key]?
         )
 
+      watch: ->
+        instance = this
         $rootScope.$watchCollection( ->        # watch for check single checkbox
           return instance.items
         , ->
@@ -122,6 +140,11 @@ angular.module('Lib.Commons', ['ngTable'])
         , true
         )
 
-      #getItems : ->
-        #return @items
+      update:(callback,obj)->
+        instance = this
+        if obj?
+          delete instance.items[obj[instance.key]] if obj[instance.key]?
+        else
+          instance.watchAll()
+        callback()
   ])
