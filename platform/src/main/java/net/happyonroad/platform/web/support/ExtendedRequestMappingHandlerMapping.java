@@ -21,10 +21,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.Method;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <h1>被扩展的Spring Request Mapping</h1>
@@ -48,10 +45,11 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
         implements ApplicationListener<ApplicationEvent> {
 
     private ApplicationContext theApplicationContext;
+    private Set<Class> handledTypes = new HashSet<Class>();
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContainerStartedEvent){
+        if (event instanceof ContainerStartedEvent) {
             //解决第一个问题
             LaunchEnvironment environment = (LaunchEnvironment) event.getSource();
             List<ApplicationContext> applications = environment.getApplications();
@@ -68,7 +66,7 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
 
     private void detectApplicationContext(ApplicationContext application) {
         theApplicationContext = application;
-        if( application == null ) return;// it's not a component with application
+        if (application == null) return;// it's not a component with application
         // controllers 是注册在parent中的
         String[] controllerNames = application.getBeanNamesForType(ApplicationController.class);
         for (String controllerName : controllerNames) {
@@ -82,13 +80,16 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
     }
 
     /**
-   	 * Look for handler methods in a handler.
-   	 * @param handler the bean name of a handler or a handler instance
-   	 */
-   	protected void detectHandlerMethods(final Object handler) {
-   		Class<?> handlerType = (handler instanceof String ? theApplicationContext().getType((String) handler) :
+     * Look for handler methods in a handler.
+     * @param handler the bean name of a handler or a handler instance
+     */
+    protected void detectHandlerMethods(final Object handler) {
+        Class<?> handlerType = (handler instanceof String ? theApplicationContext().getType((String) handler) :
                                 handler.getClass());
 
+        //在许多情况下，会重复对某个控制器进行方法解析
+        if (handled(handlerType)) return;
+        else handle(handlerType);
    		// Avoid repeated calls to getMappingForMethod which would rebuild RequestMappingInfo instances
    		final Map<Method, RequestMappingInfo> mappings = new IdentityHashMap<Method, RequestMappingInfo>();
    		final Class<?> userType = ClassUtils.getUserClass(handlerType);
@@ -115,6 +116,15 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
             SpringMvcConfig.logger.info(routeItem);
         }
    	}
+
+
+    private boolean handled(Class<?> handlerType) {
+        return handledTypes.contains(handlerType);
+    }
+
+    private void handle(Class<?> handlerType) {
+        handledTypes.add(handlerType);
+    }
 
     /**
    	 * Create the HandlerMethod instance.
