@@ -73,11 +73,7 @@ public class ServicePackageManager extends ApplicationSupportBean
             packageJars = new File[0]; /*也可能在目录下没有jar*/
         logger.debug("Loading {} service packages from: {}", packageJars.length, repository.getAbsolutePath());
         // sort the model packages by them inner dependency
-        //componentRepository.sortCandidates(packageJars);
-        //outputPackageJars(packageJars);
-        // TODO  不知道为什么，排序结果中会出错
-        // 临时规则，让系统能先正常的跑起来，以后再来解决
-        Arrays.sort(packageJars, new ServicePackageComparator());
+        componentRepository.sortCandidates(packageJars);
         outputPackageJars(packageJars);
         for (File jar : packageJars) {
             loadServicePackage(jar);
