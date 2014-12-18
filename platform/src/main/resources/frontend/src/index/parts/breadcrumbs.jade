@@ -4,8 +4,8 @@
   +check_option('breadcrumbs', 'fixed')
   ul.breadcrumb
     li
-      i.icon-home.home-icon#home
-      i.home-icon#loading
+      i.icon-home.home-icon#home(ng-if="!loading")
+      i.home-icon#loading(ng-if="loading")
         img(src="assets/loading3.gif")
       a(href="#") 首页
     li(ng-repeat="breadcrumb in breadcrumbs")
