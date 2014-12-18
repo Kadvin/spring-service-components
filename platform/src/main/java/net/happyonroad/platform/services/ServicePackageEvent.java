@@ -4,14 +4,12 @@
 package net.happyonroad.platform.services;
 
 import net.happyonroad.component.core.Component;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 
 /**
  * 所有服务包的事件
  */
 public class ServicePackageEvent extends ApplicationEvent {
-    private ApplicationContext forward;
 
     public ServicePackageEvent(Component source) {
         super(source);
@@ -20,14 +18,6 @@ public class ServicePackageEvent extends ApplicationEvent {
     @Override
     public Component getSource() {
         return (Component) super.getSource();
-    }
-
-    public ApplicationContext forwarded() {
-        return forward;
-    }
-
-    public void forwardingTo(ApplicationContext target) {
-        this.forward = target;
     }
 
     /**

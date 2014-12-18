@@ -3,22 +3,18 @@
  */
 package net.happyonroad.platform.services;
 
-import net.happyonroad.platform.config.DefaultAppConfig;
-import net.happyonroad.platform.config.DefaultServiceConfig;
-import net.happyonroad.spring.ApplicationSupportBean;
 import net.happyonroad.component.container.ComponentLoader;
 import net.happyonroad.component.container.ComponentRepository;
 import net.happyonroad.component.container.event.ContainerEvent;
 import net.happyonroad.component.container.event.ContainerStartedEvent;
 import net.happyonroad.component.container.event.ContainerStoppingEvent;
-import net.happyonroad.component.container.feature.ApplicationFeatureResolver;
-import net.happyonroad.component.container.feature.ServiceFeatureResolver;
 import net.happyonroad.component.core.Component;
 import net.happyonroad.component.core.ComponentContext;
 import net.happyonroad.component.core.exception.DependencyNotMeetException;
 import net.happyonroad.component.core.exception.InvalidComponentNameException;
 import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.component.core.support.Dependency;
+import net.happyonroad.spring.ApplicationSupportBean;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,23 +25,16 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The service package manager
  */
 public class ServicePackageManager extends ApplicationSupportBean
         implements ApplicationListener<ContainerEvent>, FilenameFilter {
-    public static final String DEFAULT_CONFIG         = "Default-Config";
-    public static final String DEFAULT_APP_CONFIG     = DefaultAppConfig.class.getName();
-    public static final String DEFAULT_SERVICE_CONFIG = DefaultServiceConfig.class.getName();
-
-    private final String defaultDbRepository, defaultWebRepository;
-
-    public ServicePackageManager(String defaultDbRepository, String defaultWebRepository) {
-        this.defaultDbRepository = defaultDbRepository;
-        this.defaultWebRepository = defaultWebRepository;
-    }
 
     @Autowired
     private ComponentLoader     componentLoader;
@@ -84,11 +73,7 @@ public class ServicePackageManager extends ApplicationSupportBean
             packageJars = new File[0]; /*也可能在目录下没有jar*/
         logger.debug("Loading {} service packages from: {}", packageJars.length, repository.getAbsolutePath());
         // sort the model packages by them inner dependency
-        //componentRepository.sortCandidates(packageJars);
-        //outputPackageJars(packageJars);
-        // TODO  不知道为什么，排序结果中会出错
-        // 临时规则，让系统能先正常的跑起来，以后再来解决
-        Arrays.sort(packageJars, new ServicePackageComparator());
+        componentRepository.sortCandidates(packageJars);
         outputPackageJars(packageJars);
         for (File jar : packageJars) {
             loadServicePackage(jar);
@@ -113,11 +98,6 @@ public class ServicePackageManager extends ApplicationSupportBean
             logger.info("Loading service package: {}", component);
             //仅发给容器
             publish(new ServicePackageEvent.LoadingEvent(component));
-            //TODO 这段全局附加特性放在这里存在问题；
-            // 当依赖排序出错时，如 net.happyonroad.menu 被依赖，但排序之后被最后一个加载
-            // 这样就会出现 在加载某个业务模型时，将 net.happyonroad.menu 视为无缺省配置的模型加载
-            // 而后这里将其视为服务模型加载时，系统认为其已经加载，而不继续加载
-            applyDefaultConfig(component);
             componentLoader.load(component);
             loadedServicePackages.add(component);
             DefaultComponent comp = (DefaultComponent) component;
@@ -129,25 +109,6 @@ public class ServicePackageManager extends ApplicationSupportBean
         }
     }
 
-    private void applyDefaultConfig(Component component) {
-        String defaultConfig = component.getManifestAttribute(DEFAULT_CONFIG);
-        if( defaultConfig != null ){
-            defaultConfig = defaultConfig.toUpperCase();
-            if( defaultConfig.equalsIgnoreCase("true") ) defaultConfig = "A,S,W,D";
-            if( defaultConfig.contains("A")){
-                component.setManifestAttribute(ApplicationFeatureResolver.APP_CONFIG, DEFAULT_APP_CONFIG);
-            }
-            if( defaultConfig.contains("S")){
-                component.setManifestAttribute(ServiceFeatureResolver.SERVICE_CONFIG, DEFAULT_SERVICE_CONFIG);
-            }
-            if( defaultConfig.contains("D")){
-                component.setManifestAttribute(MybatisFeatureResolver.DB_REPOSITORY, defaultDbRepository);
-            }
-            if( defaultConfig.contains("W")){
-                component.setManifestAttribute(SpringMvcFeatureResolver.WEB_REPOSITORY, defaultWebRepository);
-            }
-        }
-    }
 
     void unloadServicePackages() throws Exception {
         List<Component> servicePackages = new LinkedList<Component>(loadedServicePackages);
