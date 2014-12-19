@@ -1,9 +1,13 @@
-if(! ('ace' in window) ) window['ace'] = {};
+if( !('ace' in window) ) window['ace'] = {}
 
 ace.config = {
  cookie_expiry : 604800, //1 week duration for saved settings
+ cookie_path: '',
  storage_method: 2 //2 means use cookies, 1 means localStorage, 0 means localStorage if available otherwise cookies
-};
+}
+if( !('vars' in window['ace']) ) window['ace'].vars = {}
+ace.vars['very_old_ie']	= !('querySelector' in document.documentElement);
+
 
 ace.settings = {
 	is : function(item, status) {
@@ -23,141 +27,223 @@ ace.settings = {
 		ace.data.remove('settings', item+'-'+status)
 	},
 
-	navbar_fixed : function(fix) {
+	navbar_fixed : function(navbar, fix , save, chain) {
+		if(ace.vars['very_old_ie']) return false;
+		
+		var navbar = navbar || '#navbar';
+		if(typeof navbar === 'string') navbar = document.querySelector(navbar);
+		if(!navbar) return false;
+	
 		fix = fix || false;
-		if(!fix && ace.settings.is('sidebar', 'fixed')) {
-			ace.settings.sidebar_fixed(false);
+		save = save && true;
+	
+		if(!fix && chain !== false) {
+			//unfix sidebar as well
+			var sidebar = null;
+			if(
+				ace.settings.is('sidebar', 'fixed')
+				||
+				((sidebar = document.getElementById('sidebar')) && ace.hasClass(sidebar , 'sidebar-fixed'))
+			 )
+			{
+				ace.settings.sidebar_fixed(sidebar, false, save);
+			}
 		}
 		
-		var navbar = document.getElementById('navbar');
 		if(fix) {
 			if(!ace.hasClass(navbar , 'navbar-fixed-top'))  ace.addClass(navbar , 'navbar-fixed-top');
-			if(!ace.hasClass(document.body , 'navbar-fixed'))  ace.addClass(document.body , 'navbar-fixed');
 			
-			ace.settings.set('navbar', 'fixed');
+			if(save !== false) ace.settings.set('navbar', 'fixed');
 		} else {
 			ace.removeClass(navbar , 'navbar-fixed-top');
-			ace.removeClass(document.body , 'navbar-fixed');
 			
-			ace.settings.unset('navbar', 'fixed');
+			if(save !== false) ace.settings.unset('navbar', 'fixed');
 		}
+		try {
+			document.getElementById('ace-settings-navbar').checked = fix;
+		} catch(e) {}
 		
-		document.getElementById('ace-settings-navbar').checked = fix;
+		if(window.jQuery) jQuery(document).trigger('settings.ace', ['navbar_fixed' , fix , navbar]);
 	},
 
 
-	breadcrumbs_fixed : function(fix) {
+	sidebar_fixed : function(sidebar, fix , save, chain) {
+		if(ace.vars['very_old_ie']) return false;
+		
+		var sidebar = sidebar || '#sidebar';
+		if(typeof sidebar === 'string') sidebar = document.querySelector(sidebar);
+		if(!sidebar) return false;
+	
 		fix = fix || false;
-		if(fix && !ace.settings.is('sidebar', 'fixed')) {
-			ace.settings.sidebar_fixed(true);
+		save = save && true;
+		
+		if(!fix && chain !== false) {
+			//unfix breadcrumbs as well
+			var breadcrumbs = null;
+			if(
+				ace.settings.is('breadcrumbs', 'fixed')
+				||
+				((breadcrumbs = document.getElementById('breadcrumbs')) && ace.hasClass(breadcrumbs , 'breadcrumbs-fixed'))
+			 )
+			{
+				ace.settings.breadcrumbs_fixed(breadcrumbs, false, save);
+			}
 		}
 
-		var breadcrumbs = document.getElementById('breadcrumbs');
+		if( fix && chain !== false && !ace.settings.is('navbar', 'fixed') ) {
+			ace.settings.navbar_fixed(null, true, save);
+		}
+
 		if(fix) {
-			if(!ace.hasClass(breadcrumbs , 'breadcrumbs-fixed'))  ace.addClass(breadcrumbs , 'breadcrumbs-fixed');
-			if(!ace.hasClass(document.body , 'breadcrumbs-fixed'))  ace.addClass(document.body , 'breadcrumbs-fixed');
-			
-			ace.settings.set('breadcrumbs', 'fixed');
-		} else {
-			ace.removeClass(breadcrumbs , 'breadcrumbs-fixed');
-			ace.removeClass(document.body , 'breadcrumbs-fixed');
-			
-			ace.settings.unset('breadcrumbs', 'fixed');
-		}
-		document.getElementById('ace-settings-breadcrumbs').checked = fix;
-	},
+			if( !ace.hasClass(sidebar , 'sidebar-fixed') )  {
+				ace.addClass(sidebar , 'sidebar-fixed');
+				var toggler = document.getElementById('menu-toggler');
 
-
-	sidebar_fixed : function(fix) {
-		fix = fix || false;
-		if(!fix && ace.settings.is('breadcrumbs', 'fixed')) {
-			ace.settings.breadcrumbs_fixed(false);
-		}
-
-		if( fix && !ace.settings.is('navbar', 'fixed') ) {
-			ace.settings.navbar_fixed(true);
-		}
-
-		var sidebar = document.getElementById('sidebar');
-		if(fix) {
-			if( !ace.hasClass(sidebar , 'sidebar-fixed') )  ace.addClass(sidebar , 'sidebar-fixed');
-			ace.settings.set('sidebar', 'fixed');
+				if(toggler) ace.addClass(toggler , 'fixed');
+			}
+			if(save !== false) ace.settings.set('sidebar', 'fixed');
 		} else {
 			ace.removeClass(sidebar , 'sidebar-fixed');
-			ace.settings.unset('sidebar', 'fixed');
+			var toggler = document.getElementById('menu-toggler');
+			if(toggler) ace.removeClass(toggler , 'fixed');
+
+			if(save !== false) ace.settings.unset('sidebar', 'fixed');
 		}
-		document.getElementById('ace-settings-sidebar').checked = fix;
+		try {
+			document.getElementById('ace-settings-sidebar').checked = fix;
+		} catch(e) {}
+		
+		if(window.jQuery) jQuery(document).trigger('settings.ace', ['sidebar_fixed' , fix , sidebar]);
+	},
+	
+	//fixed position
+	breadcrumbs_fixed : function(breadcrumbs, fix , save, chain) {
+		if(ace.vars['very_old_ie']) return false;
+		
+		var breadcrumbs = breadcrumbs || '#breadcrumbs';
+		if(typeof breadcrumbs === 'string') breadcrumbs = document.querySelector(breadcrumbs);
+		if(!breadcrumbs) return false;
+	
+		fix = fix || false;
+		save = save && true;
+		
+		if(fix && chain !== false && !ace.settings.is('sidebar', 'fixed')) {
+			ace.settings.sidebar_fixed(null, true, save);
+		}
+
+		if(fix) {
+			if(!ace.hasClass(breadcrumbs , 'breadcrumbs-fixed'))  ace.addClass(breadcrumbs , 'breadcrumbs-fixed');
+			if(save !== false) ace.settings.set('breadcrumbs', 'fixed');
+		} else {
+			ace.removeClass(breadcrumbs , 'breadcrumbs-fixed');
+			if(save !== false) ace.settings.unset('breadcrumbs', 'fixed');
+		}
+		try {
+			document.getElementById('ace-settings-breadcrumbs').checked = fix;
+		} catch(e) {}
+		
+		if(window.jQuery) jQuery(document).trigger('settings.ace', ['breadcrumbs_fixed' , fix , breadcrumbs]);
 	},
 
-	main_container_fixed : function(inside) {
+	//fixed size
+	main_container_fixed : function(main_container, inside , save) {
+		if(ace.vars['very_old_ie']) return false;
+		
 		inside = inside || false;
-
-		var main_container = document.getElementById('main-container');
+		save = save && true;
+		
+		var main_container = main_container || '#main-container';
+		if(typeof main_container === 'string') main_container = document.querySelector(main_container);
+		if(!main_container) return false;
+		
 		var navbar_container = document.getElementById('navbar-container');
 		if(inside) {
 			if( !ace.hasClass(main_container , 'container') )  ace.addClass(main_container , 'container');
-			if( !ace.hasClass(navbar_container , 'container') )  ace.addClass(navbar_container , 'container');
-			ace.settings.set('main-container', 'fixed');
+			if( navbar_container && !ace.hasClass(navbar_container , 'container') )  ace.addClass(navbar_container , 'container');
+			if( save !== false ) ace.settings.set('main-container', 'fixed');
 		} else {
 			ace.removeClass(main_container , 'container');
-			ace.removeClass(navbar_container , 'container');
-			ace.settings.unset('main-container', 'fixed');
+			if(navbar_container) ace.removeClass(navbar_container , 'container');
+			if(save !== false) ace.settings.unset('main-container', 'fixed');
 		}
-		document.getElementById('ace-settings-add-container').checked = inside;
-		
+		try {
+			document.getElementById('ace-settings-add-container').checked = inside;
+		} catch(e) {}
+
 		
 		if(navigator.userAgent.match(/webkit/i)) {
 			//webkit has a problem redrawing and moving around the sidebar background in realtime
 			//so we do this, to force redraw
 			//there will be no problems with webkit if the ".container" class is statically put inside HTML code.
-			var sidebar = document.getElementById('sidebar');
-			ace.toggleClass(sidebar , 'menu-min');
+			var sidebar = document.getElementById('sidebar')
+			ace.toggleClass(sidebar , 'menu-min')
 			setTimeout(function() {	ace.toggleClass(sidebar , 'menu-min') } , 0)
 		}
+		
+		if(window.jQuery) jQuery(document).trigger('settings.ace', ['main_container_fixed', inside, main_container]);
 	},
 
-	sidebar_collapsed : function(collpase) {
-		collpase = collpase || false;
+	sidebar_collapsed : function(sidebar, collapse , save) {
+		if(ace.vars['very_old_ie']) return false;
 
-		var sidebar = document.getElementById('sidebar');
-		var icon = document.getElementById('sidebar-collapse').querySelector('[class*="icon-"]');
-		var $icon1 = icon.getAttribute('data-icon1');//the icon for expanded state
-		var $icon2 = icon.getAttribute('data-icon2');//the icon for collapsed state
+		var sidebar = sidebar || '#sidebar';
+		if(typeof sidebar === 'string') sidebar = document.querySelector(sidebar);
+		if(!sidebar) return false;
 
-		if(collpase) {
+		collapse = collapse || false;
+
+		if(collapse) {
 			ace.addClass(sidebar , 'menu-min');
-			ace.removeClass(icon , $icon1);
-			ace.addClass(icon , $icon2);
-
-			ace.settings.set('sidebar', 'collapsed');
+			if(save !== false) ace.settings.set('sidebar', 'collapsed');
 		} else {
 			ace.removeClass(sidebar , 'menu-min');
-			ace.removeClass(icon , $icon2);
-			ace.addClass(icon , $icon1);
-
-			ace.settings.unset('sidebar', 'collapsed');
+			if(save !== false) ace.settings.unset('sidebar', 'collapsed');
 		}
+		
+		if(window.jQuery) jQuery(document).trigger('settings.ace', ['sidebar_collapsed' , collapse, sidebar]);
+		
+		if(!window.jQuery) {
+			var toggle_btn = document.querySelector('.sidebar-collapse[data-target="#'+(sidebar.getAttribute('id')||'')+'"]');
+			if(!toggle_btn) toggle_btn = sidebar.querySelector('.sidebar-collapse');
+			if(!toggle_btn) return;
 
+	
+			var icon = toggle_btn.querySelector('[data-icon1][data-icon2]'), icon1, icon2;	
+			if(!icon) return;
+
+			icon1 = icon.getAttribute('data-icon1');//the icon for expanded state
+			icon2 = icon.getAttribute('data-icon2');//the icon for collapsed state
+
+			if(collapse) {
+				ace.removeClass(icon, icon1);
+				ace.addClass(icon, icon2);
+			}
+			else {
+				ace.removeClass(icon, icon2);
+				ace.addClass(icon, icon1);
+			}
+		}		
 	}
 	/**
+	,
 	select_skin : function(skin) {
 	}
 	*/
-};
+}
 
 
 //check the status of something
 ace.settings.check = function(item, val) {
 	if(! ace.settings.exists(item, val) ) return;//no such setting specified
 	var status = ace.settings.is(item, val);//is breadcrumbs-fixed? or is sidebar-collapsed? etc
-	
+
 	var mustHaveClass = {
 		'navbar-fixed' : 'navbar-fixed-top',
 		'sidebar-fixed' : 'sidebar-fixed',
 		'breadcrumbs-fixed' : 'breadcrumbs-fixed',
 		'sidebar-collapsed' : 'menu-min',
 		'main-container-fixed' : 'container'
-	};
+	}
 
 
 	//if an element doesn't have a specified class, but saved settings say it should, then add it
@@ -167,9 +253,9 @@ ace.settings.check = function(item, val) {
 	
 	var target = document.getElementById(item);//#navbar, #sidebar, #breadcrumbs
 	if(status != ace.hasClass(target , mustHaveClass[item+'-'+val])) {
-		ace.settings[item.replace('-','_')+'_'+val](status);//call the relevant function to mage the changes
+		ace.settings[item.replace('-','_')+'_'+val](null, status);//call the relevant function to make the changes
 	}
-};
+}
 
 
 
@@ -181,7 +267,7 @@ ace.settings.check = function(item, val) {
 //method == 2, use cookies
 //method not specified, use localStorage if available, otherwise cookies
 ace.data_storage = function(method, undefined) {
-	var prefix = 'ace.';
+	var prefix = 'ace_';
 
 	var storage = null;
 	var type = 0;
@@ -196,25 +282,25 @@ ace.data_storage = function(method, undefined) {
 	}
 
 	//var data = {}
-	this.set = function(namespace, key, value, undefined) {
+	this.set = function(namespace, key, value, path, undefined) {
 		if(!storage) return;
 		
 		if(value === undefined) {//no namespace here?
 			value = key;
 			key = namespace;
 
-			if(value == null) storage.remove(prefix+key);
+			if(value == null) storage.remove(prefix+key)
 			else {
 				if(type == 1)
-					storage.set(prefix+key, value);
+					storage.set(prefix+key, value)
 				else if(type == 2)
-					storage.set(prefix+key, value, ace.config.cookie_expiry)
+					storage.set(prefix+key, value, ace.config.cookie_expiry, path || ace.config.cookie_path)
 			}
 		}
 		else {
 			if(type == 1) {//localStorage
-				if(value == null) storage.remove(prefix+namespace+'.'+key);
-				else storage.set(prefix+namespace+'.'+key, value);
+				if(value == null) storage.remove(prefix+namespace+'_'+key)
+				else storage.set(prefix+namespace+'_'+key, value);
 			}
 			else if(type == 2) {//cookie
 				var val = storage.get(prefix+namespace);
@@ -232,10 +318,10 @@ ace.data_storage = function(method, undefined) {
 					tmp[key] = value;
 				}
 
-				storage.set(prefix+namespace , JSON.stringify(tmp), ace.config.cookie_expiry)
+				storage.set(prefix+namespace , JSON.stringify(tmp), ace.config.cookie_expiry, path || ace.config.cookie_path)
 			}
 		}
-	};
+	}
 
 	this.get = function(namespace, key, undefined) {
 		if(!storage) return null;
@@ -246,7 +332,7 @@ ace.data_storage = function(method, undefined) {
 		}
 		else {
 			if(type == 1) {//localStorage
-				return storage.get(prefix+namespace+'.'+key);
+				return storage.get(prefix+namespace+'_'+key);
 			}
 			else if(type == 2) {//cookie
 				var val = storage.get(prefix+namespace);
@@ -254,21 +340,21 @@ ace.data_storage = function(method, undefined) {
 				return key in tmp ? tmp[key] : null;
 			}
 		}
-	};
+	}
 
 	
 	this.remove = function(namespace, key, undefined) {
 		if(!storage) return;
 		
 		if(key === undefined) {
-			key = namespace;
+			key = namespace
 			this.set(key, null);
 		}
 		else {
 			this.set(namespace, key, null);
 		}
 	}
-};
+}
 
 
 
@@ -367,34 +453,36 @@ ace.sizeof = function(obj) {
 	var size = 0;
 	for(var key in obj) if(obj.hasOwnProperty(key)) size++;
 	return size;
-};
+}
 
 //because jQuery may not be loaded at this stage, we use our own toggleClass
-ace.hasClass = function(elem, className) {
-	return (" " + elem.className + " ").indexOf(" " + className + " ") > -1;
-};
+ace.hasClass = function(elem, className) {	return (" " + elem.className + " ").indexOf(" " + className + " ") > -1; }
+
 ace.addClass = function(elem, className) {
  if (!ace.hasClass(elem, className)) {
 	var currentClass = elem.className;
 	elem.className = currentClass + (currentClass.length? " " : "") + className;
  }
-};
-ace.removeClass = function(elem, className) {ace.replaceClass(elem, className);};
+}
+
+ace.removeClass = function(elem, className) {ace.replaceClass(elem, className);}
 
 ace.replaceClass = function(elem, className, newClass) {
 	var classToRemove = new RegExp(("(^|\\s)" + className + "(\\s|$)"), "i");
 	elem.className = elem.className.replace(classToRemove, function (match, p1, p2) {
 		return newClass? (p1 + newClass + p2) : " ";
 	}).replace(/^\s+|\s+$/g, "");
-};
+}
 
 ace.toggleClass = function(elem, className) {
 	if(ace.hasClass(elem, className))
 		ace.removeClass(elem, className);
 	else ace.addClass(elem, className);
-};
+}
 
-
+ace.isHTTMlElement = function(elem) {
+ return window.HTMLElement ? elem instanceof HTMLElement : ('nodeType' in elem ? elem.nodeType == 1 : false);
+}
 
 
 //data_storage instance used inside ace.settings etc

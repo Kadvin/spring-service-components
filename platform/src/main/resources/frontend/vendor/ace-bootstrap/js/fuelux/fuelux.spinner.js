@@ -1,32 +1,53 @@
 /*
- * Fuel UX Spinner
+ * Fuel UX Spinbox
  * https://github.com/ExactTarget/fuelux
  *
- * Copyright (c) 2012 ExactTarget
- * Licensed under the MIT license.
+ * Copyright (c) 2014 ExactTarget
+ * Licensed under the BSD New license.
  */
 
-(function($ , undefined) {
+// -- BEGIN UMD WRAPPER PREFACE --
 
-	//var $ = require('jquery');
+// For more information on UMD visit: 
+// https://github.com/umdjs/umd/blob/master/jqueryPlugin.js
 
+(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		// if AMD loader is available, register as an anonymous module.
+		define(['jquery'], factory);
+	} else {
+		// OR use browser globals if AMD is not present
+		factory(jQuery);
+	}
+}(function ($, undefined) {
+	// -- END UMD WRAPPER PREFACE --
 
-	// SPINNER CONSTRUCTOR AND PROTOTYPE
+	// -- BEGIN MODULE CODE HERE --
 
-	var Spinner = function (element, options) {
+	var old = $.fn.spinbox;
+
+	// SPINBOX CONSTRUCTOR AND PROTOTYPE
+
+	var Spinbox = function (element, options) {
 		this.$element = $(element);
-		this.options = $.extend({}, $.fn.spinner.defaults, options);
-		this.$input = this.$element.find('.spinner-input');
-		this.$element.on('keyup', this.$input, $.proxy(this.change, this));
+		this.options = $.extend({}, $.fn.spinbox.defaults, options);
+		this.$input = this.$element.find('.spinbox-input');
+		this.$element.on('focusin.fu.spinbox', this.$input, $.proxy(this.changeFlag, this));
+		this.$element.on('focusout.fu.spinbox', this.$input, $.proxy(this.change, this));
+		this.$element.on('keydown.fu.spinbox', this.$input, $.proxy(this.keydown, this));
+		this.$element.on('keyup.fu.spinbox', this.$input, $.proxy(this.keyup, this));
+
+		this.bindMousewheelListeners();
+		this.mousewheelTimeout = {};
 
 		if (this.options.hold) {
-			this.$element.on('mousedown', '.spinner-up', $.proxy(function() { this.startSpin(true); } , this));
-			this.$element.on('mouseup', '.spinner-up, .spinner-down', $.proxy(this.stopSpin, this));
-			this.$element.on('mouseout', '.spinner-up, .spinner-down', $.proxy(this.stopSpin, this));
-			this.$element.on('mousedown', '.spinner-down', $.proxy(function() {this.startSpin(false);} , this));
+			this.$element.on('mousedown.fu.spinbox', '.spinbox-up', $.proxy(function() { this.startSpin(true); } , this));
+			this.$element.on('mouseup.fu.spinbox', '.spinbox-up, .spinbox-down', $.proxy(this.stopSpin, this));
+			this.$element.on('mouseout.fu.spinbox', '.spinbox-up, .spinbox-down', $.proxy(this.stopSpin, this));
+			this.$element.on('mousedown.fu.spinbox', '.spinbox-down', $.proxy(function() {this.startSpin(false);} , this));
 		} else {
-			this.$element.on('click', '.spinner-up', $.proxy(function() { this.step(true); } , this));
-			this.$element.on('click', '.spinner-down', $.proxy(function() { this.step(false); }, this));
+			this.$element.on('click.fu.spinbox', '.spinbox-up', $.proxy(function() { this.step(true); } , this));
+			this.$element.on('click.fu.spinbox', '.spinbox-down', $.proxy(function() { this.step(false); }, this));
 		}
 
 		this.switches = {
@@ -42,7 +63,7 @@
 			this.switches.speed = 500;
 		}
 
-		this.lastValue = null;
+		this.lastValue = this.options.value;
 
 		this.render();
 
@@ -51,32 +72,85 @@
 		}
 	};
 
-	Spinner.prototype = {
-		constructor: Spinner,
+	Spinbox.prototype = {
+		constructor: Spinbox,
+
+		destroy: function() {
+			this.$element.remove();
+			// any external bindings
+			// [none]
+			// set input value attrbute
+			this.$element.find('input').each(function() {
+				$(this).attr('value', $(this).val());
+			});
+			// empty elements to return to original markup
+			// [none]
+			// returns string of markup
+			return this.$element[0].outerHTML;
+		},
 
 		render: function () {
-			this.$input.val(this.options.value);
-			this.$input.attr('maxlength',(this.options.max + '').split('').length);
+			var inputValue = this.parseInput( this.$input.val() );
+			var maxUnitLength = '';
+
+			// if input is empty and option value is default, 0
+			if (inputValue !== '' && this.options.value === 0) {
+				this.value(inputValue);
+			} else {
+				this.output ( this.options.value );
+			}
+
+			if ( this.options.units.length ) {
+				$.each(this.options.units, function(index, value){
+					if( value.length > maxUnitLength.length) {
+						maxUnitLength = value;
+					}
+				});
+			}
+
+		},
+
+		output: function(value, updateField) {
+			value = (value + '').split('.').join(this.options.decimalMark);
+			updateField = ( updateField || true );
+			if ( updateField ) { this.$input.val(value); }
+
+			return value;
+		},
+
+		parseInput: function(value) {
+			value = (value + '').split(this.options.decimalMark).join('.');
+
+			return value;
 		},
 
 		change: function () {
-			var newVal = this.$input.val();
+			var newVal = this.parseInput( this.$input.val() ) || '';
 
-			if(newVal/1){
-				this.options.value = newVal/1;
-			}else{
-				newVal = newVal.replace(/[^0-9]/g,'');
-				this.$input.val(newVal);
+			if(this.options.units.length || this.options.decimalMark !== '.'){
+				newVal = this.parseValueWithUnit(newVal);
+			} else if (newVal/1){
+				newVal = this.options.value = this.checkMaxMin(newVal/1);
+			} else {
+				newVal = this.checkMaxMin(newVal.replace(/[^0-9.-]/g,'') || '');
 				this.options.value = newVal/1;
 			}
+			this.output ( newVal );
 
+			this.changeFlag = false;
 			this.triggerChangedEvent();
 		},
 
+		changeFlag: function(){
+			this.changeFlag = true;
+		},
+
 		stopSpin: function () {
-			clearTimeout(this.switches.timeout);
-			this.switches.count = 1;
-			this.triggerChangedEvent();
+			if(this.switches.timeout!==undefined){
+				clearTimeout(this.switches.timeout);
+				this.switches.count = 1;
+				this.triggerChangedEvent();
+			}
 		},
 
 		triggerChangedEvent: function () {
@@ -86,10 +160,7 @@
 			this.lastValue = currentValue;
 
 			// Primary changed event
-			this.$element.trigger('changed', currentValue);
-
-			// Undocumented, kept for backward compatibility
-			this.$element.trigger('change');
+			this.$element.trigger('changed.fu.spinbox', this.output(currentValue, false)); // no DOM update
 		},
 
 		startSpin: function (type) {
@@ -108,94 +179,253 @@
 					divisor = 4;
 				}
 
-				this.switches.timeout = setTimeout($.proxy(function() {this.iterator(type);} ,this),this.switches.speed/divisor);
+				this.switches.timeout = setTimeout($.proxy(function() {this.iterate(type);} ,this),this.switches.speed/divisor);
 				this.switches.count++;
 			}
 		},
 
-		iterator: function (type) {
+		iterate: function (type) {
 			this.step(type);
 			this.startSpin(type);
 		},
 
-		step: function (dir) {
-			var curValue = this.options.value;
-			var limValue = dir ? this.options.max : this.options.min;
+		step: function (isIncrease) {
+			// isIncrease: true is up, false is down
 
-			if ((dir ? curValue < limValue : curValue > limValue)) {
-				var newVal = curValue + (dir ? 1 : -1) * this.options.step;
+			var digits, multiple, currentValue, limitValue;
 
-				if (dir ? newVal > limValue : newVal < limValue) {
-					this.value(limValue);
-				} else {
+			// trigger change event
+			if( this.changeFlag ) {
+				this.change();
+			}
+
+			// get current value and min/max options
+			currentValue = this.options.value;
+			limitValue = isIncrease ? this.options.max : this.options.min;
+
+			if ((isIncrease ? currentValue < limitValue : currentValue > limitValue)) {
+				var newVal = currentValue + (isIncrease ? 1 : -1) * this.options.step;
+
+				// raise to power of 10 x number of decimal places, then round
+				if(this.options.step % 1 !== 0){
+					digits = (this.options.step + '').split('.')[1].length;
+					multiple = Math.pow(10, digits);
+					newVal = Math.round(newVal * multiple) / multiple;
+				}
+
+				// if outside limits, set to limit value
+				if (isIncrease ? newVal > limitValue : newVal < limitValue) {
+					this.value(limitValue);
+				}
+				else {
 					this.value(newVal);
 				}
+
+			}
+			else if (this.options.cycle) {
+				var cycleVal = isIncrease ? this.options.min : this.options.max;
+				this.value(cycleVal);
 			}
 		},
 
 		value: function (value) {
-			if (!isNaN(parseFloat(value)) && isFinite(value)) {
-				value = parseFloat(value);
-				this.options.value = value;
-				this.$input.val(value);
-				return this;
+
+			if ( value || value === 0 ) {
+				if( this.options.units.length || this.options.decimalMark !== '.' ) {
+					this.output( this.parseValueWithUnit( value + (this.unit || '') ) );
+					return this;
+				
+				} else if ( !isNaN(parseFloat(value)) && isFinite(value) ) {
+					this.options.value = value/1;
+					this.output ( value + (this.unit ? this.unit : '') ) ;
+					return this;
+				
+				}
 			} else {
-				return this.options.value;
+				if( this.changeFlag ) {
+					this.change();
+				}
+
+				if( this.unit ){
+					return this.options.value + this.unit;
+				} else {
+					return this.output(this.options.value, false); // no DOM update
+				}
 			}
+		},
+
+		isUnitLegal: function (unit) {
+			var legalUnit;
+
+			$.each(this.options.units, function(index, value){
+				if( value.toLowerCase() === unit.toLowerCase()){
+					legalUnit = unit.toLowerCase();
+					return false;
+				}
+			});
+
+			return legalUnit;
+		},
+
+		// strips units and add them back
+		parseValueWithUnit: function( value ){
+			var unit = value.replace(/[^a-zA-Z]/g,'');
+			var number = value.replace(/[^0-9.-]/g,'');
+
+			if(unit){
+				unit = this.isUnitLegal(unit);
+			}
+
+			this.options.value = this.checkMaxMin(number/1);
+			this.unit = unit || undefined;
+			return this.options.value + (unit || '');
+		},
+
+		checkMaxMin: function(value){
+			// if unreadable
+			if ( isNaN( parseFloat(value) ) ) {
+				return value;
+			}
+			// if not within range return the limit
+			if ( !( value <= this.options.max && value >= this.options.min ) ){
+				value = value >= this.options.max ? this.options.max : this.options.min;
+			}
+			return value;
 		},
 
 		disable: function () {
 			this.options.disabled = true;
+			this.$element.addClass('disabled');
 			this.$input.attr('disabled','');
 			this.$element.find('button').addClass('disabled');
 		},
 
 		enable: function () {
 			this.options.disabled = false;
+			this.$element.removeClass('disabled');
 			this.$input.removeAttr("disabled");
 			this.$element.find('button').removeClass('disabled');
+		},
+
+		keydown: function(event){
+			var keyCode = event.keyCode;
+			if(keyCode===38){
+				this.step(true);
+			}else if(keyCode===40){
+				this.step(false);
+			}
+		},
+
+		keyup: function(event){
+			var keyCode = event.keyCode;
+
+			if(keyCode===38 || keyCode===40){
+				this.triggerChangedEvent();
+			}
+		},
+
+		bindMousewheelListeners: function(){
+			var inputEl = this.$input.get(0);
+			if(inputEl.addEventListener){
+				//IE 9, Chrome, Safari, Opera
+				inputEl.addEventListener('mousewheel', $.proxy(this.mousewheelHandler, this), false);
+				// Firefox
+				inputEl.addEventListener('DOMMouseScroll', $.proxy(this.mousewheelHandler, this), false);
+			}else{
+				// IE <9
+				inputEl.attachEvent('onmousewheel', $.proxy(this.mousewheelHandler, this));
+			}
+		},
+
+		mousewheelHandler: function(event){
+			var e = window.event || event; // old IE support
+			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+			var self = this;
+
+			clearTimeout(this.mousewheelTimeout);
+			this.mousewheelTimeout = setTimeout(function(){
+				self.triggerChangedEvent();
+			}, 300);
+
+			if(delta>0){//ACE
+				this.step(true);
+			}else{
+				this.step(false);
+			}
+
+			if(e.preventDefault){
+				e.preventDefault();
+			}else{
+				e.returnValue = false;
+			}
+			return false;
 		}
 	};
 
 
-	// SPINNER PLUGIN DEFINITION
+	// SPINBOX PLUGIN DEFINITION
 
-	$.fn.spinner = function (option,value) {
+	$.fn.spinbox = function (option) {
+		var args = Array.prototype.slice.call( arguments, 1 );
 		var methodReturn;
 
 		var $set = this.each(function () {
-			var $this = $(this);
-			var data = $this.data('spinner');
+			var $this   = $( this );
+			var data    = $this.data('fu.spinbox');
 			var options = typeof option === 'object' && option;
 
-			if (!data) $this.data('spinner', (data = new Spinner(this, options)));
-			if (typeof option === 'string') methodReturn = data[option](value);
+			if( !data ) {
+				$this.data('fu.spinbox', (data = new Spinbox( this, options ) ) );
+			}
+			if( typeof option === 'string' ) {
+				methodReturn = data[ option ].apply( data, args );
+			}
 		});
 
-		return (methodReturn === undefined) ? $set : methodReturn;
+		return ( methodReturn === undefined ) ? $set : methodReturn;
 	};
 
-	$.fn.spinner.defaults = {
-		value: 1,
-		min: 1,
+	// value needs to be 0 for this.render();
+	$.fn.spinbox.defaults = {
+		value: 0,
+		min: 0,
 		max: 999,
 		step: 1,
 		hold: true,
 		speed: 'medium',
-		disabled: false
+		disabled: false,
+		cycle: false,
+		units: [],
+		decimalMark: '.'
 	};
 
-	$.fn.spinner.Constructor = Spinner;
+	$.fn.spinbox.Constructor = Spinbox;
+
+	$.fn.spinbox.noConflict = function () {
+		$.fn.spinbox = old;
+		return this;
+	};
 
 
-	// SPINNER DATA-API
+	// DATA-API
 
+	$(document).on('mousedown.fu.spinbox.data-api', '[data-initialize=spinbox]', function (e) {
+		var $control = $(e.target).closest('.spinbox');
+		if ( !$control.data('fu.spinbox') ) {
+			$control.spinbox($control.data());
+		}
+	});
+
+	// Must be domReady for AMD compatibility
 	$(function () {
-		$('body').on('mousedown.spinner.data-api', '.spinner', function (e) {
+		$('[data-initialize=spinbox]').each(function () {
 			var $this = $(this);
-			if ($this.data('spinner')) return;
-			$this.spinner($this.data());
+			if (!$this.data('fu.spinbox')) {
+				$this.spinbox($this.data());
+			}
 		});
 	});
 
-})(window.jQuery);
+// -- BEGIN UMD WRAPPER AFTERWORD --
+}));
+// -- END UMD WRAPPER AFTERWORD --
