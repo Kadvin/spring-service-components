@@ -7,12 +7,12 @@
     <parent>
         <groupId>dnt</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.7.1</version>
+        <version>1.0.7</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
     <groupId>net.happyonroad</groupId>
     <artifactId>spring-service-components</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.4.1</version>
 
     <name>Spring Service Components</name>
     <url>https://github.com/Kadvin/spring-service-components</url>
