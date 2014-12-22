@@ -18,7 +18,8 @@
     <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
-        <version.component-framework>1.0.5</version.component-framework>
+        <version.component-framework>[1.0.5,)</version.component-framework>
+        <version.strict.component-framework>1.0.5</version.strict.component-framework>
     </properties>
 
     <modules>
@@ -104,7 +105,7 @@
             <plugin>
                 <groupId>net.happyonroad</groupId>
                 <artifactId>spring-component-builder</artifactId>
-                <version>${version.component-framework}</version>
+                <version>${version.strict.component-framework}</version>
                 <executions>
                     <execution>
                         <id>index-detail</id>
