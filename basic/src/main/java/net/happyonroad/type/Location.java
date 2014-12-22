@@ -14,11 +14,21 @@ public class Location {
         this.longitude = longitude;
     }
 
+    // just for json parse
+    @SuppressWarnings("UnusedDeclaration")
+    Location() {
+    }
+
     public float getLatitude() {
         return latitude;
     }
 
     public float getLongitude() {
         return longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + latitude + ", " + longitude + ')';
     }
 }
