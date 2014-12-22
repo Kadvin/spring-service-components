@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 /**
  * 缺省的平台扩展应用服务配置（定义默认导入哪些服务）
  *
- * @see  DefaultAppConfig
  */
 public class DefaultServiceConfig extends AbstractServiceConfig {
 

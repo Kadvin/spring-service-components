@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.happyonroad</groupId>
         <artifactId>spring-service-components</artifactId>
-        <version>1.0.4.1</version>
+        <version>1.0.4</version>
     </parent>
 
     <artifactId>menu</artifactId>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>net.happyonroad</groupId>
             <artifactId>platform</artifactId>
-            <version>${project.version}</version>
+            <version>${project.version}.ace</version>
         </dependency>
 
         <dependency>

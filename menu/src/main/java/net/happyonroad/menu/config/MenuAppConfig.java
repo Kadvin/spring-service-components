@@ -3,6 +3,7 @@
  */
 package net.happyonroad.menu.config;
 
+import net.happyonroad.spring.config.DefaultAppConfig;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * The menu app config
  */
 @Configuration
-@Import({net.happyonroad.spring.DefaultAppConfig.class})
+@Import({DefaultAppConfig.class})
 @ComponentScan("net.happyonroad.menu.support")
 public class MenuAppConfig {
 }

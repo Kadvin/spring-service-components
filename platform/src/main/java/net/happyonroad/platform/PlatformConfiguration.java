@@ -9,7 +9,7 @@ import net.happyonroad.platform.services.ServicePackageManager;
 import net.happyonroad.platform.support.AutoNumberInMemory;
 import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
-import net.happyonroad.spring.DefaultAppConfig;
+import net.happyonroad.spring.config.DefaultAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
