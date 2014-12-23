@@ -14,11 +14,11 @@ angular.module('ng-ztree', ['ng'])
         checked: "@" // 节点数据中保存 check 状态的属性名称
       },
       template: '<div>' +
-        '  <input id="citySel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
-        '  <div id="menuContent">' +
-        '    <ul id="treeDemo" class="ztree" style="margin-top:0; width:180px; height: 300px;"></ul>' +
-        '  </div>' +
-        '</div>',
+      '  <input id="citySel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
+      '  <div id="menuContent">' +
+      '    <ul id="treeDemo" class="ztree" style="margin-top:0; width:180px; height: 300px;"></ul>' +
+      '  </div>' +
+      '</div>',
       link: function (scope, element, attrs) {
         scope.beforeClick = function (treeId, treeNode) {
           var zTree = $.fn.zTree.getZTreeObj("treeDemo");
@@ -38,7 +38,7 @@ angular.module('ng-ztree', ['ng'])
           var nodes = zTree.getCheckedNodes(true);
 
           var names = [];
-          for(var i=0; i<nodes.length; i++){
+          for (var i = 0; i < nodes.length; i++) {
             names.push(nodes[i].name);
           }
           $("#citySel").val(names.join());
@@ -78,7 +78,7 @@ angular.module('ng-ztree', ['ng'])
             onCheck: scope.onCheck
           },
           data: {
-            key:{
+            key: {
               name: scope.nodeName,
               children: scope.children,
               checked: scope.checked
@@ -89,8 +89,8 @@ angular.module('ng-ztree', ['ng'])
         scope.$watch('treeModel', function () {
 
           if (angular.isDefined(scope.treeModel)) {
-            delete scope.treeModel.$promise
-            delete scope.treeModel.$resolved
+            delete scope.treeModel.$promise;
+            delete scope.treeModel.$resolved;
           }
           $.fn.zTree.init($("#treeDemo"), setting, scope.treeModel);
 
@@ -98,6 +98,154 @@ angular.module('ng-ztree', ['ng'])
           scope.ngModel = nodes;
 
         }, true);
+      }
+    };
+  })
+
+  .directive('ngZtreeMenu', function () {
+    return {
+      require: '?ngModel',
+      restrict: 'EA',
+      replace: true,
+      scope: {
+        nodeName: "@", // 节点数据保存节点名称的属性名称
+        url: "@" // 异步加载的URL
+      },
+      template: '<div>' +
+      '  <div class="zTreeDemoBackground left">' +
+      '    <ul id="treeDemo" class="ztree"></ul>' +
+      '  </div>' +
+      '  <div id="rMenu">' +
+      '    <ul>' +
+      '      <li id="m_add" ng-click="addTreeNode();">增加节点</li>' +
+      '      <li id="m_del" ng-click="removeTreeNode();">删除节点</li>' +
+      '      <li id="m_check" ng-click="checkTreeNode(true);">Check节点</li>' +
+      '      <li id="m_unCheck" ng-click="checkTreeNode(false);">unCheck节点</li>' +
+      '      <li id="m_reset" ng-click="resetTree();">恢复zTree</li>' +
+      '    </ul>' +
+      '  </div>' +
+      '  <style type="text/css">' +
+      '    div#rMenu {position:absolute; visibility:hidden; top:0; background-color: #555;text-align: left;padding: 2px;z-index: 9}' +
+      '    div#rMenu ul li{' +
+      '    margin: 1px 0;' +
+      '    padding: 0 5px;' +
+      '    cursor: pointer;' +
+      '    list-style: none outside none;' +
+      '    background-color: #DFDFDF;' +
+      '    z-index: 9;' +
+      '    }' +
+      '  </style>' +
+      '</div>',
+      link: function (scope, element, attrs) {
+
+        scope.filter = function (treeId, parentNode, childNodes) {
+          if (!childNodes) return null;
+          for (var i = 0, l = childNodes.length; i < l; i++) {
+            childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+          }
+          return childNodes;
+        };
+
+        scope.beforeClick = function beforeClick(treeId, treeNode) {
+
+        };
+
+        var className = "dark";
+        scope.beforeAsync = function (treeId, treeNode) {
+          className = (className === "dark" ? "" : "dark");
+          console.log("[ beforeAsync ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
+          return true;
+        };
+
+        scope.onAsyncError = function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+          console.log("[ onAsyncError ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
+        };
+
+        scope.onAsyncSuccess = function (event, treeId, treeNode, msg) {
+          console.log("[ onAsyncSuccess ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
+        };
+
+        scope.refreshNode = function (e) {
+          var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            type = e.data.type,
+            silent = e.data.silent,
+            nodes = zTree.getSelectedNodes();
+          if (nodes.length == 0) {
+            alert("请先选择一个父节点");
+          }
+          for (var i = 0, l = nodes.length; i < l; i++) {
+            zTree.reAsyncChildNodes(nodes[i], type, silent);
+            if (!silent) zTree.selectNode(nodes[i]);
+          }
+        };
+
+        scope.onRightClick = function (event, treeId, treeNode) {
+          if (!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) {
+            zTree.cancelSelectedNode();
+            scope.showRMenu("root", event.clientX, event.clientY);
+          } else if (treeNode && !treeNode.noR) {
+            zTree.selectNode(treeNode);
+            scope.showRMenu("node", event.clientX, event.clientY);
+          }
+        };
+
+        scope.showRMenu = function (type, x, y) {
+          $("#rMenu ul").show();
+          if (type == "root") {
+            $("#m_del").hide();
+            $("#m_check").hide();
+            $("#m_unCheck").hide();
+          } else {
+            $("#m_del").show();
+            $("#m_check").show();
+            $("#m_unCheck").show();
+          }
+          rMenu.css({"top": y + "px", "left": x + "px", "visibility": "visible"});
+
+          $("body").bind("mousedown", scope.onBodyMouseDown);
+        };
+        scope.hideRMenu = function () {
+          if (rMenu) rMenu.css({"visibility": "hidden"});
+          $("body").unbind("mousedown", scope.onBodyMouseDown);
+        };
+        scope.onBodyMouseDown = function (event) {
+          if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length > 0)) {
+            rMenu.css({"visibility": "hidden"});
+          }
+        };
+
+        var setting = {
+          view: {
+            selectedMulti: false
+          },
+          async: {
+            enable: true,
+            url: scope.url,
+            autoParam: [],
+            otherParam: {"otherParam": "zTreeAsyncTest"},
+            dataFilter: scope.filter,
+            type: "get"
+          },
+          callback: {
+            beforeClick: scope.beforeClick,
+            beforeAsync: scope.beforeAsync,
+            onAsyncError: scope.onAsyncError,
+            onAsyncSuccess: scope.onAsyncSuccess,
+            onRightClick: scope.onRightClick
+          },
+          data: {
+            key: {
+              name: scope.nodeName,
+              children: scope.children,
+              checked: scope.checked
+            }
+          }
+        };
+
+        var zTree, rMenu;
+        $.fn.zTree.init($("#treeDemo"), setting);
+        zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        rMenu = $("#rMenu");
       }
     };
   });
