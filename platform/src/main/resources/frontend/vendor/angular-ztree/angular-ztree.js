@@ -115,8 +115,8 @@ angular.module('ng-ztree', ['ng'])
         nodeClick: "&" //
       },
       template: '<div>' +
-      '  <div class="zTreeDemoBackground left">' +
-      '    <ul id="treeDemo" class="ztree"></ul>' +
+      '  <div>' +
+      '    <ul id="treeDemo" class="ztree" style="background: #222A2D;width: 100%"></ul>' +
       '  </div>' +
       '  <div id="rMenu">' +
       '    <ul>' +
@@ -223,7 +223,8 @@ angular.module('ng-ztree', ['ng'])
 
         var setting = {
           view: {
-            selectedMulti: false
+            selectedMulti: false,
+            fontCss : {color:"#BAC2C8", family : 'Open Sans', size: '13px'}
           },
           async: {
             enable: true,
