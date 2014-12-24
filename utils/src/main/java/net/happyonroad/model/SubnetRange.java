@@ -56,6 +56,6 @@ public class SubnetRange extends IpRange{
 
     @Override
     public String asParam() {
-        return info.getAddress();
+        return regular(info.getAddress());
     }
 }

@@ -26,7 +26,7 @@ public class SingleIp extends IpRange{
 
     @Override
     public String asParam() {
-        return getAddress();
+        return regular(getAddress());
     }
 
     @Override
