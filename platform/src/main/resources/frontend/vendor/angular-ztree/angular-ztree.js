@@ -108,6 +108,7 @@ angular.module('ng-ztree', ['ng'])
       restrict: 'EA',
       replace: true,
       scope: {
+        ngModel: "=", // 被选中的数据存在这里
         nodeName: "@", // 节点数据保存节点名称的属性名称
         topLevelUrl: "@", // 顶层异步加载的URL
         url: "@", // 异步加载的URL
@@ -155,16 +156,17 @@ angular.module('ng-ztree', ['ng'])
           return childNodes;
         };
 
-        scope.beforeClick = function (treeId, treeNode) {
+        scope.onClick = function (e, treeId, treeNode) {
+          scope.$apply(function () {
+            scope.ngModel = treeNode;
+          });
+          scope.nodeClick();
         };
 
         var className = "dark";
         scope.beforeAsync = function (treeId, treeNode) {
           className = (className === "dark" ? "" : "dark");
           return true;
-        };
-
-        scope.onAsyncError = function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
         };
 
         scope.onAsyncSuccess = function (event, treeId, treeNode, msg) {
@@ -200,10 +202,12 @@ angular.module('ng-ztree', ['ng'])
 
           $("body").bind("mousedown", scope.onBodyMouseDown);
         };
+
         scope.hideRMenu = function () {
           if (rMenu) rMenu.css({"visibility": "hidden"});
           $("body").unbind("mousedown", scope.onBodyMouseDown);
         };
+
         scope.onBodyMouseDown = function (event) {
           if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length > 0)) {
             rMenu.css({"visibility": "hidden"});
@@ -229,7 +233,7 @@ angular.module('ng-ztree', ['ng'])
           },
           callback: {
             beforeClick: scope.beforeClick,
-            onClick: scope.nodeClick,
+            onClick: scope.onClick,
             beforeAsync: scope.beforeAsync,
             onAsyncError: scope.onAsyncError,
             onAsyncSuccess: scope.onAsyncSuccess
