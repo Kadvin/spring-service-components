@@ -109,6 +109,7 @@ angular.module('ng-ztree', ['ng'])
       replace: true,
       scope: {
         nodeName: "@", // 节点数据保存节点名称的属性名称
+        topLevelUrl: "@", // 顶层异步加载的URL
         url: "@" // 异步加载的URL
       },
       template: '<div>' +
@@ -139,43 +140,37 @@ angular.module('ng-ztree', ['ng'])
       link: function (scope, element, attrs) {
 
         scope.filter = function (treeId, parentNode, childNodes) {
-          if (!childNodes) return null;
-          for (var i = 0, l = childNodes.length; i < l; i++) {
-            childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+          if (!childNodes) {
+            return null;
+          } else if (childNodes instanceof Array) {
+            for (var i = 0, l = childNodes.length; i < l; i++) {
+              if (childNodes[i].type && childNodes[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
+                childNodes[i].isParent = true;
+              }
+            }
+          } else if (childNodes instanceof Object) {
+            childNodes.isParent = true;
           }
           return childNodes;
         };
 
         scope.beforeClick = function beforeClick(treeId, treeNode) {
-
         };
 
         var className = "dark";
         scope.beforeAsync = function (treeId, treeNode) {
           className = (className === "dark" ? "" : "dark");
-          console.log("[ beforeAsync ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
           return true;
         };
 
         scope.onAsyncError = function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
-          console.log("[ onAsyncError ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
         };
 
         scope.onAsyncSuccess = function (event, treeId, treeNode, msg) {
-          console.log("[ onAsyncSuccess ]&nbsp;&nbsp;&nbsp;&nbsp;" + ((!!treeNode && !!treeNode.name) ? treeNode.name : "root"));
-        };
-
-        scope.refreshNode = function (e) {
-          var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-            type = e.data.type,
-            silent = e.data.silent,
-            nodes = zTree.getSelectedNodes();
-          if (nodes.length == 0) {
-            alert("请先选择一个父节点");
-          }
-          for (var i = 0, l = nodes.length; i < l; i++) {
-            zTree.reAsyncChildNodes(nodes[i], type, silent);
-            if (!silent) zTree.selectNode(nodes[i]);
+          zTree = $.fn.zTree.getZTreeObj("treeDemo");
+          var nodes = zTree.getNodes();
+          if (nodes.length>0) {
+            zTree.expandNode(nodes[0], true);
           }
         };
 
@@ -214,15 +209,20 @@ angular.module('ng-ztree', ['ng'])
           }
         };
 
+        function getAsyncUrl(treeId, treeNode) {
+          if ((treeNode === undefined || treeNode === null )&& scope.topLevelUrl != undefined) {
+            return scope.topLevelUrl;
+          }
+          return scope.url + treeNode.path;
+        }
+
         var setting = {
           view: {
             selectedMulti: false
           },
           async: {
             enable: true,
-            url: scope.url,
-            autoParam: [],
-            otherParam: {"otherParam": "zTreeAsyncTest"},
+            url: getAsyncUrl,
             dataFilter: scope.filter,
             type: "get"
           },
@@ -230,8 +230,8 @@ angular.module('ng-ztree', ['ng'])
             beforeClick: scope.beforeClick,
             beforeAsync: scope.beforeAsync,
             onAsyncError: scope.onAsyncError,
-            onAsyncSuccess: scope.onAsyncSuccess,
-            onRightClick: scope.onRightClick
+            onAsyncSuccess: scope.onAsyncSuccess
+            //onRightClick: scope.onRightClick
           },
           data: {
             key: {
@@ -245,6 +245,10 @@ angular.module('ng-ztree', ['ng'])
         var zTree, rMenu;
         $.fn.zTree.init($("#treeDemo"), setting);
         zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = zTree.getNodes();
+        if (nodes.length>0) {
+          zTree.reAsyncChildNodes(nodes[0], "refresh");
+        }
         rMenu = $("#rMenu");
       }
     };
