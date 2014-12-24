@@ -3,7 +3,7 @@
  */
 package net.happyonroad.platform.web.controller;
 
-import net.happyonroad.platform.model.Record;
+import net.happyonroad.model.Record;
 import net.happyonroad.platform.service.Page;
 import net.happyonroad.platform.util.PageRequest;
 import net.happyonroad.platform.util.Sort;

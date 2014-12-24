@@ -87,7 +87,8 @@ public abstract class RepositoryConfigWithH2 implements InitializingBean {
         RepositoryScanner scanner = repositoryScanner();
         // TODO 现在的 configuration 没有排序
         scanner.configure("classpath*:META-INF/mybatis.xml");
-        int count = scanner.scan(dbRepository());
+        String[] repositories = dbRepository().split(";");
+        int count = scanner.scan(repositories);
         System.out.println("Found " + count + " db repositories");
     }
 

@@ -4,7 +4,7 @@
 package net.happyonroad.menu.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.happyonroad.platform.model.Record;
+import net.happyonroad.model.Record;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.ArrayList;

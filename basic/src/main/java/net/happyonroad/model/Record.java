@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午2:42
  */
-package net.happyonroad.platform.model;
+package net.happyonroad.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;

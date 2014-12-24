@@ -15,6 +15,11 @@ import java.util.Map;
 public abstract class IpRange extends JsonSupport implements PathParameter {
     public abstract boolean include(String ip);
 
+    protected String regular(String ip){
+        return ip.replaceAll("\\.", "_");
+    }
+
+
     @SuppressWarnings("unchecked")
     public static <T> T parseJson(String content, Class<T> theClass) {
         if( theClass == SubnetRange.class){

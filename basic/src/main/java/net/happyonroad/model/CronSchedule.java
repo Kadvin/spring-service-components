@@ -9,7 +9,7 @@ package net.happyonroad.model;
  * 用于表达：
  * 在某段时间之内，以cron方式定期执行的任务
  */
-public interface Schedule {
+public interface CronSchedule {
     String getStartOn();
 
     String getStopOn();

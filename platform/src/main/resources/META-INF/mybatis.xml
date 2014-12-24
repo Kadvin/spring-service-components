@@ -17,4 +17,13 @@
         <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
         <setting name="logImpl" value="SLF4j"/>
     </settings>
+    <typeHandlers>
+        <typeHandler handler="net.happyonroad.util.PropertiesHandler" javaType="java.util.Properties"/>
+        <typeHandler handler="net.happyonroad.util.LocationHandler" javaType="net.happyonroad.type.Location"/>
+        <typeHandler handler="net.happyonroad.util.TimeSpanHandler" javaType="net.happyonroad.type.TimeSpan"/>
+        <typeHandler handler="net.happyonroad.util.ScheduleHandler" javaType="net.happyonroad.type.Schedule"/>
+        <typeHandler handler="net.happyonroad.util.CredentialsHandler" javaType="net.happyonroad.model.Credential"/>
+        <typeHandler handler="net.happyonroad.util.PointHandler" javaType="java.awt.Point"/>
+        <typeHandler handler="net.happyonroad.util.SizeHandler" javaType="net.happyonroad.type.Size"/>
+    </typeHandlers>
 </configuration>
