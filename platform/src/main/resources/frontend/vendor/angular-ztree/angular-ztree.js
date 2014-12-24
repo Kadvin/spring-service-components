@@ -110,7 +110,8 @@ angular.module('ng-ztree', ['ng'])
       scope: {
         nodeName: "@", // 节点数据保存节点名称的属性名称
         topLevelUrl: "@", // 顶层异步加载的URL
-        url: "@" // 异步加载的URL
+        url: "@", // 异步加载的URL
+        nodeClick: "&" //
       },
       template: '<div>' +
       '  <div class="zTreeDemoBackground left">' +
@@ -154,7 +155,7 @@ angular.module('ng-ztree', ['ng'])
           return childNodes;
         };
 
-        scope.beforeClick = function beforeClick(treeId, treeNode) {
+        scope.beforeClick = function (treeId, treeNode) {
         };
 
         var className = "dark";
@@ -228,6 +229,7 @@ angular.module('ng-ztree', ['ng'])
           },
           callback: {
             beforeClick: scope.beforeClick,
+            onClick: scope.nodeClick,
             beforeAsync: scope.beforeAsync,
             onAsyncError: scope.onAsyncError,
             onAsyncSuccess: scope.onAsyncSuccess
@@ -245,10 +247,6 @@ angular.module('ng-ztree', ['ng'])
         var zTree, rMenu;
         $.fn.zTree.init($("#treeDemo"), setting);
         zTree = $.fn.zTree.getZTreeObj("treeDemo");
-        var nodes = zTree.getNodes();
-        if (nodes.length>0) {
-          zTree.reAsyncChildNodes(nodes[0], "refresh");
-        }
         rMenu = $("#rMenu");
       }
     };
