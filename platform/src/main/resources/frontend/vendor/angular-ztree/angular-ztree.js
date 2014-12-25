@@ -144,16 +144,28 @@ angular.module('ng-ztree', ['ng'])
         scope.filter = function (treeId, parentNode, childNodes) {
           if (!childNodes) {
             return null;
-          } else if (childNodes instanceof Array) {
+          }
+          // 顶级节点
+          else if (parentNode == null && childNodes instanceof Object) {
+              childNodes.isParent = true;
+              childNodes.icon = packageIconPath(childNodes.icon);
+          }
+          // 二级节点及以下
+          else if (childNodes instanceof Array) {
             for (var i = 0, l = childNodes.length; i < l; i++) {
               if (childNodes[i].type && childNodes[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
                 childNodes[i].isParent = true;
+                childNodes[i].icon = packageIconPath(childNodes[i].icon);
               }
             }
-          } else if (childNodes instanceof Object) {
-            childNodes.isParent = true;
           }
           return childNodes;
+        };
+
+        // icon路径封装
+        var packageIconPath = function (iconName){
+          //assets/sys_icons/monitor_engine/16x16.png
+          return "assets/sys_icons/"+iconName+"/16x16.png";
         };
 
         scope.onClick = function (e, treeId, treeNode) {
@@ -237,8 +249,8 @@ angular.module('ng-ztree', ['ng'])
             onClick: scope.onClick,
             beforeAsync: scope.beforeAsync,
             onAsyncError: scope.onAsyncError,
-            onAsyncSuccess: scope.onAsyncSuccess
-            //onRightClick: scope.onRightClick
+            onAsyncSuccess: scope.onAsyncSuccess,
+            onRightClick: scope.onRightClick
           },
           data: {
             key: {
