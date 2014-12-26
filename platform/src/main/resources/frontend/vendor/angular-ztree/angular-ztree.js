@@ -119,7 +119,7 @@ angular.module('ng-ztree', ['ng'])
       '    <ul id="treeDemo" class="ztree" style="background: #222A2D;width: 100%"></ul>' +
       '  </div>' +
       '  <div id="rMenu">' +
-      '    <ul>' +
+      '    <ul style="margin-left:0px;margin-bottom: -;margin-bottom: 0px;">' +
       '      <li id="m_add" ng-click="addTreeNode();">增加节点</li>' +
       '      <li id="m_del" ng-click="removeTreeNode();">删除节点</li>' +
       '      <li id="m_check" ng-click="checkTreeNode(true);">Check节点</li>' +
