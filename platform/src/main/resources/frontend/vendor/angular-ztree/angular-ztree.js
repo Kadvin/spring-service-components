@@ -108,16 +108,18 @@ angular.module('ng-ztree', ['ng'])
       restrict: 'EA',
       replace: true,
       scope: {
+        ngModel: "=", // 被选中的数据存在这里
         nodeName: "@", // 节点数据保存节点名称的属性名称
         topLevelUrl: "@", // 顶层异步加载的URL
-        url: "@" // 异步加载的URL
+        url: "@", // 异步加载的URL
+        nodeClick: "&" //
       },
       template: '<div>' +
-      '  <div class="zTreeDemoBackground left">' +
-      '    <ul id="treeDemo" class="ztree"></ul>' +
+      '  <div>' +
+      '    <ul id="treeDemo" class="ztree" style="background: #222A2D;width: 100%"></ul>' +
       '  </div>' +
       '  <div id="rMenu">' +
-      '    <ul>' +
+      '    <ul style="margin-left:0px;margin-bottom: -;margin-bottom: 0px;">' +
       '      <li id="m_add" ng-click="addTreeNode();">增加节点</li>' +
       '      <li id="m_del" ng-click="removeTreeNode();">删除节点</li>' +
       '      <li id="m_check" ng-click="checkTreeNode(true);">Check节点</li>' +
@@ -142,28 +144,41 @@ angular.module('ng-ztree', ['ng'])
         scope.filter = function (treeId, parentNode, childNodes) {
           if (!childNodes) {
             return null;
-          } else if (childNodes instanceof Array) {
+          }
+          // 顶级节点
+          else if (parentNode == null && childNodes instanceof Object) {
+              childNodes.isParent = true;
+              childNodes.icon = packageIconPath(childNodes.icon);
+          }
+          // 二级节点及以下
+          else if (childNodes instanceof Array) {
             for (var i = 0, l = childNodes.length; i < l; i++) {
               if (childNodes[i].type && childNodes[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
                 childNodes[i].isParent = true;
+                childNodes[i].icon = packageIconPath(childNodes[i].icon);
               }
             }
-          } else if (childNodes instanceof Object) {
-            childNodes.isParent = true;
           }
           return childNodes;
         };
 
-        scope.beforeClick = function beforeClick(treeId, treeNode) {
+        // icon路径封装
+        var packageIconPath = function (iconName){
+          //assets/sys_icons/monitor_engine/16x16.png
+          return "assets/sys_icons/"+iconName+"/16x16.png";
+        };
+
+        scope.onClick = function (e, treeId, treeNode) {
+          scope.$apply(function () {
+            scope.ngModel = treeNode;
+          });
+          scope.nodeClick();
         };
 
         var className = "dark";
         scope.beforeAsync = function (treeId, treeNode) {
           className = (className === "dark" ? "" : "dark");
           return true;
-        };
-
-        scope.onAsyncError = function (event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
         };
 
         scope.onAsyncSuccess = function (event, treeId, treeNode, msg) {
@@ -199,10 +214,12 @@ angular.module('ng-ztree', ['ng'])
 
           $("body").bind("mousedown", scope.onBodyMouseDown);
         };
+
         scope.hideRMenu = function () {
           if (rMenu) rMenu.css({"visibility": "hidden"});
           $("body").unbind("mousedown", scope.onBodyMouseDown);
         };
+
         scope.onBodyMouseDown = function (event) {
           if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length > 0)) {
             rMenu.css({"visibility": "hidden"});
@@ -218,7 +235,8 @@ angular.module('ng-ztree', ['ng'])
 
         var setting = {
           view: {
-            selectedMulti: false
+            selectedMulti: false,
+            fontCss : {color:"#BAC2C8", family : 'Open Sans', size: '13px'}
           },
           async: {
             enable: true,
@@ -228,10 +246,11 @@ angular.module('ng-ztree', ['ng'])
           },
           callback: {
             beforeClick: scope.beforeClick,
+            onClick: scope.onClick,
             beforeAsync: scope.beforeAsync,
             onAsyncError: scope.onAsyncError,
-            onAsyncSuccess: scope.onAsyncSuccess
-            //onRightClick: scope.onRightClick
+            onAsyncSuccess: scope.onAsyncSuccess,
+            onRightClick: scope.onRightClick
           },
           data: {
             key: {
@@ -245,10 +264,6 @@ angular.module('ng-ztree', ['ng'])
         var zTree, rMenu;
         $.fn.zTree.init($("#treeDemo"), setting);
         zTree = $.fn.zTree.getZTreeObj("treeDemo");
-        var nodes = zTree.getNodes();
-        if (nodes.length>0) {
-          zTree.reAsyncChildNodes(nodes[0], "refresh");
-        }
         rMenu = $("#rMenu");
       }
     };
