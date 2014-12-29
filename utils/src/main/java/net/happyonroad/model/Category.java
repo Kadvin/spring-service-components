@@ -3,6 +3,8 @@
  */
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.happyonroad.support.JsonSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -14,18 +16,26 @@ import java.util.List;
  * 对象类型
  */
 @ManagedResource(description = "系统模型分类")
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Category extends JsonSupport {
-    private String         name;
-    private String         alias;
-    private String         label;
-    private String         description;
+    private           String         name;
+    private           String         alias;
+    private           String         label;
+    private           String         description;
     private transient Category       parent;
     private transient List<Category> children;
+    private Class resourceClass;
 
     @ManagedAttribute
     public String getType() {
         if (getParent() != null)
-            return getParent().getType() + "." + getName();
+        {
+            String parentType = getParent().getType();
+            if( parentType.endsWith("/") )
+                return parentType + getName();
+            else
+                return parentType + "/" + getName();
+        }
         return getName();
     }
 
@@ -117,5 +127,13 @@ public class Category extends JsonSupport {
      */
     public boolean includes(String name) {
         return name.startsWith(getType());
+    }
+
+    public void setResourceClass(Class resourceClass) {
+        this.resourceClass = resourceClass;
+    }
+
+    public Class getResourceClass() {
+        return resourceClass;
     }
 }
