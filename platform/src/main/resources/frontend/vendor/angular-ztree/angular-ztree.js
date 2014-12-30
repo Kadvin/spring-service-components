@@ -108,6 +108,7 @@ angular.module('ng-ztree', ['ng'])
       restrict: 'EA',
       replace: true,
       scope: {
+        this: "=",
         ngModel: "=", // 被选中的数据存在这里
         nodeName: "@", // 节点数据保存节点名称的属性名称
         topLevelUrl: "@", // 顶层异步加载的URL
@@ -120,11 +121,9 @@ angular.module('ng-ztree', ['ng'])
       '  </div>' +
       '  <div id="rMenu">' +
       '    <ul style="margin-left:0px;margin-bottom: -;margin-bottom: 0px;">' +
-      '      <li id="m_add" ng-click="addTreeNode();">增加节点</li>' +
-      '      <li id="m_del" ng-click="removeTreeNode();">删除节点</li>' +
-      '      <li id="m_check" ng-click="checkTreeNode(true);">Check节点</li>' +
-      '      <li id="m_unCheck" ng-click="checkTreeNode(false);">unCheck节点</li>' +
-      '      <li id="m_reset" ng-click="resetTree();">恢复zTree</li>' +
+      '      <li id="m_add" ng-click="showAddResource();">添加资源</li>' +
+      '      <li id="m_del" ng-click="showUpdateResource();">修改资源</li>' +
+      '      <li id="m_check" ng-click="removeResource();">删除资源</li>' +
       '    </ul>' +
       '  </div>' +
       '  <style type="text/css">' +
@@ -195,6 +194,9 @@ angular.module('ng-ztree', ['ng'])
             scope.showRMenu("root", event.clientX, event.clientY);
           } else if (treeNode && !treeNode.noR) {
             zTree.selectNode(treeNode);
+            scope.$apply(function () {
+              scope.ngModel = treeNode;
+            });
             scope.showRMenu("node", event.clientX, event.clientY);
           }
         };
@@ -232,6 +234,11 @@ angular.module('ng-ztree', ['ng'])
           }
           return scope.url + treeNode.path;
         }
+
+        scope.showAddResource = function(){
+          scope.hideRMenu();
+          $("#bootbox").show();
+        };
 
         var setting = {
           view: {
