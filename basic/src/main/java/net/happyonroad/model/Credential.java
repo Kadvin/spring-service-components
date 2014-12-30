@@ -9,10 +9,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * 一般性的访问方式抽象
  */
+@SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
 public interface Credential {
-    String Snmp = "snmp";
-    String Ssh = "ssh";
-    String Wmi = "wmi";
+    String Snmp       = "snmp";
+    String Ssh        = "ssh";
+    String Windows    = "windows";
+    String Agent      = "agent";
     String Hypervisor = "hypervisor";
 }

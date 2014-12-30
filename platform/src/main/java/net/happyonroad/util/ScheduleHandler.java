@@ -3,7 +3,6 @@
  */
 package net.happyonroad.util;
 
-import net.happyonroad.support.JsonSupport;
 import net.happyonroad.type.Schedule;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -24,7 +23,7 @@ public class ScheduleHandler implements TypeHandler<Schedule> {
         if( parameter == null )
             ps.setString(i, null);
         else{
-            ps.setString(i, JsonSupport.toJSONString(parameter));
+            ps.setString(i, ParseUtils.toJSONString(parameter));
         }
     }
 
@@ -48,7 +47,7 @@ public class ScheduleHandler implements TypeHandler<Schedule> {
 
     private Schedule stringToSchedule(String raw) {
         if( raw != null ){
-            return JsonSupport.parseJson(raw, Schedule.class);
+            return ParseUtils.parseJson(raw, Schedule.class);
         }
         return null;
     }

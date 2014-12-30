@@ -5,7 +5,7 @@ package net.happyonroad.remoting;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.remoting.support.RemoteInvocation;
 
@@ -133,7 +133,7 @@ public class InvocationRequestMessage extends InvocationMessage {
     }
 
     public String toJson() {
-        return JsonSupport.toJSONString(this);
+        return ParseUtils.toJSONString(this);
     }
 
     @Override
@@ -165,6 +165,6 @@ public class InvocationRequestMessage extends InvocationMessage {
     }
 
     public static InvocationRequestMessage parse(String json) {
-        return JsonSupport.parseJson(json, InvocationRequestMessage.class);
+        return ParseUtils.parseJson(json, InvocationRequestMessage.class);
     }
 }

@@ -1,7 +1,6 @@
 package net.happyonroad.menu.model;
 
-import net.happyonroad.menu.model.MenuItem;
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +53,7 @@ public class MenuItemTest {
 
     @Test
     public void testJson() throws Exception {
-        String json = JsonSupport.toJSONString(menuItem);
+        String json = ParseUtils.toJSONString(menuItem);
         System.out.println(json);
         Assert.assertNotNull(json);
     }

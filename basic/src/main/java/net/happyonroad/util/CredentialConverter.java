@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.util.StdConverter;
 import net.happyonroad.credential.HypervisorCredential;
 import net.happyonroad.credential.SnmpCredential;
 import net.happyonroad.credential.SshCredential;
-import net.happyonroad.credential.WmiCredential;
+import net.happyonroad.credential.WindowsCredential;
 import net.happyonroad.model.Credential;
 import net.happyonroad.support.CredentialProperties;
 
@@ -44,12 +44,12 @@ public class CredentialConverter extends StdConverter<Map<String, Object>, Map<S
                     throw new IllegalArgumentException("Can't convert " + value + " as SnmpCredential");
                 }
                 converted.put(key, credential);
-            } else if (key.equalsIgnoreCase(Credential.Wmi)) {
-                WmiCredential credential;
+            } else if (key.equalsIgnoreCase(Credential.Windows)) {
+                WindowsCredential credential;
                 if( value instanceof Map){
-                    credential = new WmiCredential((Map)value);
+                    credential = new WindowsCredential((Map)value);
                 }else{
-                    credential = (WmiCredential) value;
+                    credential = (WindowsCredential) value;
                 }
                 converted.put(key, credential);
             } else if (key.equalsIgnoreCase(Credential.Hypervisor)) {

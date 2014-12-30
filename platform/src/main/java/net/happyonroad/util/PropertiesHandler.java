@@ -3,7 +3,6 @@
  */
 package net.happyonroad.util;
 
-import net.happyonroad.support.JsonSupport;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.TypeHandler;
@@ -24,7 +23,7 @@ public class PropertiesHandler implements TypeHandler<Properties> {
         if( parameter == null )
             ps.setString(i, null);
         else{
-            ps.setString(i, JsonSupport.toJSONString(parameter));
+            ps.setString(i, ParseUtils.toJSONString(parameter));
         }
     }
 
@@ -48,7 +47,7 @@ public class PropertiesHandler implements TypeHandler<Properties> {
 
     protected Properties stringToProperties(String raw) throws SQLException {
         if( raw != null ){
-            return JsonSupport.parseJson(raw, Properties.class);
+            return ParseUtils.parseJson(raw, Properties.class);
         }
         return null;
     }

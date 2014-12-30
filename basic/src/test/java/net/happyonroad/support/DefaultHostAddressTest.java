@@ -4,6 +4,7 @@
 package net.happyonroad.support;
 
 import junit.framework.Assert;
+import net.happyonroad.util.ParseUtils;
 import org.junit.Test;
 
 /**
@@ -20,7 +21,7 @@ public class DefaultHostAddressTest {
 
     @Test
     public void testFromJson() throws Exception {
-        DefaultHostAddress address = DefaultHostAddress.parseJson(JSON, DefaultHostAddress.class);
+        DefaultHostAddress address = ParseUtils.parseJson(JSON, DefaultHostAddress.class);
         Assert.assertEquals("127.0.0.1", address.getHost());
     }
 }

@@ -5,6 +5,7 @@
 package net.happyonroad.model;
 
 import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
     public static <T> T parseJson(String content, Class<T> theClass) {
         if( theClass == SubnetRange.class){
             // {"address" : "192.168.21.0", "mask" : "255.255.255.0"}
-            Map<String, String> map = JsonSupport.parseJson(content, HashMap.class);
+            Map<String, String> map = ParseUtils.parseJson(content, HashMap.class);
             return (T)new SubnetRange(map.get("address"), map.get("mask"));
         }else if (theClass == SingleIp.class ){
 
@@ -32,7 +33,7 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
             return (T) new SingleIp(content);
         }else if( theClass == StartAndEndRange.class ){
             // {"start" : "192.168.21.10", "end" : "192.168.21.200"}
-            Map<String, String> map = JsonSupport.parseJson(content, HashMap.class);
+            Map<String, String> map = ParseUtils.parseJson(content, HashMap.class);
             return (T) new StartAndEndRange(map.get("start"), map.get("end"));
         }else if( IpRange.class.isAssignableFrom(theClass)){
             throw new UnsupportedOperationException("Can't parse json for ip range class:" + theClass);

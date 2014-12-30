@@ -3,7 +3,9 @@
  */
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -14,6 +16,7 @@ import java.sql.Timestamp;
  * <p/>
  * 在数据库中以主表的形式出现（而不是关联表）
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Record {
     protected static ObjectMapper mapper = new ObjectMapper();
 
