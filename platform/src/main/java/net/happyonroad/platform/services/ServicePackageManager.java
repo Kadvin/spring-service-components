@@ -14,6 +14,7 @@ import net.happyonroad.component.core.exception.DependencyNotMeetException;
 import net.happyonroad.component.core.exception.InvalidComponentNameException;
 import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.component.core.support.Dependency;
+import net.happyonroad.platform.service.ServicePackageContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import java.util.List;
  * The service package manager
  */
 public class ServicePackageManager extends ApplicationSupportBean
-        implements ApplicationListener<ContainerEvent>, FilenameFilter {
+        implements ApplicationListener<ContainerEvent>, FilenameFilter, ServicePackageContainer {
 
     @Autowired
     private ComponentLoader     componentLoader;
@@ -41,8 +42,13 @@ public class ServicePackageManager extends ApplicationSupportBean
     @Autowired
     private ComponentRepository componentRepository;
 
+    //这里面的顺序是按照加载顺序
+    //  最被依赖的最先被加载，排在最前面
     List<Component> loadedServicePackages = new LinkedList<Component>();
 
+    public List<Component> getServicePackages() {
+        return Collections.unmodifiableList(loadedServicePackages);
+    }
 
     @Override
     public void onApplicationEvent(ContainerEvent event) {
