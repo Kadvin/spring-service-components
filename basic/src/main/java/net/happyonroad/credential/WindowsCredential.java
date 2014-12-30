@@ -9,22 +9,38 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * WMI 认证所需资料
+ * <h1>Windows 认证所需资料</h1>
+ * Windows认证信息支持多种采集方式，包括：
+ * <ul>
+ * <li> WMI
+ * <li> WinRM
+ * </ul>
+ *
  */
-public class WmiCredential implements Credential {
+public class WindowsCredential implements Credential {
+    //认证域，可以为空
+    private String domain;
     //如果用户有限定在某个主机
     //那么用户名应该形如： Host/User
     private String user;
     private String password;
 
 
-    public WmiCredential() {
+    public WindowsCredential() {
         this(Collections.emptyMap());
     }
 
-    public WmiCredential(Map map) {
+    public WindowsCredential(Map map) {
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getUser() {

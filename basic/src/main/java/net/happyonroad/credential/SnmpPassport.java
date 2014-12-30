@@ -3,102 +3,114 @@
  */
 package net.happyonroad.credential;
 
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 
+import java.util.Collections;
 import java.util.Map;
 
-/** The snmp passport by get or set  */
+/**
+ * <h1>The snmp passport for V3</h1>
+ */
 @SuppressWarnings("UnusedDeclaration")
-public class SnmpPassport extends JsonSupport {
-    private static final long serialVersionUID = 8363183702392915587L;
+public class SnmpPassport  {
 
-    private String version;
-    private String community;
-    private String securityName;
-    private String authPassword;
-    private String privatePassword;
+    private String authenticateMethod;//身份验证类型 MD5/SHA
+    private String encryptMethod;//加密类型 DES/AES
+    private String privateKey;//数据加密密钥
+    private String userName;
+    private String password;
+    private String context;// 上下文名称
 
     public SnmpPassport() {
-        this.version = "v2c";
-        this.community = "public";
+        //noinspection unchecked
+        this(Collections.EMPTY_MAP);
     }
 
-    public SnmpPassport(Map<String, String> passport) {
-        this.version = passport.get("version");
-        this.community = passport.get("community");
-        this.securityName = passport.get("securityName");
-        this.authPassword = passport.get("authPassword");
-        this.privatePassword = passport.get("privatePassword");
+    public SnmpPassport(Map<String, Object> passport) {
+        this.authenticateMethod = ParseUtils.parseString(passport.get("authenticateMethod"), "MD5");
+        this.encryptMethod = ParseUtils.parseString(passport.get("encryptMethod"), "DES");
+        this.privateKey = ParseUtils.parseString(passport.get("privateKey"), null);
+        this.userName = ParseUtils.parseString(passport.get("userName"), null);
+        this.password = ParseUtils.parseString(passport.get("password"), null);
+        this.context = ParseUtils.parseString(passport.get("context"), null);
     }
 
-    public String getVersion() {
-        return version;
+    public String getAuthenticateMethod() {
+        return authenticateMethod;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setAuthenticateMethod(String authenticateMethod) {
+        this.authenticateMethod = authenticateMethod;
     }
 
-    public String getCommunity() {
-        return community;
+    public String getEncryptMethod() {
+        return encryptMethod;
     }
 
-    public void setCommunity(String community) {
-        this.community = community;
+    public void setEncryptMethod(String encryptMethod) {
+        this.encryptMethod = encryptMethod;
     }
 
-    public String getSecurityName() {
-        return securityName;
+    public String getPrivateKey() {
+        return privateKey;
     }
 
-    public void setSecurityName(String securityName) {
-        this.securityName = securityName;
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
-    public String getAuthPassword() {
-        return authPassword;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setAuthPassword(String authPassword) {
-        this.authPassword = authPassword;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getPrivatePassword() {
-        return privatePassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPrivatePassword(String privatePassword) {
-        this.privatePassword = privatePassword;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SnmpPassport)) return false;
 
-        SnmpPassport passport = (SnmpPassport) o;
+        SnmpPassport that = (SnmpPassport) o;
 
-        if (authPassword != null ? !authPassword.equals(passport.authPassword) : passport.authPassword != null)
+        if (authenticateMethod != null ? !authenticateMethod.equals(that.authenticateMethod) :
+            that.authenticateMethod != null) return false;
+        if (context != null ? !context.equals(that.context) : that.context != null) return false;
+        if (encryptMethod != null ? !encryptMethod.equals(that.encryptMethod) : that.encryptMethod != null)
             return false;
-        if (community != null ? !community.equals(passport.community) : passport.community != null)
-            return false;
-        if (privatePassword != null ? !privatePassword.equals(passport.privatePassword) : passport.privatePassword != null)
-            return false;
-        if (securityName != null ? !securityName.equals(passport.securityName) : passport.securityName != null)
-            return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
+        if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null) return false;
         //noinspection RedundantIfStatement
-        if (!version.equals(passport.version)) return false;
+        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = (version != null ? version.hashCode() : 0);
-        result = 31 * result + (community != null ? community.hashCode() : 0);
-        result = 31 * result + (securityName != null ? securityName.hashCode() : 0);
-        result = 31 * result + (authPassword != null ? authPassword.hashCode() : 0);
-        result = 31 * result + (privatePassword != null ? privatePassword.hashCode() : 0);
+        int result = authenticateMethod != null ? authenticateMethod.hashCode() : 0;
+        result = 31 * result + (encryptMethod != null ? encryptMethod.hashCode() : 0);
+        result = 31 * result + (privateKey != null ? privateKey.hashCode() : 0);
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (context != null ? context.hashCode() : 0);
         return result;
     }
 }

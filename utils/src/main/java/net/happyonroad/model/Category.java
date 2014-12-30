@@ -3,10 +3,13 @@
  */
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import net.happyonroad.support.JsonSupport;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,18 +17,41 @@ import java.util.List;
  * 对象类型
  */
 @ManagedResource(description = "系统模型分类")
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Category extends JsonSupport {
-    private String         name;
-    private String         alias;
-    private String         label;
-    private String         description;
+    private           String         name;
+    private           String         alias;
+    private           String         label;
+    private           String         description;
     private transient Category       parent;
     private transient List<Category> children;
+    private Class resourceClass;
+    private String[]  credentials;
+
+    // find the parent type of the given type
+    public static String parentOf(String type) {
+        //借file的api进行
+        // 如果 type == "/", 则会返回null
+        String parentType = new File(type).getParent();
+        return parentType == null ? null : parentType.replaceAll("\\\\", "/");
+    }
+
+    // find the depth of the path or type
+    public static int depth(String path) {
+        if ("/".equals(path)) return 0;
+        return path.split("/").length - 1;
+    }
 
     @ManagedAttribute
     public String getType() {
         if (getParent() != null)
-            return getParent().getType() + "." + getName();
+        {
+            String parentType = getParent().getType();
+            if( parentType.endsWith("/") )
+                return parentType + getName();
+            else
+                return parentType + "/" + getName();
+        }
         return getName();
     }
 
@@ -67,6 +93,14 @@ public class Category extends JsonSupport {
     @ManagedAttribute
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String[] getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(String[] credentials) {
+        this.credentials = credentials;
     }
 
     public Category getParent() {
@@ -117,5 +151,13 @@ public class Category extends JsonSupport {
      */
     public boolean includes(String name) {
         return name.startsWith(getType());
+    }
+
+    public void setResourceClass(Class resourceClass) {
+        this.resourceClass = resourceClass;
+    }
+
+    public Class getResourceClass() {
+        return resourceClass;
     }
 }

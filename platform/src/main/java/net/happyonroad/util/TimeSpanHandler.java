@@ -3,7 +3,6 @@
  */
 package net.happyonroad.util;
 
-import net.happyonroad.support.JsonSupport;
 import net.happyonroad.type.TimeSpan;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -24,7 +23,7 @@ public class TimeSpanHandler implements TypeHandler<TimeSpan> {
         if( parameter == null )
             ps.setString(i, null);
         else{
-            ps.setString(i, JsonSupport.toJSONString(parameter));
+            ps.setString(i, ParseUtils.toJSONString(parameter));
         }
     }
 
@@ -48,7 +47,7 @@ public class TimeSpanHandler implements TypeHandler<TimeSpan> {
 
     private TimeSpan stringToTimeSpan(String raw) {
         if( raw != null ){
-            return JsonSupport.parseJson(raw, TimeSpan.class);
+            return ParseUtils.parseJson(raw, TimeSpan.class);
         }
         return null;
     }

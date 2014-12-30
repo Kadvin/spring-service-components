@@ -4,7 +4,7 @@ import net.happyonroad.menu.config.MenuItemsControllerConfig;
 import net.happyonroad.menu.model.MenuItem;
 import net.happyonroad.menu.service.MenuItemService;
 import net.happyonroad.test.controller.ApplicationControllerTest;
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +84,7 @@ public class MenuItemsControllerTest extends ApplicationControllerTest {
 //    }
 
     protected String requestJson(){
-        return JsonSupport.toJSONString(menuItem);
+        return ParseUtils.toJSONString(menuItem);
     }
 
     // 每次测试结束之后再验证

@@ -5,7 +5,7 @@ package net.happyonroad.remoting;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 
 /** 调用返回的消息 */
 public class InvocationResponseMessage extends InvocationMessage {
@@ -31,11 +31,11 @@ public class InvocationResponseMessage extends InvocationMessage {
     }
 
     public String toJson() {
-        return JsonSupport.toJSONString(this);
+        return ParseUtils.toJSONString(this);
     }
 
     public static InvocationResponseMessage parse(String msg) {
-        return JsonSupport.parseJson(msg, InvocationResponseMessage.class);
+        return ParseUtils.parseJson(msg, InvocationResponseMessage.class);
     }
 
     public Throwable getError() {

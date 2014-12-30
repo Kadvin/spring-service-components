@@ -4,30 +4,38 @@
 package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
-import net.happyonroad.support.JsonSupport;
+import net.happyonroad.util.ParseUtils;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
- * SSH访问参数
+ * <h1>SSH访问参数</h1>
+ * 虽然在现实中，几乎只有*nix主机采用SSH认证后采集方式
+ * 但其实Windows主机也可以在开通SSH服务之后，采用SSH认证/PowerShell, Batch, VBS采集方式
  */
-public class SshCredential extends JsonSupport implements Credential {
+public class SshCredential implements Credential {
     private String user, password;
+    //SSH的端口
+    private int port = 22;
     private int timeout;
 
     public SshCredential() {
+        this(Collections.emptyMap());
     }
 
-    public SshCredential(String user, String password, int timeout) {
+    public SshCredential(String user, String password) {
         this.user = user;
         this.password = password;
-        this.timeout = timeout;
+        this.port = 22;
+        this.timeout = 1000;
     }
 
     public SshCredential(Map map) {
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
-        this.timeout = parseInt(map.get("timeout"), 1000);
+        this.port = ParseUtils.parseInt(map.get("port"), 22);
+        this.timeout = ParseUtils.parseInt(map.get("timeout"), 1000);
     }
 
     public String getUser() {
@@ -44,6 +52,14 @@ public class SshCredential extends JsonSupport implements Credential {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public int getTimeout() {

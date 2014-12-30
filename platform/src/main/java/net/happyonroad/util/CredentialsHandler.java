@@ -4,7 +4,6 @@
 package net.happyonroad.util;
 
 import net.happyonroad.model.Credential;
-import net.happyonroad.support.JsonSupport;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.TypeHandler;
@@ -24,7 +23,7 @@ public class CredentialsHandler implements TypeHandler<Credential[]> {
         if( parameter == null )
             ps.setString(i, null);
         else{
-            ps.setString(i, JsonSupport.toJSONString(parameter));
+            ps.setString(i, ParseUtils.toJSONString(parameter));
         }
     }
 
@@ -48,7 +47,7 @@ public class CredentialsHandler implements TypeHandler<Credential[]> {
 
     private Credential[] stringToCredentials(String raw) {
         if( raw != null ){
-            return JsonSupport.parseJson(raw, Credential[].class);
+            return ParseUtils.parseJson(raw, Credential[].class);
         }
         return null;
     }

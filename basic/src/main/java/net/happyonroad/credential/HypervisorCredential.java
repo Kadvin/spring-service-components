@@ -9,7 +9,8 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Hypervisor(Vmware, OpenStack, Xen) Credential
+ * <h1>Hypervisor(Vmware, OpenStack, Xen) Credential</h1>
+ * 通过 hypervisor 访问（具体使用方式尚不清楚）
  */
 public class HypervisorCredential implements Credential {
     private boolean https;

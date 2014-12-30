@@ -21,11 +21,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationEventMulticaster;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,19 +128,9 @@ public class ServicePackageManager extends ApplicationSupportBean
     }
 
     protected void publish(ApplicationEvent event) {
-        ApplicationContext mainApp = componentContext.getMainApp();
-        if (mainApp != null)
-            //通过 pom class world's main component 进行广播
-            mainApp.publishEvent(event);
-        else//通过当前(platform application context) 向外广播
-            applicationContext.publishEvent(event);
-        //向业已加载的服务包广播事件，为了避免上层容器收到额外的消息，不向他们的parent发送
-        for (Component component : loadedServicePackages) {
-            ApplicationContext app = component.getApplication();
-            if (app != null) {
-                ApplicationEventMulticaster multicaster = app.getBean(ApplicationEventMulticaster.class);
-                multicaster.multicastEvent(event);
-            }
+        //向所有的context发布，context里面有防止重复的机制
+        for (ApplicationContext context : componentContext.getApplicationFeatures()) {
+            context.publishEvent(event);
         }
     }
 

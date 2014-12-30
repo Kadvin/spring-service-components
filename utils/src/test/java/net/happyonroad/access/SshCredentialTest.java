@@ -4,6 +4,7 @@
 package net.happyonroad.access;
 
 import net.happyonroad.credential.SshCredential;
+import net.happyonroad.util.ParseUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,19 +12,19 @@ import org.junit.Test;
  * 测试 Ssh Credential to/from Json
  */
 public class SshCredentialTest {
-    public static final String JSON = "{\"user\":\"root\",\"password\":\"secret\",\"timeout\":100}";
-    SshCredential SSH = new SshCredential("root", "secret", 100);
+    public static final String JSON = "{\"user\":\"root\",\"password\":\"secret\",\"port\":22,\"timeout\":1000}";
+    SshCredential SSH = new SshCredential("root", "secret");
 
     @Test
     public void testSerializeJson() throws Exception {
-        String json = SSH.toJson();
+        String json = ParseUtils.toJSONString(SSH);
         System.out.println(json);
         Assert.assertEquals(JSON, json);
     }
 
     @Test
     public void testDeserializeJson() throws Exception {
-        SshCredential parsed = SshCredential.parseJson(JSON, SshCredential.class);
+        SshCredential parsed = ParseUtils.parseJson(JSON, SshCredential.class);
         Assert.assertEquals(SSH, parsed);
     }
 

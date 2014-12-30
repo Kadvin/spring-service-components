@@ -77,7 +77,7 @@ public class RouteItem implements Comparable<RouteItem> {
         // 现在先采用这个权宜之计
         if( httpMethods.contains("GET") && handler.toString().contains("index") ){
             requestParams.put("page", "int");
-            requestParams.put("size", "int");
+            requestParams.put("count", "int");
             requestParams.put("sort", "string");
         }
         return new RouteItem(httpMethods, url, handler.toString(), requestParams);

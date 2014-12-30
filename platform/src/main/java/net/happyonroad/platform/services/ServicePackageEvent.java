@@ -21,7 +21,7 @@ public class ServicePackageEvent extends ApplicationEvent {
     }
 
     /**
-     * the service packages is loading
+     * the service package is loading
      */
     public static class LoadingEvent extends ServicePackageEvent {
         public LoadingEvent(Component source) {
@@ -31,7 +31,7 @@ public class ServicePackageEvent extends ApplicationEvent {
 
 
     /**
-     * the service packages are loaded and ready for further works
+     * the service package is loaded and ready for further works
      */
     public static class LoadedEvent extends ServicePackageEvent {
         public LoadedEvent(Component source) {
@@ -40,7 +40,7 @@ public class ServicePackageEvent extends ApplicationEvent {
     }
 
     /**
-     * the service packages is unloading
+     * the service package is unloading
      */
     public static class UnloadingEvent extends ServicePackageEvent {
         public UnloadingEvent(Component source) {
@@ -49,7 +49,7 @@ public class ServicePackageEvent extends ApplicationEvent {
     }
 
     /**
-     * the service packages is unloaded
+     * the service package is unloaded
      */
     public static class UnloadedEvent extends ServicePackageEvent {
         public UnloadedEvent(Component source) {
