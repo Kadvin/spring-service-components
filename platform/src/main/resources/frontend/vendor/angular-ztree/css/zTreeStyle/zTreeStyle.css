@@ -138,10 +138,50 @@ ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; width:auto; height
 
 ul.ztree {margin-top: 10px;border: 1px solid #617775;background: #fff;overflow-y:scroll;overflow-x:auto;}
 
-#menuContent{
+#mainContent{
 	display:none;
 	position: absolute;
 	z-index:9;
 	left: 0 !important;
 	top: 31px !important;
+}
+
+#monitorTreeContent{
+	display:none;
+	position: absolute;
+	z-index:9;
+	left: 0 !important;
+	top: 32px !important;
+}
+
+#typeTreeContent{
+	display:none;
+	position: absolute;
+	z-index:9;
+	left: 0 !important;
+	top: 32px !important;
+}
+
+div#rMenu {
+	position: absolute;
+	visibility: hidden;
+	top: 0;
+	background-color: #555;
+	text-align: left;
+	padding: 2px;
+	z-index: 9
+}
+
+div#rMenu ul {
+	margin-left: 0;
+	margin-bottom: 0;
+}
+
+div#rMenu ul li {
+	margin: 1px 0;
+	padding: 0 5px;
+	cursor: pointer;
+	list-style: none outside none;
+	background-color: #DFDFDF;
+	z-index: 9
 }
