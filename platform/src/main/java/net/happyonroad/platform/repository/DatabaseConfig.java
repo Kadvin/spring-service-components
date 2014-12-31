@@ -21,6 +21,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
+import static java.lang.String.format;
+
 /**
  * <h1>关于数据库的配置</h1>
  */
@@ -51,8 +53,9 @@ public class DatabaseConfig {
 
         String dbName = System.getProperty("db.name", "itsnow_" + appId);
         System.setProperty("db.name", dbName);
-        String dbUrl = String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8",
-                                     dbHost, dbPort, dbName);
+        //注意: 必须设置 allowMultiQueries=true，这样 mybatis 才能使用底层的MySQL Driver一次提交多个语句（如insert2张表)
+        String dbUrl = format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true",
+                              dbHost, dbPort, dbName);
         dataSource.setUrl(dbUrl);
         dataSource.setUsername(dbUser);
         dataSource.setPassword(dbPass);

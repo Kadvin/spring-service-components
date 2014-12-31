@@ -1,6 +1,6 @@
 package net.happyonroad.menu.exception;
 
-import net.happyonroad.platform.service.ServiceException;
+import net.happyonroad.platform.exception.ServiceException;
 
 /**
  * <h1>自定义菜单异常类</h1>

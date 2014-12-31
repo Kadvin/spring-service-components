@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.support;
 
+import net.happyonroad.platform.service.ServicePackageContainer;
 import net.happyonroad.spring.Bean;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
@@ -34,6 +35,9 @@ public class JettyServer extends Bean {
 
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private ServicePackageContainer container;
+
     @Value("${app.host}")
     private String             host;
     @Value("${http.port}")
@@ -71,7 +75,8 @@ public class JettyServer extends Bean {
         context.setContextPath("/");
         File webapp = new File(System.getProperty("app.home"), "webapp");
         context.setBaseResource(Resource.newResource(webapp));
-        context.setClassLoader(applicationContext.getClassLoader());
+        ContainerAwareClassLoader classLoader = new ContainerAwareClassLoader(applicationContext.getClassLoader(), container);
+        context.setClassLoader(classLoader);
         context.getServletContext().setAttribute("application", applicationContext);
         context.setConfigurations(new Configuration[]{new JettyAnnotationConfiguration()});
         context.addAliasCheck(new AllowSymLinkAliasChecker());
