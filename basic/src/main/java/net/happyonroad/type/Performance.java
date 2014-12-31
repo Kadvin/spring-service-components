@@ -20,7 +20,7 @@ public enum Performance {
     // Warning: 警告状态，对应黄色，或者叫做 “轻微超标”
     Warning,// Minor in Mocha
     // Error：错误状态，对应红色，或者叫做 “严重超标”
-    Error,  // Serious in Mocha
+    Critical,  // Serious in Mocha
     // 未知
     Unknown
 }

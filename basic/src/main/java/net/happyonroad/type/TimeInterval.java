@@ -14,6 +14,11 @@ public class TimeInterval {
     private String interval;
     private long milliseconds;
 
+    @SuppressWarnings("UnusedDeclaration") //for serialization
+    public TimeInterval() {
+        this("1s");
+    }
+
     public TimeInterval(String interval) {
         this.interval = interval;
         this.milliseconds = parseLong(interval);
@@ -21,6 +26,18 @@ public class TimeInterval {
 
     public long getMilliseconds() {
         return milliseconds;
+    }
+
+    public void setMilliseconds(long milliseconds) {
+        this.milliseconds = milliseconds;
+    }
+
+    public String getInterval() {
+        return interval;
+    }
+
+    public void setInterval(String interval) {
+        this.interval = interval;
     }
 
     @Override
