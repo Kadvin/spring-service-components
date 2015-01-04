@@ -113,6 +113,7 @@ angular.module('ng-ztree', ['ng'])
         nodeName: "@", // 节点数据保存节点名称的属性名称
         children: "@", // 节点数据中保存子节点数据的属性名称
         checked: "@", // 节点数据中保存 check 状态的属性名称
+        topLevelUrl: "@", // 异步加载的顶级URL
         url: "@" // 异步加载的URL
       },
       template: '<div>' +
@@ -127,11 +128,11 @@ angular.module('ng-ztree', ['ng'])
           if (!childNodes) {
             return null;
           }
-          //// 顶级节点
-          //else if (parentNode == null && childNodes instanceof Object) {
-          //  childNodes.isParent = true;
-          //  childNodes.icon = packageIconPath(childNodes.icon);
-          //}
+          // 顶级节点
+          else if (parentNode === undefined && childNodes instanceof Object) {
+            childNodes.isParent = true;
+            childNodes.icon = packageIconPath(childNodes.icon);
+          }
           // 二级节点及以下
           else if (childNodes instanceof Array) {
             for (var i = 0, l = childNodes.length; i < l; i++) {
@@ -146,6 +147,9 @@ angular.module('ng-ztree', ['ng'])
 
         // icon路径封装
         var packageIconPath = function (iconName){
+          if(iconName===undefined || iconName===null){
+            return null;
+          }
           return "assets/sys_icons/"+iconName+"/16x16.png";
         };
 
@@ -197,24 +201,25 @@ angular.module('ng-ztree', ['ng'])
         };
 
         scope.onBodyDown = function (event) {
-          if (!(event.target.id == "menuBtn" || event.target.id == ""+scope.treeId+"Sel"
-            || event.target.id == ""+scope.treeId+"Content" || $(event.target).parents("#"+scope.treeId+"Content").length > 0)) {
+          if (!(event.target.id == "menuBtn" || event.target.id == ""+scope.treeId+"Sel" || event.target.id == ""+scope.treeId+"Content" || $(event.target).parents("#"+scope.treeId+"Content").length > 0)) {
             scope.hideMenu();
           }
         };
 
         function getAsyncUrl(treeId, treeNode) {
-          //if ((treeNode === undefined || treeNode === null )&& scope.topLevelUrl != undefined) {
-          //  return scope.topLevelUrl;
-          //}
+          if ((treeNode === undefined || treeNode === null )&& scope.topLevelUrl !== undefined) {
+            return scope.topLevelUrl;
+          }
           if (treeNode === undefined || treeNode === null ){
             return scope.url;
           }
-          console.log("path:"+scope.url + treeNode.path);
           return scope.url + treeNode.path;
         }
 
         var setting = {
+          view: {
+            selectedMulti: false
+          },
           check: {
             enable: true,
             chkStyle: scope.type,
