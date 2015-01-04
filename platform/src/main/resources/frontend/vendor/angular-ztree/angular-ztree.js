@@ -16,12 +16,12 @@ angular.module('ng-ztree', ['ng'])
       template: '<div>' +
       '  <input id="citySel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
       '  <div id="menuContent">' +
-      '    <ul id="treeDemo" class="ztree" style="margin-top:0; width:180px; height: 300px;"></ul>' +
+      '    <ul id="nodeTree" class="ztree" style="margin-top:0; width:180px; height: 300px;"></ul>' +
       '  </div>' +
       '</div>',
       link: function (scope, element, attrs) {
         scope.beforeClick = function (treeId, treeNode) {
-          var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+          var zTree = $.fn.zTree.getZTreeObj("nodeTree");
           zTree.checkNode(treeNode, !treeNode.checked, null, true);
           return false;
         };
@@ -34,7 +34,7 @@ angular.module('ng-ztree', ['ng'])
         };
 
         scope.getSelectedValue = function () {
-          var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+          var zTree = $.fn.zTree.getZTreeObj("nodeTree");
           var nodes = zTree.getCheckedNodes(true);
 
           var names = [];
@@ -92,51 +92,35 @@ angular.module('ng-ztree', ['ng'])
             delete scope.treeModel.$promise;
             delete scope.treeModel.$resolved;
           }
-          $.fn.zTree.init($("#treeDemo"), setting, scope.treeModel);
+          $.fn.zTree.init($("#nodeTree"), setting, scope.treeModel);
 
-          var nodes = scope.getSelectedValue();
-          scope.ngModel = nodes;
+          scope.ngModel = scope.getSelectedValue();
 
         }, true);
       }
     };
   })
 
-  .directive('ngZtreeMenu', function () {
+  .directive('ngZtreeAsync', function () {
     return {
       require: '?ngModel',
       restrict: 'EA',
-      replace: true,
       scope: {
-        this: "=",
         ngModel: "=", // 被选中的数据存在这里
+        treeId: "@", // 树模型ID
+        treeModel: "=", // 展示的树模型
+        type: "@", // radio or checkbox
         nodeName: "@", // 节点数据保存节点名称的属性名称
-        topLevelUrl: "@", // 顶层异步加载的URL
-        url: "@", // 异步加载的URL
-        nodeClick: "&" //
+        children: "@", // 节点数据中保存子节点数据的属性名称
+        checked: "@", // 节点数据中保存 check 状态的属性名称
+        topLevelUrl: "@", // 异步加载的顶级URL
+        url: "@" // 异步加载的URL
       },
       template: '<div>' +
-      '  <div>' +
-      '    <ul id="treeDemo" class="ztree" style="background: #222A2D;width: 100%"></ul>' +
+      '  <input id="{{treeId}}Sel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
+      '  <div id="{{treeId}}Content">' +
+      '    <ul id="{{treeId}}" class="ztree" style="position:absolute;margin-top:0; width:280px; height: 300px;z-index: 9"></ul>' +
       '  </div>' +
-      '  <div id="rMenu">' +
-      '    <ul style="margin-left:0px;margin-bottom: -;margin-bottom: 0px;">' +
-      '      <li id="m_add" ng-click="showAddResource();">添加资源</li>' +
-      '      <li id="m_del" ng-click="showUpdateResource();">修改资源</li>' +
-      '      <li id="m_check" ng-click="removeResource();">删除资源</li>' +
-      '    </ul>' +
-      '  </div>' +
-      '  <style type="text/css">' +
-      '    div#rMenu {position:absolute; visibility:hidden; top:0; background-color: #555;text-align: left;padding: 2px;z-index: 9}' +
-      '    div#rMenu ul li{' +
-      '    margin: 1px 0;' +
-      '    padding: 0 5px;' +
-      '    cursor: pointer;' +
-      '    list-style: none outside none;' +
-      '    background-color: #DFDFDF;' +
-      '    z-index: 9;' +
-      '    }' +
-      '  </style>' +
       '</div>',
       link: function (scope, element, attrs) {
 
@@ -145,9 +129,9 @@ angular.module('ng-ztree', ['ng'])
             return null;
           }
           // 顶级节点
-          else if (parentNode == null && childNodes instanceof Object) {
-              childNodes.isParent = true;
-              childNodes.icon = packageIconPath(childNodes.icon);
+          else if (parentNode === undefined && childNodes instanceof Object) {
+            childNodes.isParent = true;
+            childNodes.icon = packageIconPath(childNodes.icon);
           }
           // 二级节点及以下
           else if (childNodes instanceof Array) {
@@ -163,87 +147,83 @@ angular.module('ng-ztree', ['ng'])
 
         // icon路径封装
         var packageIconPath = function (iconName){
-          //assets/sys_icons/monitor_engine/16x16.png
+          if(iconName===undefined || iconName===null){
+            return null;
+          }
           return "assets/sys_icons/"+iconName+"/16x16.png";
         };
 
-        scope.onClick = function (e, treeId, treeNode) {
+        scope.beforeClick = function (treeId, treeNode) {
+          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
+          zTree.checkNode(treeNode, !treeNode.checked, null, true);
+          return false;
+        };
+
+        scope.onCheck = function (e, treeId, treeNode) {
+          var nodes = scope.getSelectedValue();
           scope.$apply(function () {
-            scope.ngModel = treeNode;
+            scope.ngModel = nodes;
           });
-          scope.nodeClick();
         };
 
-        var className = "dark";
-        scope.beforeAsync = function (treeId, treeNode) {
-          className = (className === "dark" ? "" : "dark");
-          return true;
-        };
-
-        scope.onAsyncSuccess = function (event, treeId, treeNode, msg) {
-          zTree = $.fn.zTree.getZTreeObj("treeDemo");
-          var nodes = zTree.getNodes();
-          if (nodes.length>0) {
-            zTree.expandNode(nodes[0], true);
+        scope.getSelectedValue = function () {
+          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
+          var nodes = [];
+          if(zTree!=null){
+            nodes = zTree.getCheckedNodes(true);
           }
-        };
 
-        scope.onRightClick = function (event, treeId, treeNode) {
-          if (!treeNode && event.target.tagName.toLowerCase() != "button" && $(event.target).parents("a").length == 0) {
-            zTree.cancelSelectedNode();
-            scope.showRMenu("root", event.clientX, event.clientY);
-          } else if (treeNode && !treeNode.noR) {
-            zTree.selectNode(treeNode);
-            scope.$apply(function () {
-              scope.ngModel = treeNode;
-            });
-            scope.showRMenu("node", event.clientX, event.clientY);
+          var names = [];
+          if(scope.nodeName===undefined||scope.nodeName===null){
+            scope.nodeName = "name";
           }
-        };
-
-        scope.showRMenu = function (type, x, y) {
-          $("#rMenu ul").show();
-          if (type == "root") {
-            $("#m_del").hide();
-            $("#m_check").hide();
-            $("#m_unCheck").hide();
-          } else {
-            $("#m_del").show();
-            $("#m_check").show();
-            $("#m_unCheck").show();
+          for (var i = 0; i < nodes.length; i++) {
+            names.push(nodes[i][scope.nodeName]);
           }
-          rMenu.css({"top": y + "px", "left": x + "px", "visibility": "visible"});
-
-          $("body").bind("mousedown", scope.onBodyMouseDown);
+          $("#"+scope.treeId+"Sel").val(names.join());
+          return nodes;
         };
 
-        scope.hideRMenu = function () {
-          if (rMenu) rMenu.css({"visibility": "hidden"});
-          $("body").unbind("mousedown", scope.onBodyMouseDown);
+        scope.showMenu = function () {
+          var cityObj = $("#"+scope.treeId+"Sel");
+          var cityOffset = cityObj.offset();
+          $("#"+scope.treeId+"Content").css({
+            left: cityOffset.left + "px",
+            top: cityOffset.top + cityObj.outerHeight() + "px"
+          }).slideDown("fast");
+
+          $("body").bind("mousedown", scope.onBodyDown);
         };
 
-        scope.onBodyMouseDown = function (event) {
-          if (!(event.target.id == "rMenu" || $(event.target).parents("#rMenu").length > 0)) {
-            rMenu.css({"visibility": "hidden"});
+        scope.hideMenu = function () {
+          $("#"+scope.treeId+"Content").fadeOut("fast");
+          $("body").unbind("mousedown", scope.onBodyDown);
+        };
+
+        scope.onBodyDown = function (event) {
+          if (!(event.target.id == "menuBtn" || event.target.id == ""+scope.treeId+"Sel" || event.target.id == ""+scope.treeId+"Content" || $(event.target).parents("#"+scope.treeId+"Content").length > 0)) {
+            scope.hideMenu();
           }
         };
 
         function getAsyncUrl(treeId, treeNode) {
-          if ((treeNode === undefined || treeNode === null )&& scope.topLevelUrl != undefined) {
+          if ((treeNode === undefined || treeNode === null )&& scope.topLevelUrl !== undefined) {
             return scope.topLevelUrl;
+          }
+          if (treeNode === undefined || treeNode === null ){
+            return scope.url;
           }
           return scope.url + treeNode.path;
         }
 
-        scope.showAddResource = function(){
-          scope.hideRMenu();
-          $("#bootbox").show();
-        };
-
         var setting = {
           view: {
-            selectedMulti: false,
-            fontCss : {color:"#BAC2C8", family : 'Open Sans', size: '13px'}
+            selectedMulti: false
+          },
+          check: {
+            enable: true,
+            chkStyle: scope.type,
+            radioType: "all"
           },
           async: {
             enable: true,
@@ -253,11 +233,7 @@ angular.module('ng-ztree', ['ng'])
           },
           callback: {
             beforeClick: scope.beforeClick,
-            onClick: scope.onClick,
-            beforeAsync: scope.beforeAsync,
-            onAsyncError: scope.onAsyncError,
-            onAsyncSuccess: scope.onAsyncSuccess,
-            onRightClick: scope.onRightClick
+            onCheck: scope.onCheck
           },
           data: {
             key: {
@@ -268,10 +244,18 @@ angular.module('ng-ztree', ['ng'])
           }
         };
 
-        var zTree, rMenu;
-        $.fn.zTree.init($("#treeDemo"), setting);
-        zTree = $.fn.zTree.getZTreeObj("treeDemo");
-        rMenu = $("#rMenu");
+        scope.$watch('treeModel', function () {
+
+          if (angular.isDefined(scope.treeModel)) {
+            delete scope.treeModel.$promise;
+            delete scope.treeModel.$resolved;
+          }
+          $.fn.zTree.init($("#"+scope.treeId), setting, scope.treeModel);
+
+          scope.ngModel = scope.getSelectedValue();
+
+        }, true);
       }
     };
   });
+
