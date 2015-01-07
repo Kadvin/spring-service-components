@@ -29,7 +29,7 @@ public class ServiceConfiguration extends AbstractServiceConfig {
         //Spring Security相关服务
         exportService(DelegateSecurityConfigurer.class);
 
-        //一般工具服务
-        //exportService(AutoNumberService.class);
+        //全局的class loader，能够读到所有的类，包括动态加载的类
+        //exportService(ClassLoader.class, "global", "containerAwareClassLoader");
     }
 }

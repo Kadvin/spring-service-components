@@ -1,10 +1,13 @@
 /**
  * Developer: Kadvin Date: 14-5-16 上午9:36
  */
-package net.happyonroad.spring;
+package net.happyonroad.platform.util;
 
+import net.happyonroad.component.core.ComponentContext;
+import net.happyonroad.spring.TranslateSupportBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -16,6 +19,8 @@ import javax.management.ObjectName;
  * The bean support application
  */
 public class ApplicationSupportBean extends TranslateSupportBean implements ApplicationContextAware{
+    @Autowired
+    private ComponentContext componentContext;
     protected ApplicationContext applicationContext;
 
     private MBeanExportOperations mbeanExporter;
@@ -37,7 +42,10 @@ public class ApplicationSupportBean extends TranslateSupportBean implements Appl
      * @param event the event to be published
      */
     protected void publish(ApplicationEvent event) {
-        this.applicationContext.publishEvent(event);
+        //向所有的context发布，context里面有防止重复的机制
+        for (ApplicationContext context : componentContext.getApplicationFeatures()) {
+            context.publishEvent(event);
+        }
     }
 
     /**

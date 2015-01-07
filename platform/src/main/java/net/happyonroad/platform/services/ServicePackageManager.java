@@ -15,12 +15,10 @@ import net.happyonroad.component.core.exception.InvalidComponentNameException;
 import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.component.core.support.Dependency;
 import net.happyonroad.platform.service.ServicePackageContainer;
-import net.happyonroad.spring.ApplicationSupportBean;
+import net.happyonroad.platform.util.ApplicationSupportBean;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import java.io.File;
@@ -37,8 +35,6 @@ public class ServicePackageManager extends ApplicationSupportBean
 
     @Autowired
     private ComponentLoader     componentLoader;
-    @Autowired
-    private ComponentContext    componentContext;
     @Autowired
     private ComponentRepository componentRepository;
 
@@ -131,13 +127,6 @@ public class ServicePackageManager extends ApplicationSupportBean
         //这个事件就仅发给容器
         publish(new ServicePackageEvent.UnloadedEvent(component));
         logger.info("Unloaded  service package: {}", component);
-    }
-
-    protected void publish(ApplicationEvent event) {
-        //向所有的context发布，context里面有防止重复的机制
-        for (ApplicationContext context : componentContext.getApplicationFeatures()) {
-            context.publishEvent(event);
-        }
     }
 
     @Override

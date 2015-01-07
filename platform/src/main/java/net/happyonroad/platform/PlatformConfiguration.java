@@ -5,11 +5,15 @@ package net.happyonroad.platform;
 
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.platform.service.AutoNumberService;
+import net.happyonroad.platform.service.ServicePackageContainer;
 import net.happyonroad.platform.services.ServicePackageManager;
 import net.happyonroad.platform.support.AutoNumberInMemory;
+import net.happyonroad.platform.support.ContainerAwareClassLoader;
 import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.spring.config.DefaultAppConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -36,11 +40,18 @@ import org.springframework.context.annotation.Import;
 @org.springframework.context.annotation.Configuration
 @Import({DefaultAppConfig.class, DatabaseConfig.class})
 public class PlatformConfiguration {
+    @Autowired
+    private ApplicationContext applicationContext;
 
     // 用于启动WEB应用
     @Bean
     public JettyServer jettyServer(){
         return new JettyServer();
+    }
+
+    @Bean
+    public ContainerAwareClassLoader containerAwareClassLoader(ServicePackageContainer container){
+        return new ContainerAwareClassLoader(applicationContext.getClassLoader(), container);
     }
 
     // 用于加载扩展服务模块
