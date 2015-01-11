@@ -3,11 +3,11 @@
  */
 package net.happyonroad.util;
 
+import net.happyonroad.type.Point;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.TypeHandler;
 
-import java.awt.*;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,6 +47,10 @@ public class PointHandler implements TypeHandler<Point> {
 
     private Point stringToPoint(String raw) {
         if( raw != null ){
+                 //兼容JsonHandler的数据
+            if( raw.contains(JsonHandler.SPLIT) ){
+                raw = raw.split(JsonHandler.SPLIT)[0];
+            }
             return ParseUtils.parseJson(raw, Point.class);
         }
         return null;

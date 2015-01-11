@@ -47,6 +47,10 @@ public class CredentialsHandler implements TypeHandler<Credential[]> {
 
     private Credential[] stringToCredentials(String raw) {
         if( raw != null ){
+            //兼容JsonHandler的数据
+            if( raw.contains(JsonHandler.SPLIT) ){
+                raw = raw.split(JsonHandler.SPLIT)[0];
+            }
             return ParseUtils.parseJson(raw, Credential[].class);
         }
         return null;

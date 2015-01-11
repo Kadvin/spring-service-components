@@ -47,6 +47,10 @@ public class ScheduleHandler implements TypeHandler<Schedule> {
 
     private Schedule stringToSchedule(String raw) {
         if( raw != null ){
+            //兼容JsonHandler的数据
+            if( raw.contains(JsonHandler.SPLIT) ){
+                raw = raw.split(JsonHandler.SPLIT)[0];
+            }
             return ParseUtils.parseJson(raw, Schedule.class);
         }
         return null;

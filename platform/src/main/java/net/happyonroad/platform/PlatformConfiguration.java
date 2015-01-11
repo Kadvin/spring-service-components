@@ -51,7 +51,10 @@ public class PlatformConfiguration {
 
     @Bean
     public ContainerAwareClassLoader containerAwareClassLoader(ServicePackageContainer container){
-        return new ContainerAwareClassLoader(applicationContext.getClassLoader(), container);
+        // 用 Thread上下文的Class Loader(main class loader)
+        //  比 application 的 Class loader(platform class loader)
+        // 更为有效，其可以看到除动态加载的类; Container Aware特性再看到其他
+        return new ContainerAwareClassLoader(Thread.currentThread().getContextClassLoader(), container);
     }
 
     // 用于加载扩展服务模块

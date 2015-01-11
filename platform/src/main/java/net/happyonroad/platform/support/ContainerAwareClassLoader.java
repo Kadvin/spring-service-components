@@ -44,19 +44,23 @@ public class ContainerAwareClassLoader extends ClassLoader {
                     //try next
                 }
             }
-            throw new ClassNotFoundException(name);
+            throw e;
         }
     }
 
     protected List<ApplicationContext> getApplications() {
-        if (applications == null || applications.isEmpty()) {
-
+        if (applications == null ) {
             List<Component> components = container.getServicePackages();
-            applications = new ArrayList<ApplicationContext>(components.size());
-            for (Component component : components) {
-                applications.add(component.getApplication());
+            if (!components.isEmpty()) {
+                applications = new ArrayList<ApplicationContext>(components.size());
+                for (Component component : components) {
+                    applications.add(component.getApplication());
+                }
+                Collections.reverse(applications);
+            }else{
+                //noinspection unchecked
+                return Collections.EMPTY_LIST;
             }
-            Collections.reverse(applications);
         }
         return applications;
     }

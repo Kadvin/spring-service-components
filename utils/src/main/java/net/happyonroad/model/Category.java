@@ -28,20 +28,6 @@ public class Category extends JsonSupport {
     private Class resourceClass;
     private String[]  credentials;
 
-    // find the parent type of the given type
-    public static String parentOf(String type) {
-        //借file的api进行
-        // 如果 type == "/", 则会返回null
-        String parentType = new File(type).getParent();
-        return parentType == null ? null : parentType.replaceAll("\\\\", "/");
-    }
-
-    // find the depth of the path or type
-    public static int depth(String path) {
-        if ("/".equals(path)) return 0;
-        return path.split("/").length - 1;
-    }
-
     @ManagedAttribute
     public String getType() {
         if (getParent() != null)
@@ -159,5 +145,26 @@ public class Category extends JsonSupport {
 
     public Class getResourceClass() {
         return resourceClass;
+    }
+
+        // find the parent type of the given type
+    public static String parentOf(String type) {
+        //借file的api进行
+        // 如果 type == "/", 则会返回null
+        String parentType = new File(type).getParent();
+        return parentType == null ? null : parentType.replaceAll("\\\\", "/");
+    }
+
+    // find the depth of the path or type
+    public static int depth(String path) {
+        if ("/".equals(path)) return 0;
+        return path.split("/").length - 1;
+    }
+
+    // find the top most path
+    // path: starts with "/"
+    public static String topPathOf(String path) {
+        String[] strings = path.split("/");
+        return "/" + strings[1];
     }
 }
