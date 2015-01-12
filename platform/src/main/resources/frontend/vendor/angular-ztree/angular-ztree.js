@@ -108,7 +108,6 @@ angular.module('ng-ztree', ['ng'])
       scope: {
         ngModel: "=", // 被选中的数据存在这里
         treeId: "@", // 树模型ID
-        treeModel: "=", // 展示的树模型
         type: "@", // radio or checkbox
         nodeName: "@", // 节点数据保存节点名称的属性名称
         children: "@", // 节点数据中保存子节点数据的属性名称
@@ -124,25 +123,27 @@ angular.module('ng-ztree', ['ng'])
       '</div>',
       link: function (scope, element, attrs) {
 
-        scope.filter = function (treeId, parentNode, childNodes) {
-          if (!childNodes) {
+        scope.type = scope.type?scope.type:"radio";
+
+        scope.filter = function (treeId, parentNode, responseData) {
+          if (!responseData) {
             return null;
           }
           // 顶级节点
-          else if (parentNode === undefined && childNodes instanceof Object) {
-            childNodes.isParent = true;
-            childNodes.icon = packageIconPath(childNodes.icon);
+          else if (parentNode === undefined) {
+            responseData.isParent = true;
+            responseData.icon = packageIconPath(responseData.icon);
           }
           // 二级节点及以下
-          else if (childNodes instanceof Array) {
-            for (var i = 0, l = childNodes.length; i < l; i++) {
-              if (childNodes[i].type && childNodes[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
-                childNodes[i].isParent = true;
-                childNodes[i].icon = packageIconPath(childNodes[i].icon);
+          else {
+            for (var i = 0, l = responseData.length; i < l; i++) {
+              if (responseData[i].type && responseData[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
+                responseData[i].isParent = true;
+                responseData[i].icon = packageIconPath(responseData[i].icon);
               }
             }
           }
-          return childNodes;
+          return responseData;
         };
 
         // icon路径封装
@@ -154,7 +155,6 @@ angular.module('ng-ztree', ['ng'])
         };
 
         scope.beforeClick = function (treeId, treeNode) {
-          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
           zTree.checkNode(treeNode, !treeNode.checked, null, true);
           return false;
         };
@@ -164,24 +164,32 @@ angular.module('ng-ztree', ['ng'])
           scope.$apply(function () {
             scope.ngModel = nodes;
           });
+          scope.hideMenu();
         };
 
         scope.getSelectedValue = function () {
-          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
           var nodes = [];
-          if(zTree!=null){
-            nodes = zTree.getCheckedNodes(true);
-          }
-
           var names = [];
-          if(scope.nodeName===undefined||scope.nodeName===null){
+          if(!scope.nodeName){
             scope.nodeName = "name";
           }
-          for (var i = 0; i < nodes.length; i++) {
-            names.push(nodes[i][scope.nodeName]);
+          if(zTree!=null){
+            nodes = zTree.getCheckedNodes(true);
+            if(scope.type=='radio'){
+              if(nodes && nodes.length>0){
+                $("#"+scope.treeId+"Sel").val(nodes[0][scope.nodeName]);
+                return nodes[0];
+              }else{
+                return null;
+              }
+            }else{
+              for (var i = 0; i < nodes.length; i++) {
+                names.push(nodes[i][scope.nodeName]);
+              }
+              $("#"+scope.treeId+"Sel").val(names.join());
+              return nodes;
+            }
           }
-          $("#"+scope.treeId+"Sel").val(names.join());
-          return nodes;
         };
 
         scope.showMenu = function () {
@@ -244,16 +252,10 @@ angular.module('ng-ztree', ['ng'])
           }
         };
 
-        scope.$watch('treeModel', function () {
-
-          if (angular.isDefined(scope.treeModel)) {
-            delete scope.treeModel.$promise;
-            delete scope.treeModel.$resolved;
-          }
-          $.fn.zTree.init($("#"+scope.treeId), setting, scope.treeModel);
-
-          scope.ngModel = scope.getSelectedValue();
-
+        var zTree;
+        scope.$watch('url', function () {
+        $.fn.zTree.init($("#"+scope.treeId), setting, null);
+        zTree = $.fn.zTree.getZTreeObj(scope.treeId);
         }, true);
       }
     };
