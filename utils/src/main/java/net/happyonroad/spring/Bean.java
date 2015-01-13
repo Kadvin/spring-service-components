@@ -6,19 +6,21 @@ package net.happyonroad.spring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 
 /**
  * <h2>基本的Spring Bean</h2>
  * 支持Lifecycle相关接口
  */
-public class Bean implements SmartLifecycle {
+public class Bean implements SmartLifecycle, PriorityOrdered {
     public static final int    DEFAULT_PHASE = 100;
     protected           Logger logger        = LoggerFactory.getLogger(getClass());
 
     protected int phase = DEFAULT_PHASE;
     protected boolean running;
     protected boolean autoStartup = false;
+    private int order;
 
     @Override
     public void start() {
@@ -82,6 +84,15 @@ public class Bean implements SmartLifecycle {
     protected void starting() {
         logger.debug("{} Starting", this);
         running = true;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     /** 默认的 started 方法，主要就是说明自身已经启动完成 */
