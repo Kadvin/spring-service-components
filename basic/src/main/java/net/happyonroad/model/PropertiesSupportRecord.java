@@ -34,4 +34,8 @@ public class PropertiesSupportRecord extends Record{
         return getProperty(name, null);
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
