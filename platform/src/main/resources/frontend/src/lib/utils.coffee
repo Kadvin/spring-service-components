@@ -23,5 +23,12 @@ angular.module('Lib.Utils', [])
           regx = new RegExp "\\{#{i - 1}\\}", "gm"
           string = string.replace regx, val
         return string
+
+      isEmpty: (obj) ->
+        for name of obj
+          return false
+        true
+      isNotEmpty: (obj) ->
+        !@isEmpty(obj)
     }
   ])
