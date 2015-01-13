@@ -12,7 +12,7 @@ import org.junit.Test;
  * 测试 Ssh Credential to/from Json
  */
 public class SshCredentialTest {
-    public static final String JSON = "{\"user\":\"root\",\"password\":\"secret\",\"port\":22,\"timeout\":1000}";
+    public static final String JSON = "{\"class\":\"net.happyonroad.credential.SshCredential\",\"user\":\"root\",\"password\":\"secret\",\"port\":22,\"timeout\":1000}";
     SshCredential SSH = new SshCredential("root", "secret");
 
     @Test
