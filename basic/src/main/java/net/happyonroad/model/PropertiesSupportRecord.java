@@ -9,6 +9,7 @@ import java.util.Properties;
  * 支持扩展属性的记录
  */
 public class PropertiesSupportRecord extends Record{
+
     // 扩展属性
     private Properties properties;
 
