@@ -361,11 +361,11 @@ app.factory('ngTableParams', ['$q', '$log', function ($q, $log) {
             for (var key in params) {
                 if (params.hasOwnProperty(key)) {
                     var item = params[key],
-                        name = encodeURIComponent(key);
+                        name = key;
                     if (typeof item === "object") {
                         for (var subkey in item) {
                             if (!angular.isUndefined(item[subkey]) && item[subkey] !== "") {
-                                var pname = name + "[" + encodeURIComponent(subkey) + "]";
+                                var pname = name + "[" + subkey + "]";
                                 if (asString) {
                                     pairs.push(pname + "=" + item[subkey]);
                                 } else {
@@ -375,9 +375,9 @@ app.factory('ngTableParams', ['$q', '$log', function ($q, $log) {
                         }
                     } else if (!angular.isFunction(item) && !angular.isUndefined(item) && item !== "") {
                         if (asString) {
-                            pairs.push(name + "=" + encodeURIComponent(item));
+                            pairs.push(name + "=" + item);
                         } else {
-                            pairs[name] = encodeURIComponent(item);
+                            pairs[name] = item;
                         }
                     }
                 }
