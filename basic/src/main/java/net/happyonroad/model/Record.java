@@ -18,10 +18,13 @@ import java.sql.Timestamp;
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Record {
+
     protected static ObjectMapper mapper = new ObjectMapper();
 
     private Long      id;
     private Timestamp createdAt, updatedAt;
+    @JsonIgnore
+    private boolean cascadeDeleting, cascadeCreating;
 
     public Long getId() {
         return id;
@@ -100,5 +103,24 @@ public class Record {
     @JsonIgnore
     public boolean isNew() {
         return id == null || id <= 0 ;
+    }
+
+
+    public void cascadeCreating(){
+        cascadeCreating = true;
+    }
+
+    public void cascadeDeleting(){
+        cascadeDeleting = true;
+    }
+
+    @JsonIgnore
+    public boolean isCascadeCreating(){
+        return cascadeCreating;
+    }
+
+    @JsonIgnore
+    public boolean isCascadeDeleting(){
+        return cascadeDeleting;
     }
 }
