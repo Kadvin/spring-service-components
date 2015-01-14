@@ -20,7 +20,9 @@
     "angular-ui-tree": "~2.1.4",
     "angular-auto-validate": "~1.7.21",
     "select2": "~3.5.2",
-    "echarts": "~2.1.10"
+    "echarts": "~2.1.10",
+    "jquery-ui": "1.11.0"
+
   },
   "depeacendencies": {
     "-ace-bootstrap": "git@github.com:Kadvin/ace-bootstrap.git",
