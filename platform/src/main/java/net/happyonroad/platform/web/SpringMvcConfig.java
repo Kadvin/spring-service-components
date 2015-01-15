@@ -42,6 +42,11 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport implements Initi
     }
 
     @Bean
+    public SpringWebSocketConfig webSocketConfig(){
+        return new SpringWebSocketConfig();
+    }
+
+    @Bean
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
         PathMatchConfigurer configurer = new PathMatchConfigurer();
         configurePathMatch(configurer);
