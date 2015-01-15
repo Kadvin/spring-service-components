@@ -34,36 +34,65 @@ angular.module('ng-ztree', ['ng'])
           });
         };
 
+        //---展示节点路径
+        var separator = '>';
+        var getPathText = function (node) {
+          if (node) {
+            var s = getNodeLabel(node);
+            while (node = node.getParentNode()) {
+              s = getNodeLabel(node) + separator + s;
+            }
+            return s;
+          }else{
+            return null;
+          }
+        };
+
+        var getNodeLabel = function (node) {
+          if (!scope.nodeName) {
+            scope.nodeName = "name";
+          }
+          return node[scope.nodeName];
+        };
+
         scope.getSelectedValue = function () {
           var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
           var nodes = zTree.getCheckedNodes(true);
 
           var names = [];
           for (var i = 0; i < nodes.length; i++) {
-            names.push(nodes[i].name);
+            names.push(getPathText(nodes[i]));
           }
-          $("#"+scope.treeId+"Sel").val(names.join());
+          $("#" + scope.treeId + "Sel").val(names.join());
           return nodes;
         };
 
         scope.showMenu = function () {
-          var cityObj = $("#"+scope.treeId+"Sel");
-          var cityOffset = $("#"+scope.treeId+"Sel").offset();
-          $("#"+scope.treeId+"Content").css({
+          var cityObj = $("#" + scope.treeId + "Sel");
+          var cityOffset = cityObj.offset();
+          $("#" + scope.treeId + "Content").css({
             left: cityOffset.left + "px",
             top: cityOffset.top + cityObj.outerHeight() + "px"
           }).slideDown("fast");
 
           $("body").bind("mousedown", scope.onBodyDown);
+
+          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
+          var node1 = zTree.getNodeByParam("type", "/", null);
+          var node2 = zTree.getNodeByParam("type", "/application", null);
+          var node3 = zTree.getNodeByParam("type", "/application/monitor_server", null);
+          zTree.setChkDisabled(node1, true);
+          zTree.setChkDisabled(node2, true);
+          zTree.removeNode(node3);
         };
 
         scope.hideMenu = function () {
-          $("#"+scope.treeId+"Content").fadeOut("fast");
+          $("#" + scope.treeId + "Content").fadeOut("fast");
           $("body").unbind("mousedown", scope.onBodyDown);
         };
 
         scope.onBodyDown = function (event) {
-          if (!(event.target.id == "menuBtn" || event.target.id == scope.treeId+"Sel" || event.target.id == scope.treeId+"Content" || $(event.target).parents("#"+scope.treeId+"Content").length > 0)) {
+          if (!(event.target.id == "menuBtn" || event.target.id == scope.treeId + "Sel" || event.target.id == scope.treeId + "Content" || $(event.target).parents("#" + scope.treeId + "Content").length > 0)) {
             scope.hideMenu();
           }
         };
@@ -93,7 +122,7 @@ angular.module('ng-ztree', ['ng'])
             delete scope.treeModel.$promise;
             delete scope.treeModel.$resolved;
           }
-          $.fn.zTree.init($("#"+scope.treeId), setting, scope.treeModel);
+          $.fn.zTree.init($("#" + scope.treeId), setting, scope.treeModel);
 
           scope.ngModel = scope.getSelectedValue();
 
@@ -160,6 +189,27 @@ angular.module('ng-ztree', ['ng'])
           return false;
         };
 
+        //---展示节点路径
+        var separator = '>';
+        var getPathText = function (node) {
+          if (node) {
+            var s = getNodeLabel(node);
+            while (node = node.getParentNode()) {
+              s = getNodeLabel(node) + separator + s;
+            }
+            return s;
+          }else{
+            return null;
+          }
+        };
+
+        var getNodeLabel = function (node) {
+          if (!scope.nodeName) {
+            scope.nodeName = "name";
+          }
+          return node[scope.nodeName];
+        };
+
         scope.onCheck = function (e, treeId, treeNode) {
           var nodes = scope.getSelectedValue();
           scope.$apply(function () {
@@ -178,14 +228,16 @@ angular.module('ng-ztree', ['ng'])
             nodes = zTree.getCheckedNodes(true);
             if (scope.type == 'radio') {
               if (nodes && nodes.length > 0) {
-                $("#" + scope.treeId + "Sel").val(nodes[0][scope.nodeName]);
+                var fullPathLabel = getPathText(nodes[0])
+                $("#" + scope.treeId + "Sel").val(fullPathLabel);
                 return nodes[0];
               } else {
                 return null;
               }
             } else {
               for (var i = 0; i < nodes.length; i++) {
-                names.push(nodes[i][scope.nodeName]);
+                var fullPathLabel = getPathText(nodes[i])
+                names.push(fullPathLabel);
               }
               $("#" + scope.treeId + "Sel").val(names.join());
               return nodes;
@@ -226,9 +278,9 @@ angular.module('ng-ztree', ['ng'])
             return scope.url;
           }
           var urls = scope.url.split("?");
-          if(urls.length>1) {
+          if (urls.length > 1) {
             return urls[0] + treeNode.path + "?" + urls[1];
-          }else{
+          } else {
             return scope.url + treeNode.path;
           }
         }
@@ -248,12 +300,12 @@ angular.module('ng-ztree', ['ng'])
             if (curStatus != "init" && curStatus != "") {
               asyncForAll = true;
               scope.$apply(function () {
-                if(scope.ngModel){
-                  console.log("scope.ngModel.path:"+scope.ngModel.path);
+                if (scope.ngModel) {
+//                  console.log("scope.ngModel.path:" + scope.ngModel.path);
                   var nodes = zTree.getNodes();
-                  console.log("nodes:"+nodes);
+//                  console.log("nodes:" + nodes);
                   var node = zTree.getNodeByParam("path", scope.ngModel.path, null);
-                  if(node){
+                  if (node) {
                     zTree.selectNode(node);
                     node.checked = true;
                     zTree.updateNode(node);
@@ -279,7 +331,7 @@ angular.module('ng-ztree', ['ng'])
           }
         }
 
-        var zTree,curStatus = "init", curAsyncCount = 0, asyncForAll = false, goAsync = false, path="";
+        var zTree, curStatus = "init", curAsyncCount = 0, asyncForAll = false, goAsync = false, path = "";
 
         var setting = {
           view: {
