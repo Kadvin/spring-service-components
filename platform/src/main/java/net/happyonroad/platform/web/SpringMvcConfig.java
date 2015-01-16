@@ -3,6 +3,8 @@
  */
 package net.happyonroad.platform.web;
 
+import net.happyonroad.platform.web.handler.NorthHandler;
+import net.happyonroad.platform.web.handler.SouthHandler;
 import net.happyonroad.platform.web.interceptor.AfterFilterInterceptor;
 import net.happyonroad.platform.web.interceptor.BeforeFilterInterceptor;
 import net.happyonroad.platform.web.support.ExtendedRequestMappingHandlerMapping;
@@ -22,6 +24,10 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import java.util.List;
 
@@ -32,18 +38,15 @@ import java.util.List;
 //@EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan("net.happyonroad.platform.web.controller")
-public class SpringMvcConfig extends WebMvcConfigurationSupport implements InitializingBean {
+@EnableWebSocket
+public class SpringMvcConfig extends WebMvcConfigurationSupport
+        implements InitializingBean, WebSocketConfigurer {
     public static final Log logger = LogFactory.getLog(SpringMvcConfig.class);
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         super.configureContentNegotiation(configurer);
         configurer.defaultContentType(MediaType.APPLICATION_JSON);
-    }
-
-    @Bean
-    public SpringWebSocketConfig webSocketConfig(){
-        return new SpringWebSocketConfig();
     }
 
     @Bean
@@ -129,5 +132,19 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport implements Initi
         registration.setCachePeriod(oneYear);
     }
 
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(southHandler(), "/south")
+                .addHandler(northHandler(), "/north").withSockJS();
+    }
+
+    @Bean
+    public WebSocketHandler southHandler() {
+        return new SouthHandler();
+    }
+
+    private WebSocketHandler northHandler() {
+        return new NorthHandler();
+    }
 
 }

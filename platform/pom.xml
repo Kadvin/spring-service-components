@@ -7,11 +7,11 @@
     <parent>
         <groupId>net.happyonroad</groupId>
         <artifactId>spring-service-components</artifactId>
-        <version>1.0.4.2</version>
+        <version>1.0.5</version>
     </parent>
 
     <artifactId>platform</artifactId>
-    <version>1.0.4.2</version>
+    <version>1.0.5</version>
 
     <name>Components Platform</name>
     <description>
@@ -40,6 +40,14 @@
             <artifactId>spring-security-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
         </dependency>
@@ -59,7 +67,15 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>${version.javax.websocket}</version>
+        </dependency>
         <!--ORM Related-->
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -145,5 +161,5 @@
         </plugins>
     </build>
 
-    
+
 </project>
