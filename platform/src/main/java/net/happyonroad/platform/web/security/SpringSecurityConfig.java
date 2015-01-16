@@ -19,6 +19,10 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.regex.Pattern;
 
 /**
  * Work as parent of SpringMvcConfig
@@ -29,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().requireCsrfProtectionMatcher(new RegexRequestMatcher("^/(north|south)/.*$", null));
+        http.csrf().requireCsrfProtectionMatcher(new CustomMatcher());
         http.exceptionHandling().accessDeniedHandler(new LoginPageDeniedHandler());
         http.authenticationProvider(delegateAuthenticationProvider())
                 // 配置了 authentication provider 之后， 不需要配置 user details service
@@ -91,5 +95,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
     public DelegateSecurityConfigurer delegate(PersistentTokenRepository delegate) {
         delegateTokenRepository().setDelegate(delegate);
         return this;
+    }
+
+    private static final class CustomMatcher implements RequestMatcher {
+        private Pattern allowedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
+
+        /* (non-Javadoc)
+         * @see org.springframework.security.web.util.matcher.RequestMatcher#matches(javax.servlet.http.HttpServletRequest)
+         */
+        public boolean matches(HttpServletRequest request) {
+            if ( request.getPathInfo().startsWith("/south") || request.getPathInfo().startsWith("/north") )
+               return false;
+            return !allowedMethods.matcher(request.getMethod()).matches();
+        }
     }
 }
