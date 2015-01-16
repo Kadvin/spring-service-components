@@ -104,7 +104,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
          * @see org.springframework.security.web.util.matcher.RequestMatcher#matches(javax.servlet.http.HttpServletRequest)
          */
         public boolean matches(HttpServletRequest request) {
-            if ( request.getPathInfo().startsWith("/south") || request.getPathInfo().startsWith("/north") )
+            if ( request.getServletPath().startsWith("/south") || request.getServletPath().startsWith("/north") )
                return false;
             return !allowedMethods.matcher(request.getMethod()).matches();
         }
