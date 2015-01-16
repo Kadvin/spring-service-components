@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 /**
  * Work as parent of SpringMvcConfig
@@ -28,6 +29,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implement
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().requireCsrfProtectionMatcher(new RegexRequestMatcher("^/(north|south)/.*$", null));
         http.exceptionHandling().accessDeniedHandler(new LoginPageDeniedHandler());
         http.authenticationProvider(delegateAuthenticationProvider())
                 // 配置了 authentication provider 之后， 不需要配置 user details service
