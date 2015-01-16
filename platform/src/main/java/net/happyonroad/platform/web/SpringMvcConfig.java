@@ -3,8 +3,7 @@
  */
 package net.happyonroad.platform.web;
 
-import net.happyonroad.platform.web.handler.NorthHandler;
-import net.happyonroad.platform.web.handler.SouthHandler;
+import net.happyonroad.platform.web.handler.DefaultDelegateWebSocketHandler;
 import net.happyonroad.platform.web.interceptor.AfterFilterInterceptor;
 import net.happyonroad.platform.web.interceptor.BeforeFilterInterceptor;
 import net.happyonroad.platform.web.support.ExtendedRequestMappingHandlerMapping;
@@ -134,17 +133,18 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(southHandler(), "/south")
-                .addHandler(northHandler(), "/north").withSockJS();
+        registry.addHandler(southWebSocketHandler(), "/south")
+                .addHandler(northWebSocketHandler(), "/north").withSockJS();
     }
 
     @Bean
-    public WebSocketHandler southHandler() {
-        return new SouthHandler();
+    public WebSocketHandler southWebSocketHandler() {
+        return new DefaultDelegateWebSocketHandler();
     }
 
-    private WebSocketHandler northHandler() {
-        return new NorthHandler();
+    @Bean
+    public WebSocketHandler northWebSocketHandler() {
+        return new DefaultDelegateWebSocketHandler();
     }
 
 }

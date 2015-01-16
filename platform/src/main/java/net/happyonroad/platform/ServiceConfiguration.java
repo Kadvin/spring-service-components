@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform;
 
+import net.happyonroad.platform.web.handler.DelegateWebSocketHandler;
 import net.happyonroad.platform.web.security.DelegateSecurityConfigurer;
 import net.happyonroad.spring.service.AbstractServiceConfig;
 import org.apache.ibatis.session.Configuration;
@@ -29,6 +30,10 @@ public class ServiceConfiguration extends AbstractServiceConfig {
         //Spring Security相关服务
         exportService(DelegateSecurityConfigurer.class);
 
+        //Spring North WebSocket Handler
+        exportService(DelegateWebSocketHandler.class, "north", "northWebSocketHandler");
+        //Spring South WebSocket Handler
+        exportService(DelegateWebSocketHandler.class, "south", "southWebSocketHandler");
         //全局的class loader，能够读到所有的类，包括动态加载的类
         //exportService(ClassLoader.class, "global", "containerAwareClassLoader");
     }
