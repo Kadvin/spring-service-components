@@ -71,11 +71,6 @@
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-server</artifactId>
         </dependency>
-        <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-api</artifactId>
-            <version>${version.javax.websocket}</version>
-        </dependency>
         <!--ORM Related-->
         <dependency>
             <groupId>org.mybatis</groupId>
@@ -99,10 +94,6 @@
             <artifactId>utils</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>net.happyonroad</groupId>
-            <artifactId>spring-component-framework</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>

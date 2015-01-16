@@ -29,7 +29,6 @@
         <module>utils</module>
         <module>message_bus</module>
         <module>cache_service</module>
-        <module>config</module>
         <module>redis</module>
         <module>remoting</module>
         <module>platform</module>
@@ -74,11 +73,6 @@
             </dependency>
 
             <!-- Components DEPENDENCIES -->
-            <dependency>
-                <groupId>net.happyonroad</groupId>
-                <artifactId>config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>net.happyonroad</groupId>
                 <artifactId>utils</artifactId>
