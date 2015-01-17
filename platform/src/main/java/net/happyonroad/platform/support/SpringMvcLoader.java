@@ -107,6 +107,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
     private void registerHttpMethodFilter(ServletContext servletContext) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(METHOD_FILTER_NAME, HiddenHttpMethodFilter.class);
+        registration.setAsyncSupported(true);
         registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
     }
 
