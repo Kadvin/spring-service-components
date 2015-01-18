@@ -48,6 +48,12 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     }
 
     @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        super.customizeRegistration(registration);
+        registration.setAsyncSupported(true);
+    }
+
+    @Override
     protected WebApplicationContext createRootApplicationContext() {
         return webAppContext = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
     }
