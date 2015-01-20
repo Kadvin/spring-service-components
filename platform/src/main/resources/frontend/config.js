@@ -108,6 +108,7 @@ module.exports = {
       '../vendor/ace-bootstrap/js/ace.js',
       '../vendor/ace-bootstrap/js/ace-elements.js',
       '../vendor/ace-bootstrap/js/ace-extra.js',
+      '../vendor/ace-bootstrap/js/jquery.raty.js',
       '../vendor/typehead.js/bs2/typeahead-bs2.js',
       '../vendor/ng-table/ng-table.js',
       '../vendor/ng-grid/ng-grid-2.0.11.debug.js',

@@ -1,373 +1,389 @@
-angular.module('ng-ztree', ['ng'])
+(function () {
+  "use strict";
 
-  .directive('ngZtree', function () {
-    return {
-      require: '?ngModel',
-      restrict: 'EA',
-      replace: true,
-      scope: {
-        treeId: "@", // 树模型ID
-        ngModel: "=", // 被选中的数据存在这里
-        treeModel: "=", // 展示的树模型
-        type: "@", // radio or checkbox
-        nodeName: "@", // 节点数据保存节点名称的属性名称
-        children: "@", // 节点数据中保存子节点数据的属性名称
-        checked: "@" // 节点数据中保存 check 状态的属性名称
-      },
-      template: '<div>' +
-        '  <input id="{{treeId}}Sel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
-        '  <div id="{{treeId}}Content">' +
-        '    <ul id="{{treeId}}" class="ztree" style="margin-top:0; width:280px; height: 300px;"></ul>' +
-        '  </div>' +
-        '</div>',
-      link: function (scope, element, attrs) {
-        scope.beforeClick = function (treeId, treeNode) {
-          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
-          zTree.checkNode(treeNode, !treeNode.checked, null, true);
-          return false;
-        };
+  angular.module('ng-ztree', [])
 
-        scope.onCheck = function (e, treeId, treeNode) {
-          var nodes = scope.getSelectedValue();
-          scope.$apply(function () {
-            scope.ngModel = nodes;
-          });
-        };
+    .directive('ngZtree', function () {
+      return {
+        require: '?ngModel',
+        restrict: 'EA',
+        replace: true,
+        scope: {
+          treeId: "@", // 树模型ID
+          ngModel: "=", // 被选中的数据存在这里
+          treeModel: "=", // 展示的树模型
+          type: "@", // radio or checkbox
+          nodeName: "@", // 节点数据保存节点名称的属性名称
+          children: "@", // 节点数据中保存子节点数据的属性名称
+          checked: "@", // 节点数据中保存 check 状态的属性名称
+          disabledNodes: "=", // 不可被选中的节点
+          removedNodes: "=" // 需要从树中移动的节点
+        },
+        template: '<div>' +
+          '  <input id="{{treeId}}Sel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
+          '  <div id="{{treeId}}Content">' +
+          '    <ul id="{{treeId}}" class="ztree" style="margin-top:0; width:280px; height: 300px;"></ul>' +
+          '  </div>' +
+          '</div>',
+        link: function (scope, element, attrs) {
 
-        //---展示节点路径
-        var separator = '>';
-        var getPathText = function (node) {
-          if (node) {
-            var s = getNodeLabel(node);
-            while (node = node.getParentNode()) {
-              s = getNodeLabel(node) + separator + s;
-            }
-            return s;
-          }else{
-            return null;
-          }
-        };
+          var beforeClick = function (treeId, treeNode) {
+            zTree.checkNode(treeNode, true, false, true);
+            return !treeNode.chkDisabled;
+          };
 
-        var getNodeLabel = function (node) {
-          if (!scope.nodeName) {
-            scope.nodeName = "name";
-          }
-          return node[scope.nodeName];
-        };
+          var onClick = function (event, treeId, treeNode) {
+            hideMenu();
+          };
 
-        scope.getSelectedValue = function () {
-          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
-          var nodes = zTree.getCheckedNodes(true);
+          var beforeCheck = function(treeId, treeNode) {
+            return !treeNode.chkDisabled;
+          };
 
-          var names = [];
-          for (var i = 0; i < nodes.length; i++) {
-            names.push(getPathText(nodes[i]));
-          }
-          $("#" + scope.treeId + "Sel").val(names.join());
-          return nodes;
-        };
+          var onCheck = function (e, treeId, treeNode) {
+            zTree.checkNode(treeNode, true, false);
+            var nodes = findSelectedValue();
+            scope.$apply(function () {
+              scope.ngModel = nodes;
+            });
+          };
 
-        scope.showMenu = function () {
-          var cityObj = $("#" + scope.treeId + "Sel");
-          var cityOffset = cityObj.offset();
-          $("#" + scope.treeId + "Content").css({
-            left: cityOffset.left + "px",
-            top: cityOffset.top + cityObj.outerHeight() + "px"
-          }).slideDown("fast");
-
-          $("body").bind("mousedown", scope.onBodyDown);
-
-          var zTree = $.fn.zTree.getZTreeObj(scope.treeId);
-          var node1 = zTree.getNodeByParam("type", "/", null);
-          var node2 = zTree.getNodeByParam("type", "/application", null);
-          var node3 = zTree.getNodeByParam("type", "/application/monitor_server", null);
-          zTree.setChkDisabled(node1, true);
-          zTree.setChkDisabled(node2, true);
-          zTree.removeNode(node3);
-        };
-
-        scope.hideMenu = function () {
-          $("#" + scope.treeId + "Content").fadeOut("fast");
-          $("body").unbind("mousedown", scope.onBodyDown);
-        };
-
-        scope.onBodyDown = function (event) {
-          if (!(event.target.id == "menuBtn" || event.target.id == scope.treeId + "Sel" || event.target.id == scope.treeId + "Content" || $(event.target).parents("#" + scope.treeId + "Content").length > 0)) {
-            scope.hideMenu();
-          }
-        };
-
-        var setting = {
-          check: {
-            enable: true,
-            chkStyle: scope.type,
-            radioType: "all"
-          },
-          callback: {
-            beforeClick: scope.beforeClick,
-            onCheck: scope.onCheck
-          },
-          data: {
-            key: {
-              name: scope.nodeName,
-              children: scope.children,
-              checked: scope.checked
-            }
-          }
-        };
-
-        scope.$watch('treeModel', function () {
-
-          if (angular.isDefined(scope.treeModel)) {
-            delete scope.treeModel.$promise;
-            delete scope.treeModel.$resolved;
-          }
-          $.fn.zTree.init($("#" + scope.treeId), setting, scope.treeModel);
-
-          scope.ngModel = scope.getSelectedValue();
-
-        }, true);
-      }
-    };
-  })
-
-  .directive('ngZtreeAsync', function () {
-    return {
-      require: '?ngModel',
-      restrict: 'EA',
-      scope: {
-        ngModel: "=", // 被选中的数据存在这里
-        treeId: "@", // 树模型ID
-        type: "@", // radio or checkbox
-        nodeName: "@", // 节点数据保存节点名称的属性名称
-        children: "@", // 节点数据中保存子节点数据的属性名称
-        checked: "@", // 节点数据中保存 check 状态的属性名称
-        topLevelUrl: "@", // 异步加载的顶级URL
-        url: "@" // 异步加载的URL
-      },
-      template: '<div>' +
-        '  <input id="{{treeId}}Sel" type="text" readonly ng-click="showMenu();" ng-init="showMenu();" style="width: 100%"/>' +
-        '  <div id="{{treeId}}Content">' +
-        '    <ul id="{{treeId}}" class="ztree" style="position:absolute;margin-top:0; width:280px; height: 300px;z-index: 9"></ul>' +
-        '  </div>' +
-        '</div>',
-      link: function (scope, element, attrs) {
-
-        scope.type = scope.type ? scope.type : "radio";
-
-        scope.filter = function (treeId, parentNode, responseData) {
-          if (!responseData) {
-            return null;
-          }
-          // 顶级节点
-          else if (parentNode === undefined) {
-            responseData.isParent = true;
-            responseData.icon = warpIconPath(responseData.icon);
-          }
-          // 二级节点及以下
-          else {
-            for (var i = 0, l = responseData.length; i < l; i++) {
-              if (responseData[i].type && responseData[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
-                responseData[i].isParent = true;
-                responseData[i].icon = warpIconPath(responseData[i].icon);
+          //---展示节点路径
+          var separator = '>';
+          var findPathText = function (node) {
+            if (node) {
+              var s = findNodeLabel(node);
+              while (node = node.getParentNode()) {
+                s = findNodeLabel(node) + separator + s;
               }
-            }
-          }
-          return responseData;
-        };
-
-        // icon路径封装
-        var warpIconPath = function (iconName) {
-          if (iconName === undefined || iconName === null) {
-            return null;
-          }
-          return "assets/sys_icons/" + iconName + "/16x16.png";
-        };
-
-        scope.beforeClick = function (treeId, treeNode) {
-          zTree.checkNode(treeNode, !treeNode.checked, null, true);
-          return false;
-        };
-
-        //---展示节点路径
-        var separator = '>';
-        var getPathText = function (node) {
-          if (node) {
-            var s = getNodeLabel(node);
-            while (node = node.getParentNode()) {
-              s = getNodeLabel(node) + separator + s;
-            }
-            return s;
-          }else{
-            return null;
-          }
-        };
-
-        var getNodeLabel = function (node) {
-          if (!scope.nodeName) {
-            scope.nodeName = "name";
-          }
-          return node[scope.nodeName];
-        };
-
-        scope.onCheck = function (e, treeId, treeNode) {
-          var nodes = scope.getSelectedValue();
-          scope.$apply(function () {
-            scope.ngModel = nodes;
-          });
-          scope.hideMenu();
-        };
-
-        scope.getSelectedValue = function () {
-          var nodes = [];
-          var names = [];
-          if (!scope.nodeName) {
-            scope.nodeName = "name";
-          }
-          if (zTree != null) {
-            nodes = zTree.getCheckedNodes(true);
-            if (scope.type == 'radio') {
-              if (nodes && nodes.length > 0) {
-                var fullPathLabel = getPathText(nodes[0])
-                $("#" + scope.treeId + "Sel").val(fullPathLabel);
-                return nodes[0];
-              } else {
-                return null;
-              }
+              return s;
             } else {
-              for (var i = 0; i < nodes.length; i++) {
-                var fullPathLabel = getPathText(nodes[i])
-                names.push(fullPathLabel);
-              }
-              $("#" + scope.treeId + "Sel").val(names.join());
-              return nodes;
+              return null;
             }
-          }
-        };
+          };
 
-        scope.showMenu = function () {
-          var cityObj = $("#" + scope.treeId + "Sel");
-          var cityOffset = cityObj.offset();
-          $("#" + scope.treeId + "Content").css({
-            left: cityOffset.left + "px",
-            top: cityOffset.top + cityObj.outerHeight() + "px"
-          }).slideDown("fast");
+          var findNodeLabel = function (node) {
+            if (!scope.nodeName) {
+              scope.nodeName = "name";
+            }
+            return node[scope.nodeName];
+          };
 
-          $("body").bind("mousedown", scope.onBodyDown);
+          var findSelectedValue = function () {
+            var nodes = zTree.getCheckedNodes(true);
 
-          var node = zTree.getNodes();
-          zTree.reAsyncChildNodes(node[0], "refresh");
-        };
+            var names = [];
+            for (var i = 0; i < nodes.length; i++) {
+              names.push(findPathText(nodes[i]));
+            }
+            $("#" + scope.treeId + "Sel").val(names.join());
+            return nodes;
+          };
 
-        scope.hideMenu = function () {
-          $("#" + scope.treeId + "Content").fadeOut("fast");
-          $("body").unbind("mousedown", scope.onBodyDown);
-        };
+          scope.showMenu = function () {
+            var cityObj = $("#" + scope.treeId + "Sel");
+            var cityOffset = cityObj.offset();
+            $("#" + scope.treeId + "Content").css({
+              left: cityOffset.left + "px",
+              top: cityOffset.top + cityObj.outerHeight() + "px"
+            }).slideDown("fast");
 
-        scope.onBodyDown = function (event) {
-          if (!(event.target.id == "menuBtn" || event.target.id == "" + scope.treeId + "Sel" || event.target.id == "" + scope.treeId + "Content" || $(event.target).parents("#" + scope.treeId + "Content").length > 0)) {
-            scope.hideMenu();
-          }
-        };
+            $("body").bind("mousedown", onBodyDown);
 
-        function getAsyncUrl(treeId, treeNode) {
-          if ((treeNode === undefined || treeNode === null ) && scope.topLevelUrl !== undefined) {
-            return scope.topLevelUrl;
-          }
-          if (treeNode === undefined || treeNode === null) {
-            return scope.url;
-          }
-          var urls = scope.url.split("?");
-          if (urls.length > 1) {
-            return urls[0] + treeNode.path + "?" + urls[1];
-          } else {
-            return scope.url + treeNode.path;
-          }
+            if(scope.disabledNodes){
+              for(var i=0;i<scope.disabledNodes.length;i++){
+                var disabledNode = scope.disabledNodes[i];
+                var node = zTree.getNodeByParam(disabledNode.name, disabledNode.value);
+                if(node)
+                  zTree.setChkDisabled(node, true);
+              }
+            }
+            if(scope.removedNodes){
+              for(var i=0;i<scope.removedNodes.length;i++){
+                var removedNode = scope.removedNodes[i];
+                var node = zTree.getNodeByParam(removedNode.name, removedNode.value);
+                if(node)
+                  zTree.removeNode(node);
+              }
+            }
+          };
+
+          var hideMenu = function () {
+            $("#" + scope.treeId + "Content").fadeOut("fast");
+            $("body").unbind("mousedown", onBodyDown);
+          };
+
+          var onBodyDown = function (event) {
+            if (!(event.target.id == scope.treeId + "Sel" || event.target.id == scope.treeId + "Content" || $(event.target).parents("#" + scope.treeId + "Content").length > 0)) {
+              hideMenu();
+            }
+          };
+
+          var setting = {
+            check: {
+              enable: true,
+              chkStyle: scope.type,
+              radioType: "all"
+            },
+            callback: {
+              beforeClick: beforeClick,
+              onClick: onClick,
+              beforeCheck: beforeCheck,
+              onCheck: onCheck
+            },
+            data: {
+              key: {
+                name: scope.nodeName,
+                children: scope.children,
+                checked: scope.checked
+              }
+            }
+          };
+
+          var zTree = {};
+          scope.$watch('treeModel', function () {
+
+            if (angular.isDefined(scope.treeModel)) {
+              delete scope.treeModel.$promise;
+              delete scope.treeModel.$resolved;
+            }
+            $.fn.zTree.init($("#" + scope.treeId), setting, scope.treeModel);
+            zTree = $.fn.zTree.getZTreeObj(scope.treeId);
+
+            scope.ngModel = findSelectedValue();
+
+          }, true);
         }
+      };
+    })
 
-        function beforeAsync() {
-          curAsyncCount++;
-        }
+    .directive('ngZtreeAsync', function () {
+      return {
+        require: '?ngModel',
+        restrict: 'EA',
+        scope: {
+          ngModel: "=", // 被选中的数据存在这里
+          treeId: "@", // 树模型ID
+          type: "@", // radio or checkbox
+          nodeName: "@", // 节点数据保存节点名称的属性名称
+          children: "@", // 节点数据中保存子节点数据的属性名称
+          checked: "@", // 节点数据中保存 check 状态的属性名称
+          checkDisabled: "@", // 是否可选择标记，true为不可选择
+          topLevelUrl: "@", // 异步加载的顶级URL
+          url: "@" // 异步加载的URL
+        },
+        template: '<div>' +
+          '  <input id="{{treeId}}Sel" type="text" readonly ng-click="showMenu();" style="width: 100%"/>' +
+          '  <div id="{{treeId}}Content">' +
+          '    <ul id="{{treeId}}" class="ztree" style="position:absolute;margin-top:0; width:280px; height: 300px;z-index: 9"></ul>' +
+          '  </div>' +
+          '</div>',
+        link: function (scope, element, attrs) {
 
-        function onAsyncSuccess(event, treeId, treeNode, msg) {
-          curAsyncCount--;
-          if (treeNode) {
-            asyncNodes(treeNode.children);
-          } else {
-            asyncNodes(treeNode);
-          }
-          if (curAsyncCount <= 0) {
-            if (curStatus != "init" && curStatus != "") {
-              asyncForAll = true;
-              scope.$apply(function () {
-                if (scope.ngModel) {
-//                  console.log("scope.ngModel.path:" + scope.ngModel.path);
-                  var nodes = zTree.getNodes();
-//                  console.log("nodes:" + nodes);
-                  var node = zTree.getNodeByParam("path", scope.ngModel.path, null);
-                  if (node) {
-                    zTree.selectNode(node);
-                    node.checked = true;
-                    zTree.updateNode(node);
-                    scope.getSelectedValue();
-                  }
+          var type = scope.type ? scope.type : "radio";
+
+          var filter = function (treeId, parentNode, responseData) {
+            if (!responseData) {
+              return null;
+            }
+            // 顶级节点
+            else if (parentNode === undefined) {
+              responseData.isParent = true;
+              responseData.icon = warpTreeIconPath(responseData.icon);
+            }
+            // 二级节点及以下
+            else {
+              for (var i = 0, l = responseData.length; i < l; i++) {
+                if (responseData[i].type && responseData[i].type.toUpperCase() != 'Resource'.toUpperCase()) {
+                  responseData[i].isParent = true;
+                  responseData[i].icon = warpTreeIconPath(responseData[i].icon);
                 }
-              });
+              }
             }
-            curStatus = "";
-          }
-        }
+            return responseData;
+          };
 
-        function asyncNodes(nodes) {
-          if (!nodes) return;
-          curStatus = "async";
-          for (var i = 0, l = nodes.length; i < l; i++) {
-            if (nodes[i].isParent && nodes[i].zAsync) {
-              asyncNodes(nodes[i].children);
+          // icon路径封装
+          var warpTreeIconPath = function (iconName) {
+            return warpIconPath(iconName, 16);
+          };
+
+          var warpIconPath = function (iconName, size) {
+            if (iconName === undefined || iconName === null) {
+              return null;
+            }
+            return "assets/sys_icons/" + iconName + "/"+size+"x"+size+".png";
+          };
+
+          var beforeClick = function (treeId, treeNode) {
+            zTree.checkNode(treeNode, !treeNode.checked, null, true);
+            return false;
+          };
+
+          //---展示节点路径
+          var separator = '>';
+          var findPathText = function (node) {
+            if (node) {
+              var s = findNodeLabel(node);
+              while (node = node.getParentNode()) {
+                s = findNodeLabel(node) + separator + s;
+              }
+              return s;
             } else {
-              goAsync = true;
-              zTree.reAsyncChildNodes(nodes[i], "refresh", true);
+              return null;
+            }
+          };
+
+          var findNodeLabel = function (node) {
+            if (!scope.nodeName) {
+              scope.nodeName = "name";
+            }
+            return node[scope.nodeName];
+          };
+
+          var beforeCheck = function (treeId, treeNode) {
+            return !scope.checkDisabled;
+          };
+
+          var onCheck = function (e, treeId, treeNode) {
+            var nodes = findSelectedValue();
+            scope.$apply(function () {
+              scope.ngModel = nodes;
+            });
+            hideMenu();
+          };
+
+          var findSelectedValue = function () {
+            var nodes = [];
+            var names = [];
+            var fullPathLabel = "";
+            if (!scope.nodeName) {
+              scope.nodeName = "name";
+            }
+            if (zTree != null) {
+              nodes = zTree.getCheckedNodes(true);
+              if (scope.type == 'radio') {
+                if (nodes && nodes.length > 0) {
+                  fullPathLabel = findPathText(nodes[0]);
+                  $("#" + scope.treeId + "Sel").val(fullPathLabel);
+                  return nodes[0];
+                } else {
+                  return null;
+                }
+              } else {
+                for (var i = 0; i < nodes.length; i++) {
+                  fullPathLabel = findPathText(nodes[i]);
+                  names.push(fullPathLabel);
+                }
+                $("#" + scope.treeId + "Sel").val(names.join());
+                return nodes;
+              }
+            }
+          };
+
+          scope.showMenu = function () {
+            var cityObj = $("#" + scope.treeId + "Sel");
+            var cityOffset = cityObj.offset();
+            $("#" + scope.treeId + "Content").css({
+              left: cityOffset.left + "px",
+              top: cityOffset.top + cityObj.outerHeight() + "px"
+            }).slideDown("fast");
+
+            $("body").bind("mousedown", onBodyDown);
+          };
+
+          var hideMenu = function () {
+            $("#" + scope.treeId + "Content").fadeOut("fast");
+            $("body").unbind("mousedown", onBodyDown);
+          };
+
+          var onBodyDown = function (event) {
+            if (!(event.target.id == scope.treeId + "Sel" || event.target.id == scope.treeId + "Content" || $(event.target).parents("#" + scope.treeId + "Content").length > 0)) {
+              hideMenu();
+            }
+          };
+
+          function getAsyncUrl(treeId, treeNode) {
+            if (!treeNode && scope.topLevelUrl) {
+              return scope.topLevelUrl;
+            }
+            if (!treeNode) {
+              return scope.url;
+            }
+            var urls = scope.url.split("?");
+            if (urls.length > 1) {
+              return urls[0] + treeNode.path + "?" + urls[1];
+            } else {
+              return scope.url + treeNode.path;
             }
           }
+
+          function onAsyncSuccess(event, treeId, parentNode, msg) {
+            if(!parentNode){
+              var nodes = zTree.getNodes();
+              zTree.expandNode(nodes[0], true);
+            }else{
+              asyncNodes(parentNode.children);
+            }
+          }
+
+          function asyncNodes(nodes) {
+            if (!nodes) return;
+            for (var i = 0, l = nodes.length; i < l; i++) {
+              if (scope.ngModel.path.indexOf(nodes[i].path) != -1) {
+                if (scope.ngModel.path === nodes[i].path) {
+                  zTree.selectNode(nodes[i]);
+                  nodes[i].checked = true;
+                  zTree.updateNode(nodes[i]);
+                  findSelectedValue();
+                  return;
+                }
+                if (nodes[i].isParent && nodes[i].zAsync) {
+                  asyncNodes(nodes[i].children);
+                } else {
+                  zTree.reAsyncChildNodes(nodes[i], "refresh");
+                }
+              }
+            }
+          }
+
+          var zTree = {};
+
+          var setting = {
+            view: {
+              selectedMulti: false
+            },
+            check: {
+              enable: true,
+              chkStyle: type,
+              radioType: "all"
+            },
+            async: {
+              enable: true,
+              url: getAsyncUrl,
+              dataFilter: filter,
+              type: "get"
+            },
+            callback: {
+              beforeClick: beforeClick,
+              onAsyncSuccess: onAsyncSuccess,
+              beforeCheck: beforeCheck,
+              onCheck: onCheck
+            },
+            data: {
+              key: {
+                name: scope.nodeName,
+                children: scope.children,
+                checked: scope.checked
+              }
+            }
+          };
+
+          scope.$watch('ngModel', function () {
+            $.fn.zTree.init($("#" + scope.treeId), setting);
+            zTree = $.fn.zTree.getZTreeObj(scope.treeId);
+          });
         }
-
-        var zTree, curStatus = "init", curAsyncCount = 0, asyncForAll = false, goAsync = false, path = "";
-
-        var setting = {
-          view: {
-            selectedMulti: false
-          },
-          check: {
-            enable: true,
-            chkStyle: scope.type,
-            radioType: "all"
-          },
-          async: {
-            enable: true,
-            url: getAsyncUrl,
-            dataFilter: scope.filter,
-            type: "get"
-          },
-          callback: {
-            beforeClick: scope.beforeClick,
-            beforeAsync: beforeAsync,
-            onAsyncSuccess: onAsyncSuccess,
-            onCheck: scope.onCheck
-          },
-          data: {
-            key: {
-              name: scope.nodeName,
-              children: scope.children,
-              checked: scope.checked
-            }
-          }
-        };
-
-        scope.$watch('ngModel', function () {
-          $.fn.zTree.init($("#" + scope.treeId), setting, null);
-          zTree = $.fn.zTree.getZTreeObj(scope.treeId);
-        }, true);
-      }
-    };
-  });
-
+      };
+    });
+})();
