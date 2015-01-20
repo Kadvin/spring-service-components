@@ -27,6 +27,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.List;
 
@@ -134,7 +135,10 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(southWebSocketHandler(), "/south")
-                .addHandler(northWebSocketHandler(), "/north").withSockJS();
+                .addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();
+
+        registry.addHandler(northWebSocketHandler(), "/north")
+                .addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();
     }
 
     @Bean
