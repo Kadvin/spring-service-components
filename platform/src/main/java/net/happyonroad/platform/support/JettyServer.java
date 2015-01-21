@@ -129,7 +129,6 @@ public class JettyServer extends Bean {
                     (List<ContainerInitializer>) context.getAttribute(AnnotationConfiguration.CONTAINER_INITIALIZERS);
             ContainerInitializer initializer = initializers.get(0);
             initializer.addApplicableTypeName(SpringMvcLoader.class.getName());
-
         }
     }
 }

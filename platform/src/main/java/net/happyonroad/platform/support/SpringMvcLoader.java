@@ -48,6 +48,12 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     }
 
     @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        super.customizeRegistration(registration);
+        registration.setAsyncSupported(true);
+    }
+
+    @Override
     protected WebApplicationContext createRootApplicationContext() {
         return webAppContext = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
     }
@@ -107,6 +113,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
     private void registerHttpMethodFilter(ServletContext servletContext) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(METHOD_FILTER_NAME, HiddenHttpMethodFilter.class);
+        registration.setAsyncSupported(true);
         registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
     }
 

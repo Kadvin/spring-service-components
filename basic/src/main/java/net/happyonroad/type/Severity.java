@@ -8,17 +8,25 @@ package net.happyonroad.type;
  */
 public enum Severity {
     /* 清除 */
-    CLEAR,
+    CLEAR(0),
     /* 一般 */
-    INDETERMINATE,
+    INDETERMINATE(1),
     /* 警告 */
-    WARNING,
+    WARNING(2),
     /* 次要 */
-    MINOR,
+    MINOR(3),
     /* 严重 */
-    MAJOR,
+    MAJOR(4),
     /* 致命*/
-    CRITICAL;
+    CRITICAL(5);
 
-    public int value() { return ordinal() + 1; }
+    private int value;
+
+    Severity(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

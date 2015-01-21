@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter implements DelegateSecurityConfigurer {
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().requireCsrfProtectionMatcher(new CustomMatcher());

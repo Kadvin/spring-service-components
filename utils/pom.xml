@@ -20,12 +20,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.happyonroad</groupId>
-            <artifactId>config</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>${version.commons.collections}</version>
@@ -109,6 +103,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${version.slf4j}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.happyonroad</groupId>
+            <artifactId>spring-component-framework</artifactId>
         </dependency>
     </dependencies>
 </project>
