@@ -1,6 +1,9 @@
-//- A standard form
+//- A form with mousedown blur
 mixin form(name)
-  form.form-horizontal(name=name, novalidate="novalidate", ng-model-options="{ updateOn: 'mousedown blur' }", role="form")&attributes(attributes)
+  +base_form(name)(ng-model-options="{ updateOn: 'mousedown blur' }")
+//- A standard form
+mixin base_form(name)
+  form.form-horizontal(name=name, novalidate="novalidate", role="form")&attributes(attributes)
     block
 //- A section contains several form groups
 mixin section(title)
