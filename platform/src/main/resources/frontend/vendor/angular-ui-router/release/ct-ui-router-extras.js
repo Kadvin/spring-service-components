@@ -24,7 +24,7 @@ var map = function (collection, callback) {
   return result;
 };
 
-var keys = function (collection) { 
+var keys = function (collection) {
   "use strict";
   return map(collection, function (collection, key) {
     return key;
