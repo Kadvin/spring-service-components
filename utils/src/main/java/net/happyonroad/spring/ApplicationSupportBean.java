@@ -4,7 +4,6 @@
 package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
-import net.happyonroad.spring.TranslateSupportBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class ApplicationSupportBean extends TranslateSupportBean
     public void publishEvent(ApplicationEvent event) {
         //向所有的context发布，context里面有防止重复的机制
         for (ApplicationContext context : componentContext.getApplicationFeatures()) {
-            context.publishEvent(event);
+            if( context != null) context.publishEvent(event);
         }
     }
 
