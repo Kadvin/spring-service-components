@@ -54,8 +54,8 @@ public class SeverityHandler implements TypeHandler<Severity>{
         }
     }
 
-    private int severityValue(Severity param){
-        return param.getValue();
+    private int severityValue(Severity severity){
+        return severity.getValue();
     }
 
 }

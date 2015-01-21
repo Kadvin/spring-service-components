@@ -1,7 +1,6 @@
 package net.happyonroad.util;
 
 import net.happyonroad.type.AckStatus;
-import net.happyonroad.type.AckStatus;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.TypeHandler;
@@ -21,29 +20,29 @@ public class AckStatusHandler implements TypeHandler<AckStatus>{
         if (parameter == null)
             ps.setInt(i, 0);
         else {
-            ps.setInt(i, AckStatusValue(parameter));
+            ps.setInt(i, ackStatusValue(parameter));
         }
     }
 
     @Override
     public AckStatus getResult(ResultSet rs, String columnName) throws SQLException {
         int raw = rs.getInt(columnName);
-        return AckStatusByValue(raw);
+        return ackStatusByValue(raw);
     }
 
     @Override
     public AckStatus getResult(ResultSet rs, int columnIndex) throws SQLException {
         int raw = rs.getInt(columnIndex);
-        return AckStatusByValue(raw);
+        return ackStatusByValue(raw);
     }
 
     @Override
     public AckStatus getResult(CallableStatement cs, int columnIndex) throws SQLException {
         int raw = cs.getInt(columnIndex);
-        return AckStatusByValue(raw);
+        return ackStatusByValue(raw);
     }
 
-    private AckStatus AckStatusByValue(int raw) {
+    private AckStatus ackStatusByValue(int raw) {
         switch (raw){
             case 0: return AckStatus.Unacked;
             case 2: return AckStatus.Cleared;
@@ -52,8 +51,8 @@ public class AckStatusHandler implements TypeHandler<AckStatus>{
         }
     }
 
-    private int AckStatusValue(AckStatus param){
-        return param.getValue();
+    private int ackStatusValue(AckStatus ackStatus){
+        return ackStatus.getValue();
     }
 
 }
