@@ -15,7 +15,9 @@ import java.util.Collections;
  */
 public class DefaultAdminDetailsManager implements UserDetailsService {
 
-    private User admin = new User("admin", "secret", Collections.EMPTY_LIST);
+    private User admin = new User("admin",
+            DefaultAuthenticationProvider.passwordEncoder.encode("secret"),
+            Collections.EMPTY_LIST);
 
     @Override
 

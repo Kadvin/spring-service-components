@@ -12,8 +12,6 @@ import net.happyonroad.platform.support.ContainerAwareClassLoader;
 import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.spring.config.DefaultAppConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -40,8 +38,6 @@ import org.springframework.context.annotation.Import;
 @org.springframework.context.annotation.Configuration
 @Import({DefaultAppConfig.class, DatabaseConfig.class})
 public class PlatformConfiguration {
-    @Autowired
-    private ApplicationContext applicationContext;
 
     // 用于启动WEB应用
     @Bean

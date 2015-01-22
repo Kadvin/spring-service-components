@@ -5,6 +5,7 @@ package net.happyonroad.platform.web;
 
 import net.happyonroad.platform.web.support.*;
 import net.happyonroad.platform.web.util.ConfigurableRequestMatcher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -72,14 +73,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return new String[]{"/south", "/north"};
     }
 
-    private UserDetailsService defaultUserDetailsService() {
+    @Bean
+    protected UserDetailsService defaultUserDetailsService() {
         return new DefaultAdminDetailsManager();
     }
 
+    @Bean
     protected AuthenticationProvider defaultAuthenticationProvider() {
         return new DefaultAuthenticationProvider(defaultUserDetailsService());
     }
 
+    @Bean
     protected PersistentTokenRepository defaultTokenRepository() {
         return new InMemoryTokenRepositoryImpl();
     }
