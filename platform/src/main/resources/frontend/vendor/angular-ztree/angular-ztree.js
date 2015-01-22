@@ -322,6 +322,7 @@
             if(!parentNode){
               var nodes = zTree.getNodes();
               zTree.expandNode(nodes[0], true);
+              pointNode(nodes[0]);
             }else{
               asyncNodes(parentNode.children);
             }
@@ -331,12 +332,8 @@
             if (!nodes) return;
             for (var i = 0, l = nodes.length; i < l; i++) {
               if (scope.ngModel.path.indexOf(nodes[i].path) != -1) {
-                if (scope.ngModel.path === nodes[i].path) {
-                  zTree.selectNode(nodes[i]);
-                  nodes[i].checked = true;
-                  zTree.updateNode(nodes[i]);
-                  findSelectedValue();
-                  return;
+                if(pointNode(nodes[i])){
+                  return true;
                 }
                 if (nodes[i].isParent && nodes[i].zAsync) {
                   asyncNodes(nodes[i].children);
@@ -344,6 +341,18 @@
                   zTree.reAsyncChildNodes(nodes[i], "refresh");
                 }
               }
+            }
+          }
+
+          function pointNode(node){
+            if (scope.ngModel.path === node.path) {
+              zTree.selectNode(node);
+              node.checked = true;
+              zTree.updateNode(node);
+              findSelectedValue();
+              return true;
+            }else{
+              return false;
             }
           }
 
