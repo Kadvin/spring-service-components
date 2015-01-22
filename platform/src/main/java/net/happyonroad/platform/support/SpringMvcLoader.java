@@ -5,6 +5,10 @@ package net.happyonroad.platform.support;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -28,7 +32,8 @@ import java.util.Set;
  * </ul>
  */
 
-public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer
+    implements ServletContextListener{
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
 
     ApplicationContext applicationContext;
@@ -72,6 +77,24 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     @Override
     protected void registerContextLoaderListener(ServletContext servletContext) {
         super.registerContextLoaderListener(servletContext);
+        servletContext.addListener(this);
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        //将Root　Web Context 里面的 Security Related Services 注册到 对外的applicationContext里面
+        UserDetailsService userDetailsService = webAppContext.getBean(UserDetailsService.class);
+        AuthenticationProvider authenticationProvider = webAppContext.getBean(AuthenticationProvider.class);
+        PersistentTokenRepository tokenRepository = webAppContext.getBean(PersistentTokenRepository.class);
+        ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
+        cac.getBeanFactory().registerSingleton("defaultUserDetailsService", userDetailsService);
+        cac.getBeanFactory().registerSingleton("defaultAuthenticationProvider", authenticationProvider);
+        cac.getBeanFactory().registerSingleton("defaultTokenRepository", tokenRepository);
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // need do nothing
     }
 
     protected WebApplicationContext createServletApplicationContext() {
