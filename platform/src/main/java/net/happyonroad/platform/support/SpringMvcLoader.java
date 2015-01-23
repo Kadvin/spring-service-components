@@ -133,7 +133,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
             try {
                 securityConfigClass = Thread.currentThread().getContextClassLoader().loadClass(configClassName);
             } catch (ClassNotFoundException e3) {
-                throw new ApplicationContextException("Can't load security configuration class " + configClassName);
+                throw new ApplicationContextException("Can't load security configuration class " + configClassName, e3);
             }
         }
         return new Class<?>[]{securityConfigClass};

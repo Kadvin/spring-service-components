@@ -36,6 +36,7 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
             logger.debug("Authentication failed: no credentials provided");
             throw new BadCredentialsException(error);
         }
+        if(userDetails.getPassword() == null ) return;
         String presentedPassword = authentication.getCredentials().toString();
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             logger.debug("Authentication failed: password does not match stored value");
