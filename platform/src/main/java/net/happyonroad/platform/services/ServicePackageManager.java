@@ -13,6 +13,7 @@ import net.happyonroad.component.core.exception.DependencyNotMeetException;
 import net.happyonroad.component.core.exception.InvalidComponentNameException;
 import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.component.core.support.Dependency;
+import net.happyonroad.platform.event.*;
 import net.happyonroad.platform.service.ServicePackageContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
 import org.springframework.beans.factory.access.BootstrapException;
@@ -50,14 +51,14 @@ public class ServicePackageManager extends ApplicationSupportBean
         if (event instanceof ContainerStartedEvent) {
             try {
                 loadServicePackages();
-                publishEvent(new ServicePackagesEvent.LoadedEvent(this));
+                publishEvent(new SystemStartedEvent(this));
             } catch (Exception e) {
                 throw new BootstrapException("Can't load service packages", e);
             }
         } else if (event instanceof ContainerStoppingEvent) {
             try {
+                publishEvent(new SystemStoppingEvent(this));
                 unloadServicePackages();
-                publishEvent(new ServicePackagesEvent.UnloadedEvent(this));
             } catch (Exception e) {
                 throw new ApplicationContextException("Can't unload service packages", e);
             }
@@ -96,12 +97,12 @@ public class ServicePackageManager extends ApplicationSupportBean
         try {
             logger.info("Loading service package: {}", component);
             //仅发给容器
-            publishEvent(new ServicePackageEvent.LoadingEvent(component));
+            publishEvent(new ExtensionLoadingEvent(component));
             componentLoader.load(component);
             loadedServicePackages.add(component);
             DefaultComponent comp = (DefaultComponent) component;
             registerMbean(comp, comp.getObjectName());
-            publishEvent(new ServicePackageEvent.LoadedEvent(component));
+            publishEvent(new ExtensionLoadedEvent(component));
             logger.info("Loaded  service package: {}", component);
         } catch (Exception e) {
             logger.error("Can't load service package: " + component + ", ignore it and going on", e);
@@ -120,11 +121,11 @@ public class ServicePackageManager extends ApplicationSupportBean
 
     void unloadServicePackage(Component component) {
         logger.info("Unloading service package: {}", component);
-        publishEvent(new ServicePackageEvent.UnloadingEvent(component));
+        publishEvent(new ExtensionUnloadingEvent(component));
         componentLoader.unloadSingle(component);
         loadedServicePackages.remove(component);
         //这个事件就仅发给容器
-        publishEvent(new ServicePackageEvent.UnloadedEvent(component));
+        publishEvent(new ExtensionUnloadedEvent(component));
         logger.info("Unloaded  service package: {}", component);
     }
 

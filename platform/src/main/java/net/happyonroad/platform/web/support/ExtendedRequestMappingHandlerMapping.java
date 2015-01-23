@@ -5,7 +5,7 @@ package net.happyonroad.platform.web.support;
 
 import net.happyonroad.component.container.LaunchEnvironment;
 import net.happyonroad.component.container.event.ContainerStartedEvent;
-import net.happyonroad.platform.services.ServicePackageEvent;
+import net.happyonroad.platform.event.ExtensionLoadedEvent;
 import net.happyonroad.platform.web.SpringMvcConfig;
 import net.happyonroad.platform.web.controller.ApplicationController;
 import net.happyonroad.platform.web.model.RouteItem;
@@ -56,7 +56,7 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
             for (ApplicationContext application : applications) {
                 detectApplicationContext(application);
             }
-        } else if (event instanceof ServicePackageEvent.LoadedEvent) {
+        } else if (event instanceof ExtensionLoadedEvent) {
             //解决第二个问题
             Component component = (Component) event.getSource();
             ApplicationContext application = component.getApplication();

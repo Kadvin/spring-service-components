@@ -3,7 +3,7 @@
  */
 package net.happyonroad.platform.web.handler;
 
-import net.happyonroad.platform.services.ServicePackagesEvent;
+import net.happyonroad.platform.event.SystemStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.Assert;
 import org.springframework.web.socket.CloseStatus;
@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <h1>能够将WebSocket Handler 任务委托出去</h1>
  */
 public class DefaultDelegateWebSocketHandler implements
-        DelegateWebSocketHandler, ApplicationListener<ServicePackagesEvent.LoadedEvent>{
+        DelegateWebSocketHandler, ApplicationListener<SystemStartedEvent>{
     WebSocketHandler delegate;
     private boolean systemStarted;
     private Lock lock = new ReentrantLock(false);
@@ -40,7 +40,7 @@ public class DefaultDelegateWebSocketHandler implements
     //只有接收到这个消息之后才开始对外提供服务
     // 在此之前都block用户请求
     @Override
-    public void onApplicationEvent(ServicePackagesEvent.LoadedEvent event) {
+    public void onApplicationEvent(SystemStartedEvent event) {
         this.systemStarted = true;
         lock.unlock();
     }
