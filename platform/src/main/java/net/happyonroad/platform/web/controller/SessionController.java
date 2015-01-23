@@ -32,4 +32,13 @@ public class SessionController extends ApplicationController {
     public void logout(){
         // 不需要做任何事情
     }
+
+    /**
+     * <h2>登出</h2>
+     * GET /api/logout
+     */
+    @RequestMapping("logout")
+    public void logout2(){
+        // 不需要做任何事情
+    }
 }

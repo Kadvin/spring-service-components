@@ -3,18 +3,21 @@
  */
 package net.happyonroad.platform.support;
 
-import net.happyonroad.platform.web.SpringMvcConfig;
-import net.happyonroad.platform.web.security.DelegateSecurityConfigurer;
-import net.happyonroad.platform.web.security.SpringSecurityConfig;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.*;
+import java.io.File;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -30,11 +33,11 @@ import java.util.Set;
  */
 
 public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer
-        implements ServletContextListener{
+    implements ServletContextListener{
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
 
     ApplicationContext applicationContext;
-    private AnnotationConfigWebApplicationContext webAppContext;
+    WebApplicationContext webAppContext;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -55,23 +58,38 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
     @Override
     protected WebApplicationContext createRootApplicationContext() {
-        return webAppContext = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
+        File securityXml = new File(System.getProperty("app.home"), "webapp/security.xml");
+        if( securityXml.exists() ){
+            XmlWebApplicationContext context = new XmlWebApplicationContext();
+            // Load by Servlet Resource
+            context.setConfigLocation("security.xml");
+            context.setClassLoader(Thread.currentThread().getContextClassLoader());
+            webAppContext = context;
+            return context;
+        }else{
+            AnnotationConfigWebApplicationContext acc = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
+            //设置了class loader之后，就支持了定制化  spring_mvc.configuration
+            acc.setClassLoader(Thread.currentThread().getContextClassLoader());
+            return webAppContext = acc;
+        }
     }
 
     @Override
     protected void registerContextLoaderListener(ServletContext servletContext) {
         super.registerContextLoaderListener(servletContext);
-        //这里也监听 Servlet Context 事件
         servletContext.addListener(this);
     }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        //将Root　Web Context 里面的 DelegateSecurityConfigurer 注册到 对外的applicationContext里面
-        // 以便将其以服务的形式暴露出来
-        DelegateSecurityConfigurer configurer = webAppContext.getBean(DelegateSecurityConfigurer.class);
+        //将Root　Web Context 里面的 Security Related Services 注册到 对外的applicationContext里面
+        UserDetailsService userDetailsService = webAppContext.getBean(UserDetailsService.class);
+        AuthenticationProvider authenticationProvider = webAppContext.getBean(AuthenticationProvider.class);
+        PersistentTokenRepository tokenRepository = webAppContext.getBean(PersistentTokenRepository.class);
         ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
-        cac.getBeanFactory().registerSingleton("publicDelegateSecurityConfigurer", configurer);
+        cac.getBeanFactory().registerSingleton("defaultUserDetailsService", userDetailsService);
+        cac.getBeanFactory().registerSingleton("defaultAuthenticationProvider", authenticationProvider);
+        cac.getBeanFactory().registerSingleton("defaultTokenRepository", tokenRepository);
     }
 
     @Override
@@ -82,7 +100,9 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     protected WebApplicationContext createServletApplicationContext() {
         AnnotationConfigWebApplicationContext servletAppContext =
                 (AnnotationConfigWebApplicationContext) super.createServletApplicationContext();
-        if( applicationContext != null ){
+        //设置了class loader之后，就支持了定制化  spring_mvc.configuration
+        servletAppContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+        if( applicationContext != null){
             servletAppContext.setParent(applicationContext);
             PlatformEventForwarder forwarder = applicationContext.getBean(PlatformEventForwarder.class);
             forwarder.bind(servletAppContext);
@@ -93,12 +113,30 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{SpringSecurityConfig.class};
+        String securityConfigClassName = System.getProperty("security.configuration",
+                "net.happyonroad.platform.web.security.SpringSecurityConfig");
+        return getConfigClasses(securityConfigClassName);
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class<?>[]{SpringMvcConfig.class};
+        String securityConfigClassName = System.getProperty("spring_mvc.configuration",
+                "net.happyonroad.platform.web.SpringMvcConfig");
+        return getConfigClasses(securityConfigClassName);
+    }
+
+    private Class<?>[] getConfigClasses(String configClassName) {
+        Class<?> securityConfigClass;
+        try {
+            securityConfigClass = applicationContext.getClassLoader().loadClass(configClassName);
+        } catch (ClassNotFoundException e2) {
+            try {
+                securityConfigClass = Thread.currentThread().getContextClassLoader().loadClass(configClassName);
+            } catch (ClassNotFoundException e3) {
+                throw new ApplicationContextException("Can't load security configuration class " + configClassName);
+            }
+        }
+        return new Class<?>[]{securityConfigClass};
     }
 
     @Override

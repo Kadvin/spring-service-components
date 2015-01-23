@@ -7,10 +7,7 @@ import net.happyonroad.component.core.ComponentContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.*;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import javax.management.ObjectName;
@@ -45,7 +42,12 @@ public class ApplicationSupportBean extends TranslateSupportBean
     public void publishEvent(ApplicationEvent event) {
         //向所有的context发布，context里面有防止重复的机制
         for (ApplicationContext context : componentContext.getApplicationFeatures()) {
-            if( context != null) context.publishEvent(event);
+            if( context != null ) {
+                if( context instanceof ConfigurableApplicationContext){
+                    if( !((ConfigurableApplicationContext) context).isActive() ) continue;
+                }
+                context.publishEvent(event);
+            }
         }
     }
 

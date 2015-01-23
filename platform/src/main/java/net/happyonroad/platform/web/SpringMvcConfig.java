@@ -24,10 +24,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.List;
 
@@ -38,9 +34,8 @@ import java.util.List;
 //@EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan("net.happyonroad.platform.web.controller")
-@EnableWebSocket
 public class SpringMvcConfig extends WebMvcConfigurationSupport
-        implements InitializingBean, WebSocketConfigurer {
+        implements InitializingBean {
     public static final Log logger = LogFactory.getLog(SpringMvcConfig.class);
 
     @Override
@@ -132,14 +127,6 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         registration.setCachePeriod(oneYear);
     }
 
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(southWebSocketHandler(), "/south")
-                .addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();
-
-        registry.addHandler(northWebSocketHandler(), "/north")
-                .addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();
-    }
 
     @Bean
     public WebSocketHandler southWebSocketHandler() {
