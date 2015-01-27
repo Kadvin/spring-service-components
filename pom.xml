@@ -22,6 +22,7 @@
     <properties>
         <version.component-framework>[1.0.7,)</version.component-framework>
         <version.strict.component-framework>1.0.7</version.strict.component-framework>
+        <version.guava>10.0.1</version.guava>
     </properties>
 
     <modules>
@@ -92,6 +93,11 @@
                 <groupId>net.happyonroad</groupId>
                 <artifactId>redis</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
             </dependency>
 
         </dependencies>

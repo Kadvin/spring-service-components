@@ -109,5 +109,10 @@
             <groupId>net.happyonroad</groupId>
             <artifactId>spring-component-framework</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
 </project>

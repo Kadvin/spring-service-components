@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  * 在数据库中以主表的形式出现（而不是关联表）
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
-public class Record {
+public class Record implements Cloneable{
 
     protected static ObjectMapper mapper = new ObjectMapper();
 

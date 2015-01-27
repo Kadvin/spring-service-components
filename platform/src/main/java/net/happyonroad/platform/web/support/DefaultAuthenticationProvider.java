@@ -11,15 +11,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 /**
  *  <h1>A Default Authentication Provider</h1>
  */
 public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
-
-    static PasswordEncoder passwordEncoder = new StandardPasswordEncoder();
 
     private final UserDetailsService userDetailsService;
 
@@ -34,12 +30,6 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
         String error = messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials");
         if (authentication.getCredentials() == null) {
             logger.debug("Authentication failed: no credentials provided");
-            throw new BadCredentialsException(error);
-        }
-        if(userDetails.getPassword() == null ) return;
-        String presentedPassword = authentication.getCredentials().toString();
-        if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            logger.debug("Authentication failed: password does not match stored value");
             throw new BadCredentialsException(error);
         }
     }
