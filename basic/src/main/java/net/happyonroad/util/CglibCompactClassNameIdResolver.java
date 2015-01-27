@@ -21,6 +21,11 @@ import java.util.EnumSet;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class CglibCompactClassNameIdResolver extends TypeIdResolverBase {
+
+    public CglibCompactClassNameIdResolver() {
+        this(Object.class);
+    }
+
     public CglibCompactClassNameIdResolver(Class baseType) {
         this(SimpleType.construct(baseType), TypeFactory.defaultInstance());
     }
@@ -37,20 +42,24 @@ public class CglibCompactClassNameIdResolver extends TypeIdResolverBase {
     @Override
     public String idFromValueAndType(Object value, Class<?> type) {
         String className = _idFrom(value, type);
+        return reduceCglibName(className);
+    }
+
+    String reduceCglibName(String className) {
         int pos = className.indexOf("$$EnhancerByCGLIB");
         return pos > 0 ? className.substring(0, pos) : className;
     }
 
     @Override
     public JavaType typeFromId(String id) {
-        int pos = id.indexOf("$$EnhancerByCGLIB");
-        String className =  pos > 0 ? id.substring(0, pos) : id;
+        String className =  reduceCglibName(id);
         return _typeFromId(className, _typeFactory);
     }
 
     @Override
     public String idFromValue(Object value) {
-        return _idFrom(value, value.getClass());
+        String className = _idFrom(value, value.getClass());
+        return reduceCglibName(className);
     }
 
     protected JavaType _typeFromId(String id, TypeFactory typeFactory)
