@@ -45,6 +45,26 @@ public class TimeInterval {
         return interval;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TimeInterval)) return false;
+
+        TimeInterval that = (TimeInterval) o;
+
+        if (milliseconds != that.milliseconds) return false;
+        if (!interval.equals(that.interval)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = interval.hashCode();
+        result = 31 * result + (int) (milliseconds ^ (milliseconds >>> 32));
+        return result;
+    }
+
     /**
      * Parse the value into human readable string
      * @param value the value

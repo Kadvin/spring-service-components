@@ -23,4 +23,23 @@ public class Size {
         return "Size(" + this.width + ", " + this.height + ")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Size)) return false;
+
+        Size size = (Size) o;
+
+        if (height != size.height) return false;
+        if (width != size.width) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = width;
+        result = 31 * result + height;
+        return result;
+    }
 }

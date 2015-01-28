@@ -19,6 +19,8 @@ import java.sql.Timestamp;
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Record implements Cloneable{
 
+    public static String[] HELP_ATTRS = {"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting", "cascadeCreating", "hierarchyDeleting"};
+
     protected static ObjectMapper mapper = new ObjectMapper();
 
     private Long      id;

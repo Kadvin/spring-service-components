@@ -31,4 +31,24 @@ public class Location {
     public String toString() {
         return "(" + latitude + ", " + longitude + ')';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Location)) return false;
+
+        Location location = (Location) o;
+
+        if (Float.compare(location.latitude, latitude) != 0) return false;
+        if (Float.compare(location.longitude, longitude) != 0) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (latitude != +0.0f ? Float.floatToIntBits(latitude) : 0);
+        result = 31 * result + (longitude != +0.0f ? Float.floatToIntBits(longitude) : 0);
+        return result;
+    }
 }
