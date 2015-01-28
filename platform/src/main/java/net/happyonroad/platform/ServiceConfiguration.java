@@ -3,7 +3,6 @@
  */
 package net.happyonroad.platform;
 
-import net.happyonroad.platform.web.handler.DelegateWebSocketHandler;
 import net.happyonroad.spring.service.AbstractServiceConfig;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -34,10 +33,5 @@ public class ServiceConfiguration extends AbstractServiceConfig {
         exportService(UserDetailsService.class, "default");
         exportService(AuthenticationProvider.class, "default");
         exportService(PersistentTokenRepository.class, "default");
-
-        //Spring North WebSocket Handler
-        exportService(DelegateWebSocketHandler.class, "north", "northWebSocketHandler");
-        //Spring South WebSocket Handler
-        exportService(DelegateWebSocketHandler.class, "south", "southWebSocketHandler");
   }
 }

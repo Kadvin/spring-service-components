@@ -3,11 +3,13 @@
  */
 package net.happyonroad.platform.event;
 
+import net.happyonroad.component.core.ComponentContext;
+
 /**
- * All service packages are unloaded
+ * All service packages are unloading
  */
 public class SystemStoppingEvent extends SystemEvent {
-    public SystemStoppingEvent(Object source) {
+    public SystemStoppingEvent(ComponentContext source) {
         super(source);
     }
 }

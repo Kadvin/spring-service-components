@@ -9,6 +9,7 @@ import net.happyonroad.component.container.event.ContainerEvent;
 import net.happyonroad.component.container.event.ContainerStartedEvent;
 import net.happyonroad.component.container.event.ContainerStoppingEvent;
 import net.happyonroad.component.core.Component;
+import net.happyonroad.component.core.ComponentContext;
 import net.happyonroad.component.core.exception.DependencyNotMeetException;
 import net.happyonroad.component.core.exception.InvalidComponentNameException;
 import net.happyonroad.component.core.support.DefaultComponent;
@@ -36,6 +37,8 @@ public class ServicePackageManager extends ApplicationSupportBean
     @Autowired
     private ComponentLoader     componentLoader;
     @Autowired
+    private ComponentContext    componentContext;
+    @Autowired
     private ComponentRepository componentRepository;
 
     //这里面的顺序是按照加载顺序
@@ -51,13 +54,13 @@ public class ServicePackageManager extends ApplicationSupportBean
         if (event instanceof ContainerStartedEvent) {
             try {
                 loadServicePackages();
-                publishEvent(new SystemStartedEvent(this));
+                publishEvent(new SystemStartedEvent(componentContext));
             } catch (Exception e) {
                 throw new BootstrapException("Can't load service packages", e);
             }
         } else if (event instanceof ContainerStoppingEvent) {
             try {
-                publishEvent(new SystemStoppingEvent(this));
+                publishEvent(new SystemStoppingEvent(componentContext));
                 unloadServicePackages();
             } catch (Exception e) {
                 throw new ApplicationContextException("Can't unload service packages", e);

@@ -3,14 +3,19 @@
  */
 package net.happyonroad.platform.event;
 
+import net.happyonroad.component.core.ComponentContext;
 import org.springframework.context.ApplicationEvent;
 
 /**
  * 所有服务包的事件
  */
 public class SystemEvent extends ApplicationEvent {
-    public SystemEvent(Object source) {
+    public SystemEvent(ComponentContext source) {
         super(source);
     }
 
+    @Override
+    public ComponentContext getSource() {
+        return (ComponentContext) super.getSource();
+    }
 }

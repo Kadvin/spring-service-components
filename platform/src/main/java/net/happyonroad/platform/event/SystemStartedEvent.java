@@ -3,11 +3,13 @@
  */
 package net.happyonroad.platform.event;
 
+import net.happyonroad.component.core.ComponentContext;
+
 /**
  * All service packages are loaded and ready for further works
  */
 public class SystemStartedEvent extends SystemEvent {
-    public SystemStartedEvent(Object source) {
+    public SystemStartedEvent(ComponentContext source) {
         super(source);
     }
 }

@@ -3,7 +3,6 @@
  */
 package net.happyonroad.platform.web;
 
-import net.happyonroad.platform.web.handler.DefaultDelegateWebSocketHandler;
 import net.happyonroad.platform.web.interceptor.AfterFilterInterceptor;
 import net.happyonroad.platform.web.interceptor.BeforeFilterInterceptor;
 import net.happyonroad.platform.web.support.ExtendedRequestMappingHandlerMapping;
@@ -23,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
-import org.springframework.web.socket.WebSocketHandler;
 
 import java.util.List;
 
@@ -127,15 +125,5 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         registration.setCachePeriod(oneYear);
     }
 
-
-    @Bean
-    public WebSocketHandler southWebSocketHandler() {
-        return new DefaultDelegateWebSocketHandler();
-    }
-
-    @Bean
-    public WebSocketHandler northWebSocketHandler() {
-        return new DefaultDelegateWebSocketHandler();
-    }
 
 }

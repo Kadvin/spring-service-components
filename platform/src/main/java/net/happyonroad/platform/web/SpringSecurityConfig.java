@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,51 +26,83 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        super.configure(auth);
+        auth.userDetailsService(defaultUserDetailsService());
+        auth.authenticationProvider(defaultAuthenticationProvider());
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        configureCsrf(http);
+        configureExceptionHandling(http);
+        configureRememberMe(http);
+        configureAnonymous(http);
+        configureLogout(http);
+        configureSessionManagement(http);
+        configureAuthorizeRequests(http);
+    }
+
+    /* 配置CSRF */
+    protected void configureCsrf(HttpSecurity http) throws Exception {
         ConfigurableRequestMatcher customizedCsrfMatcher = new ConfigurableRequestMatcher();
         customizedCsrfMatcher.setExcludedUrls(csrfExcludeUrls());
         http.csrf().requireCsrfProtectionMatcher(customizedCsrfMatcher);
+    }
+
+    /* 配置Exception Handler */
+    protected void configureExceptionHandling(HttpSecurity http) throws Exception {
         http.exceptionHandling().accessDeniedHandler(new LoginPageDeniedHandler());
-        http.userDetailsService(defaultUserDetailsService());
-        http.authenticationProvider(defaultAuthenticationProvider())
-                // 配置了 authentication provider 之后， 不需要配置 user details service
-                //.userDetailsService(delegateUserDetailsService())
-                /* 配置 remember me*/
-                .rememberMe()
+    }
+
+    /* 配置匿名服务 */
+    protected void configureAnonymous(HttpSecurity http) throws Exception {
+        http.anonymous().authorities("ROLE_ANONYMOUS").principal("ANONYMOUS");
+    }
+
+    /* 配置自动登录服务 */
+    protected void configureRememberMe(HttpSecurity http) throws Exception {
+        http.rememberMe()
                 .authenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler())
                 .tokenRepository(defaultTokenRepository())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)//一个月
-                .useSecureCookie(true)
-                /* 配置匿名服务 */
-                .and().anonymous().authorities("ROLE_ANONYMOUS").principal("ANONYMOUS")
-                /* 配置登出服务 */
-                .and().logout().invalidateHttpSession(true).logoutSuccessUrl("/login.html")
-                .logoutRequestMatcher(new AntPathRequestMatcher("/api/session", "DELETE"))
-                .logoutSuccessHandler(new DefaultLogoutSuccessHandler())
-                /* 配置会话服务 */
-                .and().sessionManagement().enableSessionUrlRewriting(true).sessionFixation().migrateSession();
+                .useSecureCookie(true);
+    }
+
+    /* 配置登出服务 */
+    protected void configureLogout(HttpSecurity http) throws Exception {
+        http.logout().invalidateHttpSession(true).logoutSuccessUrl("/login.html")
+                .logoutRequestMatcher(logoutRequestMatcher())
+                .logoutSuccessHandler(logoutSuccessHandler());
+    }
+
+    /* 配置会话服务 */
+    protected void configureSessionManagement(HttpSecurity http) throws Exception {
+        http.sessionManagement().enableSessionUrlRewriting(true).sessionFixation().migrateSession();
+    }
+
+    /* 配置请求限制 */
+    protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
         // 若以后支持手机客户端访问，那个时候可能就需要基于Digest-Authentication
         //noinspection unchecked
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authenticated =
                 (ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry) http.authorizeRequests();
         //谁在前，谁优先级高
         authenticated.antMatchers(HttpMethod.POST, "api/session").anonymous()
-                     .antMatchers("/login.html").anonymous() // use spring interceptor
+                .antMatchers("/login.html").anonymous() // use spring interceptor
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/index.html").not().anonymous()
-                .antMatchers("/routes").hasRole("ANONYMOUS")
                 .antMatchers("/**").permitAll();
         authenticated.and().formLogin()
                 .loginPage("/login.html")
                 .loginProcessingUrl("/api/session")
-                .successHandler(new DefaultAuthenticationSuccessHandler())
-                .failureHandler(new DefaultAuthenticationFailureHandler())
-                .and().httpBasic().realmName("ItsNow Platform");
+                .successHandler(successHandler())
+                .failureHandler(authenticationFailureHandler())
+                .and().httpBasic().realmName(realmName());
     }
 
-    protected String[] csrfExcludeUrls(){
+    protected String[] csrfExcludeUrls() {
         return new String[]{"/south", "/north"};
     }
 
@@ -83,9 +116,30 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return new DefaultAuthenticationProvider(defaultUserDetailsService());
     }
 
+
     @Bean
     protected PersistentTokenRepository defaultTokenRepository() {
         return new InMemoryTokenRepositoryImpl();
+    }
+
+    protected String realmName() {
+        return "ItsNow Platform";
+    }
+
+    protected DefaultAuthenticationFailureHandler authenticationFailureHandler() {
+        return new DefaultAuthenticationFailureHandler();
+    }
+
+    protected DefaultAuthenticationSuccessHandler successHandler() {
+        return new DefaultAuthenticationSuccessHandler();
+    }
+
+    protected DefaultLogoutSuccessHandler logoutSuccessHandler() {
+        return new DefaultLogoutSuccessHandler();
+    }
+
+    protected AntPathRequestMatcher logoutRequestMatcher() {
+        return new AntPathRequestMatcher("/api/session", "DELETE");
     }
 
 }
