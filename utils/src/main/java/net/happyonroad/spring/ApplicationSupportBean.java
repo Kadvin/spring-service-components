@@ -11,9 +11,12 @@ import org.springframework.context.*;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import javax.management.ObjectName;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * The bean support application
@@ -69,5 +72,16 @@ public class ApplicationSupportBean extends TranslateSupportBean
             mbeanExporter.registerManagedResource(bean, name);
     }
 
+    protected static String formatViolation(Collection violations){
+        StringBuilder sb = new StringBuilder();
+        //noinspection unchecked
+        Iterator<ConstraintViolation> it = violations.iterator();
+        while (it.hasNext()) {
+            ConstraintViolation violation = it.next();
+            sb.append(violation.getPropertyPath()).append(" ").append(violation.getMessage());
+            if( it.hasNext() ) sb.append(",");
+        }
+        return sb.toString();
+    }
 
 }
