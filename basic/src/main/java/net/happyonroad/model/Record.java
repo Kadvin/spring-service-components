@@ -24,7 +24,7 @@ public class Record implements Cloneable{
     private Long      id;
     private Timestamp createdAt, updatedAt;
     @JsonIgnore
-    private boolean cascadeDeleting, cascadeCreating, hierarchyDeleting;
+    private boolean cascadeDeleting, cascadeCreating, hierarchyDeleting, cascadeUpdating;
 
     public Long getId() {
         return id;
@@ -131,5 +131,14 @@ public class Record implements Cloneable{
     @JsonIgnore
     public boolean isHierarchyDeleting() {
         return hierarchyDeleting;
+    }
+
+    public void cascadeUpdating() {
+        this.cascadeUpdating = true;
+    }
+
+    @JsonIgnore
+    public boolean isCascadeUpdating() {
+        return cascadeUpdating;
     }
 }

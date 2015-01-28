@@ -11,12 +11,18 @@ import org.springframework.context.*;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import javax.management.ObjectName;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  * The bean support application
  */
 public class ApplicationSupportBean extends TranslateSupportBean
         implements ApplicationContextAware, ApplicationEventPublisher {
+    protected static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    protected static Validator validator = factory.getValidator();
+
     @Autowired
     private ComponentContext componentContext;
     protected ApplicationContext applicationContext;
