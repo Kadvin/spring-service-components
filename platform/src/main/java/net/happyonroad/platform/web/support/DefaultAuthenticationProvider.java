@@ -32,6 +32,11 @@ public class DefaultAuthenticationProvider extends AbstractUserDetailsAuthentica
             logger.debug("Authentication failed: no credentials provided");
             throw new BadCredentialsException(error);
         }
+        //authentication(用户输入的)密码是原始密码
+        //userDetails里面的密码模拟的是存在数据库里面加密过的密码
+        if( !DefaultAdminDetailsManager.encoder.matches(authentication.getCredentials().toString(), userDetails.getPassword())){
+            throw new BadCredentialsException(error);
+        }
     }
 
     @Override

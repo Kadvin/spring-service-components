@@ -3,7 +3,6 @@
  */
 package net.happyonroad.platform.web.model;
 
-import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +12,7 @@ import java.util.Collections;
 /**
  * A default user
  */
-public class DefaultUser implements UserDetails, CredentialsContainer {
+public class DefaultUser implements UserDetails {
     private String username, password;
 
     @SuppressWarnings("UnusedDeclaration")
@@ -23,11 +22,6 @@ public class DefaultUser implements UserDetails, CredentialsContainer {
     public DefaultUser(String username, String password) {
         setUsername(username);
         setPassword(password);
-    }
-
-    @Override
-    public void eraseCredentials() {
-        this.password = null;
     }
 
     @Override

@@ -39,6 +39,7 @@ public class ContainerAwareClassLoader extends ClassLoader {
 
             for (ApplicationContext application : getApplications()) {
                 try {
+                    if(application == null ) continue;
                     return application.getClassLoader().loadClass(name);
                 } catch (ClassNotFoundException ex) {
                     //try next

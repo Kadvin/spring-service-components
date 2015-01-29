@@ -28,20 +28,23 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
-        auth.userDetailsService(defaultUserDetailsService());
         auth.authenticationProvider(defaultAuthenticationProvider());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.httpBasic().realmName(realmName());
         configureCsrf(http);
         configureExceptionHandling(http);
         configureRememberMe(http);
         configureAnonymous(http);
         configureLogout(http);
         configureSessionManagement(http);
-        configureAuthorizeRequests(http);
+        configureLoginForm(http);
+        //noinspection unchecked
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authenticated =
+                (ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry) http.authorizeRequests();
+        configureAuthorizeRequests(authenticated);
     }
 
     /* 配置CSRF */
@@ -83,23 +86,22 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /* 配置请求限制 */
-    protected void configureAuthorizeRequests(HttpSecurity http) throws Exception {
+    protected void configureAuthorizeRequests(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeRequests) throws Exception {
         // 若以后支持手机客户端访问，那个时候可能就需要基于Digest-Authentication
-        //noinspection unchecked
-        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authenticated =
-                (ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry) http.authorizeRequests();
         //谁在前，谁优先级高
-        authenticated.antMatchers(HttpMethod.POST, "api/session").anonymous()
+        authorizeRequests.antMatchers(HttpMethod.POST, "api/session").anonymous()
                 .antMatchers("/login.html").anonymous() // use spring interceptor
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/index.html").not().anonymous()
                 .antMatchers("/**").permitAll();
-        authenticated.and().formLogin()
+    }
+
+    protected void configureLoginForm(HttpSecurity http) throws Exception {
+        http.formLogin()
                 .loginPage("/login.html")
                 .loginProcessingUrl("/api/session")
                 .successHandler(successHandler())
-                .failureHandler(authenticationFailureHandler())
-                .and().httpBasic().realmName(realmName());
+                .failureHandler(authenticationFailureHandler());
     }
 
     protected String[] csrfExcludeUrls() {

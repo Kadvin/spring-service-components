@@ -7,13 +7,16 @@ import net.happyonroad.platform.web.model.DefaultUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 /**
  * A default admin details service implementations
  */
 public class DefaultAdminDetailsManager implements UserDetailsService {
+    static PasswordEncoder encoder = new StandardPasswordEncoder();
 
-    private DefaultUser admin = new DefaultUser("admin","secret");
+    private DefaultUser admin = new DefaultUser("admin",encoder.encode("secret"));
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

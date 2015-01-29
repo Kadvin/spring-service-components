@@ -90,6 +90,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         cac.getBeanFactory().registerSingleton("defaultUserDetailsService", userDetailsService);
         cac.getBeanFactory().registerSingleton("defaultAuthenticationProvider", authenticationProvider);
         cac.getBeanFactory().registerSingleton("defaultTokenRepository", tokenRepository);
+
     }
 
     @Override
@@ -105,7 +106,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         if( applicationContext != null){
             servletAppContext.setParent(applicationContext);
             PlatformEventForwarder forwarder = applicationContext.getBean(PlatformEventForwarder.class);
-            forwarder.bind(servletAppContext);
+            forwarder.bind(webAppContext, servletAppContext);
         }
 
         return servletAppContext;

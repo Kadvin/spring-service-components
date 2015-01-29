@@ -16,15 +16,18 @@ import org.springframework.context.ApplicationListener;
  */
 public class PlatformEventForwarder extends Bean
         implements ApplicationListener<ApplicationEvent> {
-    ApplicationContext springMvcContext;
+    ApplicationContext[] contexts;
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (springMvcContext == null) return;
-        springMvcContext.publishEvent(event);
+        if (contexts == null) return;
+        if (contexts.length == 0) return;
+        for (ApplicationContext context : contexts) {
+            context.publishEvent(event);
+        }
     }
 
-    public void bind(ApplicationContext target){
-        this.springMvcContext = target;
+    public void bind(ApplicationContext... targets){
+        this.contexts = targets;
     }
 }
