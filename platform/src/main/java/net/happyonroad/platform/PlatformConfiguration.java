@@ -5,10 +5,10 @@ package net.happyonroad.platform;
 
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.platform.service.AutoNumberService;
-import net.happyonroad.platform.service.ServicePackageContainer;
-import net.happyonroad.platform.services.ServicePackageManager;
+import net.happyonroad.service.ExtensionContainer;
+import net.happyonroad.extension.ExtensionManager;
 import net.happyonroad.platform.support.AutoNumberInMemory;
-import net.happyonroad.platform.support.ContainerAwareClassLoader;
+import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.spring.config.DefaultAppConfig;
@@ -46,17 +46,17 @@ public class PlatformConfiguration {
     }
 
     @Bean
-    public ContainerAwareClassLoader containerAwareClassLoader(ServicePackageContainer container){
+    public ExtensionAwareClassLoader containerAwareClassLoader(ExtensionContainer container){
         // 用 Thread上下文的Class Loader(main class loader)
         //  比 application 的 Class loader(platform class loader)
-        // 更为有效，其可以看到除动态加载的类; Container Aware特性再看到其他
-        return new ContainerAwareClassLoader(Thread.currentThread().getContextClassLoader(), container);
+        // 更为有效，其可以看到除动态加载的类; Extension Aware特性再看到其他
+        return new ExtensionAwareClassLoader(Thread.currentThread().getContextClassLoader(), container);
     }
 
     // 用于加载扩展服务模块
     @Bean
-    public ServicePackageManager pkgManager(){
-        return new ServicePackageManager();
+    public ExtensionManager pkgManager(){
+        return new ExtensionManager();
     }
 
     //用于把平台context中的事件转发给 躲在dispatcher servlet 中的 Spring Mvc Context

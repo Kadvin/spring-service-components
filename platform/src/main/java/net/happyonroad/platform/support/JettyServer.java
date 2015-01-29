@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.support;
 
+import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.ibatis.io.Resources;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
@@ -36,7 +37,7 @@ public class JettyServer extends Bean {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private ContainerAwareClassLoader classLoader;
+    private ExtensionAwareClassLoader classLoader;
 
     @Value("${app.host}")
     private String             host;

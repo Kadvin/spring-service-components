@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-10 下午9:58
  */
-package net.happyonroad.platform.exception;
+package net.happyonroad.exception;
 
 /**
  * 服务层抛出的错误

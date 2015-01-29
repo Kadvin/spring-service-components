@@ -2,5 +2,5 @@
     <include resource="logback-basic.xml"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="net.happyonroad.platform.repository.support.MybatisRepositoryScanner" level="DEBUG"/>
-    <logger name="net.happyonroad.platform.services.SpringMvcFeatureResolver" level="DEBUG"/>
+    <logger name="net.happyonroad.platform.resolver.SpringMvcFeatureResolver" level="DEBUG"/>
 </configuration>

@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-14 下午5:01
  */
-package net.happyonroad.platform.services;
+package net.happyonroad.platform.resolver;
 
 import net.happyonroad.platform.repository.support.MybatisRepositoryScanner;
 import net.happyonroad.util.StringUtils;

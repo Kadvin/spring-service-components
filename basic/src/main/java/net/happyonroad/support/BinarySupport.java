@@ -49,19 +49,23 @@ public class BinarySupport implements Serializable, Cloneable, Binable {
     }
 
     public byte[] toBinary() {
+        return toBinary(this);
+    }
+
+    public static byte[] toBinary(Object object){
         try{
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutput out = null;
             try {
                 out = new ObjectOutputStream(bos);
-                out.writeObject(this);
+                out.writeObject(object);
                 return bos.toByteArray();
             } finally {
                 bos.close();
                 if (out != null) out.close();
             }
         }catch (IOException ex){
-            throw  new IllegalStateException("Can't serialize " + this + " as binary stream");
+            throw  new IllegalStateException("Can't serialize " + object + " as binary stream");
         }
     }
 }

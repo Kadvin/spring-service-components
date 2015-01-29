@@ -1,10 +1,10 @@
 /**
  * Developer: Kadvin Date: 14/12/30 下午8:18
  */
-package net.happyonroad.platform.support;
+package net.happyonroad.extension;
 
 import net.happyonroad.component.core.Component;
-import net.happyonroad.platform.service.ServicePackageContainer;
+import net.happyonroad.service.ExtensionContainer;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ import java.util.List;
  * 默认的类加载器(platform class loader)无法加载到这些类
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
-public class ContainerAwareClassLoader extends ClassLoader {
-    private final ServicePackageContainer  container;
+public class ExtensionAwareClassLoader extends ClassLoader {
+    private final ExtensionContainer container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
     private       List<ApplicationContext> applications;
 
-    public ContainerAwareClassLoader(ClassLoader parent, ServicePackageContainer container) {
+    public ExtensionAwareClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
     }
@@ -51,7 +51,7 @@ public class ContainerAwareClassLoader extends ClassLoader {
 
     protected List<ApplicationContext> getApplications() {
         if (applications == null ) {
-            List<Component> components = container.getServicePackages();
+            List<Component> components = container.getExtensions();
             if (!components.isEmpty()) {
                 applications = new ArrayList<ApplicationContext>(components.size());
                 for (Component component : components) {

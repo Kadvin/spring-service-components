@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-5-16 上午9:46
  */
-package net.happyonroad.platform.event;
+package net.happyonroad.event;
 
 import net.happyonroad.component.core.Component;
 import org.springframework.context.ApplicationEvent;

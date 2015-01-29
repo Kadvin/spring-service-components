@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -17,7 +18,7 @@ import java.sql.Timestamp;
  * 在数据库中以主表的形式出现（而不是关联表）
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
-public class Record implements Cloneable{
+public class Record implements Cloneable, Serializable{
 
     public static String[] HELP_ATTRS = {"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting", "cascadeCreating", "hierarchyDeleting"};
 
