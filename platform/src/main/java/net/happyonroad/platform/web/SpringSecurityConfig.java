@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().realmName(realmName());
+        configureBasic(http);
         configureCsrf(http);
         configureExceptionHandling(http);
         configureRememberMe(http);
@@ -45,6 +45,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authenticated =
                 (ExpressionUrlAuthorizationConfigurer.ExpressionInterceptUrlRegistry) http.authorizeRequests();
         configureAuthorizeRequests(authenticated);
+    }
+
+    protected void configureBasic(HttpSecurity http) throws Exception {
+        //http.httpBasic().realmName(realmName());
     }
 
     /* 配置CSRF */
@@ -122,10 +126,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected PersistentTokenRepository defaultTokenRepository() {
         return new InMemoryTokenRepositoryImpl();
-    }
-
-    protected String realmName() {
-        return "ItsNow Platform";
     }
 
     protected DefaultAuthenticationFailureHandler authenticationFailureHandler() {
