@@ -6,6 +6,7 @@ package net.happyonroad.platform.support;
 import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.ibatis.io.Resources;
+import org.apache.jasper.servlet.JspServlet;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
@@ -33,7 +34,6 @@ import javax.servlet.ServletContainerInitializer;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -153,7 +153,7 @@ public class JettyServer extends Bean {
      */
     private ServletHolder jspServletHolder()
     {
-        ServletHolder holderJsp = new ServletHolder("jsp", JettyJspServlet.class);
+        ServletHolder holderJsp = new ServletHolder("jsp", JspServlet.class);
         holderJsp.setInitOrder(0);
         holderJsp.setInitParameter("logVerbosityLevel", "DEBUG");
         holderJsp.setInitParameter("fork", "false");
