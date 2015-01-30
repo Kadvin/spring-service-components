@@ -6,7 +6,11 @@ package net.happyonroad.platform.support;
 import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.ibatis.io.Resources;
+import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
+import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NCSARequestLog;
@@ -16,6 +20,7 @@ import org.eclipse.jetty.server.handler.AllowSymLinkAliasChecker;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -26,8 +31,11 @@ import org.springframework.context.ApplicationContextException;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /** The Jetty Server Instance */
@@ -51,11 +59,12 @@ public class JettyServer extends Bean {
         if ("localhost".equalsIgnoreCase(host)) {
             host = "0.0.0.0";
         }
-        server = new Server(new InetSocketAddress(host, port));
-        WebAppContext context = createWebContext();
-        server.setHandler(createHandlers(context));
-        server.setStopAtShutdown(true);
         try {
+            server = new Server(new InetSocketAddress(host, port));
+            WebAppContext context = createWebContext();
+            WebAppContext jspContext = createJspContext();
+            server.setHandler(createHandlers(context, jspContext));
+            server.setStopAtShutdown(true);
             server.start();
             logger.info("Jetty bind at {}:{}", host, port);
         } catch (Exception e) {
@@ -85,11 +94,80 @@ public class JettyServer extends Bean {
         return context;
     }
 
-    private HandlerCollection createHandlers(WebAppContext context) {
+    private WebAppContext createJspContext() throws Exception {
+        // Set JSP to use Standard JavaC always
+        System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
+        File jspRoot = getJspRootResourceUri();
+        File scratchDir = getScratchDir();
+        WebAppContext context = new WebAppContext();
+        context.setContextPath("/legacy");
+        context.setAttribute("javax.servlet.context.tempdir", scratchDir);
+        context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+          ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/.*taglibs.*\\.jar$");
+        context.setResourceBase(jspRoot.getAbsolutePath());
+        context.setAttribute("org.eclipse.jetty.containerInitializers", jspInitializers());
+        context.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
+        context.addBean(new ServletContainerInitializersStarter(context), true);
+        context.setClassLoader(classLoader);
+        context.addAliasCheck(new AllowSymLinkAliasChecker());
+
+        context.addServlet(jspServletHolder(), "*.jsp");
+        return context;
+    }
+
+    private File getJspRootResourceUri() throws IOException
+    {
+        File jspRootDir = new File(System.getProperty("app.home"), "webapp/jsp-root");
+        if (!jspRootDir.exists() && !jspRootDir.mkdirs()){
+            throw new IOException("Unable to create jsp root: " + jspRootDir);
+        }
+        return jspRootDir;
+    }
+
+    /**
+     * Establish Scratch directory for the servlet context (used by JSP compilation)
+     */
+    private File getScratchDir() throws IOException {
+        File tempDir = new File(System.getProperty("app.home"), "webapp/temp");
+
+        if (!tempDir.exists() && !tempDir.mkdirs()){
+            throw new IOException("Unable to create scratch directory: " + tempDir);
+        }
+        return tempDir;
+    }
+
+    /**
+     * Ensure the jsp engine is initialized correctly
+     */
+    private List<ContainerInitializer> jspInitializers()
+    {
+        JettyJasperInitializer sci = new JettyJasperInitializer();
+        ContainerInitializer initializer = new ContainerInitializer(sci, null);
+        List<ContainerInitializer> initializers = new ArrayList<ContainerInitializer>();
+        initializers.add(initializer);
+        return initializers;
+    }
+
+    /**
+     * Create JSP Servlet (must be named "jsp")
+     */
+    private ServletHolder jspServletHolder()
+    {
+        ServletHolder holderJsp = new ServletHolder("jsp", JettyJspServlet.class);
+        holderJsp.setInitOrder(0);
+        holderJsp.setInitParameter("logVerbosityLevel", "DEBUG");
+        holderJsp.setInitParameter("fork", "false");
+        holderJsp.setInitParameter("xpoweredBy", "false");
+        holderJsp.setInitParameter("compilerTargetVM", "1.7");
+        holderJsp.setInitParameter("compilerSourceVM", "1.7");
+        holderJsp.setInitParameter("keepgenerated", "true");
+        return holderJsp;
+    }
+
+    private HandlerCollection createHandlers(WebAppContext... contexts) {
 
         List<Handler> handlers = new ArrayList<Handler>();
-
-        handlers.add(context);
+        Collections.addAll(handlers, contexts);
 
         HandlerList handlerList = new HandlerList();
         handlerList.setHandlers(handlers.toArray(new Handler[handlers.size()]));

@@ -37,7 +37,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
 
     ApplicationContext applicationContext;
-    WebApplicationContext webAppContext;
+    WebApplicationContext webAppContext, securityAppContext;
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -64,13 +64,13 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
             // Load by Servlet Resource
             context.setConfigLocation("security.xml");
             context.setClassLoader(Thread.currentThread().getContextClassLoader());
-            webAppContext = context;
+            securityAppContext = context;
             return context;
         }else{
             AnnotationConfigWebApplicationContext acc = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
             //设置了class loader之后，就支持了定制化  spring_mvc.configuration
             acc.setClassLoader(Thread.currentThread().getContextClassLoader());
-            return webAppContext = acc;
+            return securityAppContext = acc;
         }
     }
 
@@ -83,9 +83,9 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         //将Root　Web Context 里面的 Security Related Services 注册到 对外的applicationContext里面
-        UserDetailsService userDetailsService = webAppContext.getBean(UserDetailsService.class);
-        AuthenticationProvider authenticationProvider = webAppContext.getBean(AuthenticationProvider.class);
-        PersistentTokenRepository tokenRepository = webAppContext.getBean(PersistentTokenRepository.class);
+        UserDetailsService userDetailsService = securityAppContext.getBean(UserDetailsService.class);
+        AuthenticationProvider authenticationProvider = securityAppContext.getBean(AuthenticationProvider.class);
+        PersistentTokenRepository tokenRepository = securityAppContext.getBean(PersistentTokenRepository.class);
         ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
         cac.getBeanFactory().registerSingleton("defaultUserDetailsService", userDetailsService);
         cac.getBeanFactory().registerSingleton("defaultAuthenticationProvider", authenticationProvider);
@@ -106,9 +106,9 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         if( applicationContext != null){
             servletAppContext.setParent(applicationContext);
             PlatformEventForwarder forwarder = applicationContext.getBean(PlatformEventForwarder.class);
-            forwarder.bind(webAppContext, servletAppContext);
+            forwarder.bind(securityAppContext, servletAppContext);
         }
-
+        webAppContext = servletAppContext;
         return servletAppContext;
 	}
 

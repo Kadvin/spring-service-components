@@ -7,11 +7,11 @@
     <parent>
         <groupId>net.happyonroad</groupId>
         <artifactId>spring-service-components</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </parent>
 
     <artifactId>platform</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 
     <name>Components Platform</name>
     <description>
@@ -36,8 +36,8 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.springframework.security</groupId>-->
-            <!--<artifactId>spring-security-messaging</artifactId>-->
+        <!--<groupId>org.springframework.security</groupId>-->
+        <!--<artifactId>spring-security-messaging</artifactId>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -70,6 +70,19 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jsp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jstl</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
