@@ -3,10 +3,12 @@
  */
 package net.happyonroad.platform.repository;
 
+import net.happyonroad.component.container.ServiceExporter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
@@ -27,7 +29,11 @@ import static java.lang.String.format;
  * <h1>关于数据库的配置</h1>
  */
 @Configuration
-public class DatabaseConfig {
+public class DatabaseConfig implements InitializingBean {
+    //在被测试程序使用时，无需对外注册服务
+    @Autowired(required = false)
+    ServiceExporter exporter;
+
     @Autowired
     ApplicationContext application;
 
@@ -89,5 +95,20 @@ public class DatabaseConfig {
     @Bean
     public JdbcTemplate jdbcTemplate() throws PropertyVetoException {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if( exporter == null ) return;
+        //数据库模块暴露的服务由数据库模块自行负责
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource()).getObject();
+        exporter.exports(DataSource.class, dataSource());
+        exporter.exports(SqlSessionFactory.class, sqlSessionFactory);
+        exporter.exports(JdbcTemplate.class, jdbcTemplate());
+        // 被 activiti 使用
+        exporter.exports(PlatformTransactionManager.class, transactionManager(dataSource()));
+        // 被 mybatis的config模块使用
+        exporter.exports(org.apache.ibatis.session.Configuration.class, configuration(sqlSessionFactory));
+
     }
 }

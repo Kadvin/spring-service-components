@@ -35,7 +35,6 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Service-Config>net.happyonroad.platform.config.DefaultServiceConfig</Service-Config>
                             <App-Config>net.happyonroad.menu.config.MenuAppConfig</App-Config>
                             <DB-Repository>net.happyonroad.menu.repository</DB-Repository>
                             <Web-Repository>net.happyonroad.menu.web.controller</Web-Repository>

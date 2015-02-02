@@ -147,7 +147,6 @@
                     <archive>
                         <manifestEntries>
                             <App-Config>net.happyonroad.platform.PlatformConfiguration</App-Config>
-                            <Service-Config>net.happyonroad.platform.ServiceConfiguration</Service-Config>
                         </manifestEntries>
                     </archive>
                 </configuration>

@@ -6,7 +6,6 @@ package net.happyonroad.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.Lifecycle;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +20,6 @@ import java.util.regex.Pattern;
 /**
  * Apply configured properties to system property
  */
-@Component
 public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
     private static final Pattern INTERPOLATE_PTN = Pattern.compile("[#|$]\\{([^}]+)\\}");
     Logger logger = LoggerFactory.getLogger(ApplyToSystemProperties.class);

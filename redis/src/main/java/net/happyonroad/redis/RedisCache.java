@@ -51,6 +51,11 @@ public class RedisCache extends Bean implements MutableCacheService {
     ////////////////////////////////////////////////
 
     @Override
+    public void start() {
+        super.start();
+    }
+
+    @Override
     protected void performStart() {
         super.performStart();
         pool = new RedisPool(config);
