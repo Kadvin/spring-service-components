@@ -63,7 +63,7 @@ public class JettyServer extends Bean {
             server = new Server(new InetSocketAddress(host, port));
             WebAppContext context = createWebContext();
             WebAppContext jspContext = createJspContext();
-            server.setHandler(createHandlers(context, jspContext));
+            server.setHandler(createHandlers(jspContext, context));
             server.setStopAtShutdown(true);
             server.start();
             logger.info("Jetty bind at {}:{}", host, port);
