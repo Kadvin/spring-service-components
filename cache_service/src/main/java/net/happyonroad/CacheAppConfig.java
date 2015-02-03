@@ -5,9 +5,7 @@ package net.happyonroad;
 
 import net.happyonroad.cache.MutableCacheService;
 import net.happyonroad.cache.support.DefaultCache;
-import net.happyonroad.component.container.ServiceExporter;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
@@ -18,9 +16,7 @@ import org.springframework.jmx.support.RegistrationPolicy;
  */
 @Configuration
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-public class CacheAppConfig implements InitializingBean{
-    @Autowired
-    ServiceExporter exporter;
+public class CacheAppConfig extends AbstractAppConfig{
 
     @Bean
     public DefaultCache defaultCache(){
@@ -28,7 +24,7 @@ public class CacheAppConfig implements InitializingBean{
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        exporter.exports(MutableCacheService.class, defaultCache(), "default");
+    public void doExports() {
+        exports(MutableCacheService.class, "default");
     }
 }

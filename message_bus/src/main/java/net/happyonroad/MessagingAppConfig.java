@@ -3,13 +3,10 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.component.container.ServiceExporter;
-import net.happyonroad.component.container.ServiceImporter;
 import net.happyonroad.concurrent.StrategyExecutorService;
 import net.happyonroad.messaging.MessageBus;
 import net.happyonroad.messaging.support.DefaultMessageBus;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
@@ -21,11 +18,7 @@ import org.springframework.scheduling.TaskScheduler;
  */
 @Configuration
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-public class MessagingAppConfig implements InitializingBean{
-    @Autowired
-    ServiceImporter importer;
-    @Autowired
-    ServiceExporter exporter;
+public class MessagingAppConfig extends AbstractAppConfig{
     @Bean
     MessageBus defaultMessageBus(){
         return new DefaultMessageBus();
@@ -42,7 +35,7 @@ public class MessagingAppConfig implements InitializingBean{
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        exporter.exports(MessageBus.class, defaultMessageBus());
+    public void doExports() {
+        exports(MessageBus.class);
     }
 }

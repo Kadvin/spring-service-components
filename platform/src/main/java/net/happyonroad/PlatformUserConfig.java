@@ -3,11 +3,8 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.cache.CacheService;
-import net.happyonroad.component.container.ServiceImporter;
-import net.happyonroad.messaging.MessageBus;
+import net.happyonroad.spring.config.AbstractUserConfig;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,42 +18,30 @@ import javax.sql.DataSource;
  * 将会导入平台提供的所有相关服务，典型的是数据库相关服务
  */
 @Configuration
-public class PlatformUserConfig {
-    @Autowired
-    ServiceImporter importer;
-
+public class PlatformUserConfig extends AbstractUserConfig{
     @Bean
     DataSource dataSource(){
-        return importer.imports(DataSource.class);
+        return imports(DataSource.class);
     }
 
     @Bean
     PlatformTransactionManager transactionManager(){
-        return importer.imports(PlatformTransactionManager.class);
+        return imports(PlatformTransactionManager.class);
     }
 
     @Bean
     SqlSessionFactory sqlSessionFactory(){
-        return importer.imports(SqlSessionFactory.class);
+        return imports(SqlSessionFactory.class);
     }
 
     @Bean
     JdbcTemplate jdbcTemplate(){
-        return importer.imports(JdbcTemplate.class);
+        return imports(JdbcTemplate.class);
     }
 
     @Bean
     org.apache.ibatis.session.Configuration dbConfiguration(){
-        return importer.imports(org.apache.ibatis.session.Configuration.class);
-    }
-
-    @Bean
-    CacheService cacheService(){
-        return importer.imports(CacheService.class, System.getProperty("cache.provider", "default"));
-    }
-    @Bean
-    MessageBus messageBus(){
-        return importer.imports(MessageBus.class, System.getProperty("messaging.provider", "default"));
+        return imports(org.apache.ibatis.session.Configuration.class);
     }
 
 }

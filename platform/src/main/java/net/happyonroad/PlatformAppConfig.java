@@ -3,34 +3,26 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.component.container.ServiceExporter;
+import net.happyonroad.extension.ExtensionAwareClassLoader;
+import net.happyonroad.extension.ExtensionManager;
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.platform.service.AutoNumberService;
-import net.happyonroad.service.ExtensionContainer;
-import net.happyonroad.extension.ExtensionManager;
 import net.happyonroad.platform.support.AutoNumberInMemory;
-import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
+import net.happyonroad.service.ExtensionContainer;
+import net.happyonroad.spring.config.AbstractAppConfig;
 import net.happyonroad.spring.config.DefaultAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.sql.DataSource;
 
 
 /**
@@ -53,11 +45,7 @@ import javax.sql.DataSource;
  */
 @org.springframework.context.annotation.Configuration
 @Import({DefaultAppConfig.class, DatabaseConfig.class})
-public class PlatformAppConfig implements ApplicationListener<ComponentLoadedEvent>, ApplicationContextAware {
-    @Autowired
-    ServiceExporter exporter;
-
-    ApplicationContext applicationContext;
+public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
 
     // 用于启动WEB应用
     @Bean
@@ -99,13 +87,8 @@ public class PlatformAppConfig implements ApplicationListener<ComponentLoadedEve
         PersistentTokenRepository persistentTokenRepository = applicationContext.getBean(PersistentTokenRepository.class);
 
         // Spring Security Registered
-        exporter.exports(UserDetailsService.class, userDetailsService, "default");
-        exporter.exports(AuthenticationProvider.class, authenticationProvider, "default");
-        exporter.exports(PersistentTokenRepository.class, persistentTokenRepository, "default");
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        exports(UserDetailsService.class, userDetailsService);
+        exports(AuthenticationProvider.class, authenticationProvider);
+        exports(PersistentTokenRepository.class, persistentTokenRepository);
     }
 }

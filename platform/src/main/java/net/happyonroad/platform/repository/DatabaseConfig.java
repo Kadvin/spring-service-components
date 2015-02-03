@@ -3,7 +3,7 @@
  */
 package net.happyonroad.platform.repository;
 
-import net.happyonroad.component.container.ServiceExporter;
+import net.happyonroad.spring.service.ServiceExporter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -69,12 +69,12 @@ public class DatabaseConfig implements InitializingBean {
     }
 
     @Bean
-    public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource){
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setConfigLocation(application.getResource("classpath:META-INF/mybatis.xml"));
         factory.setDataSource(dataSource);
         factory.setPlugins(new Interceptor[]{statementInterceptor()});
-        return factory;
+        return factory.getObject();
     }
 
     @Bean
@@ -101,7 +101,7 @@ public class DatabaseConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         if( exporter == null ) return;
         //数据库模块暴露的服务由数据库模块自行负责
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource()).getObject();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource());
         exporter.exports(DataSource.class, dataSource());
         exporter.exports(SqlSessionFactory.class, sqlSessionFactory);
         exporter.exports(JdbcTemplate.class, jdbcTemplate());

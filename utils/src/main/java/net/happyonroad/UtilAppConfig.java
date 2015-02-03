@@ -3,10 +3,8 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.component.container.ServiceExporter;
 import net.happyonroad.config.ApplyToSystemProperties;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -20,9 +18,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 // context:property-placeholder 里面的 location 包括通配符的功能
 //  通过 @PropertySource 无法实现
 @ImportResource("classpath:META-INF/properties.xml")
-public class UtilAppConfig implements InitializingBean{
-    @Autowired
-    ServiceExporter exporter;
+public class UtilAppConfig extends AbstractAppConfig{
 
     @Bean
     ApplyToSystemProperties applyToSystemProperties(){
@@ -39,7 +35,7 @@ public class UtilAppConfig implements InitializingBean{
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        exporter.exports(TaskScheduler.class, taskScheduler(), "system");
+    public void doExports()  {
+        exports(TaskScheduler.class, "system");
     }
 }
