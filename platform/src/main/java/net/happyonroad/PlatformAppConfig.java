@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-14 下午4:22
  */
-package net.happyonroad.platform;
+package net.happyonroad;
 
 import net.happyonroad.component.container.ServiceExporter;
 import net.happyonroad.platform.repository.DatabaseConfig;
@@ -40,8 +40,7 @@ import javax.sql.DataSource;
  * 加载的逻辑顺序为:
  * <pre>
  * Spring Component AppLauncher
- *   |- Platform Configuration
- *   |   |- Config module
+ *   |- Platform App Config
  *   |   |- Database module
  *   |   |- JettyServer
  *   |   |    |- AnnotationConfiguration
@@ -54,7 +53,7 @@ import javax.sql.DataSource;
  */
 @org.springframework.context.annotation.Configuration
 @Import({DefaultAppConfig.class, DatabaseConfig.class})
-public class PlatformConfiguration implements ApplicationListener<ComponentLoadedEvent>, ApplicationContextAware {
+public class PlatformAppConfig implements ApplicationListener<ComponentLoadedEvent>, ApplicationContextAware {
     @Autowired
     ServiceExporter exporter;
 

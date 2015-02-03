@@ -11,7 +11,7 @@ import net.happyonroad.redis.RedisCache;
 import net.happyonroad.redis.RedisMessageBus;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.jmx.support.RegistrationPolicy;
@@ -21,21 +21,24 @@ import org.springframework.jmx.support.RegistrationPolicy;
  */
 @Configuration
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-@ComponentScan("net.happyonroad.redis")
 public class RedisAppConfig implements InitializingBean{
     @Autowired
     ServiceImporter importer;
     @Autowired
     ServiceExporter exporter;
 
-    @Autowired
-    RedisMessageBus redisMessageBus;
-    @Autowired
-    RedisCache redisCache;
+    @Bean
+    RedisMessageBus redisMessageBus(){
+        return new RedisMessageBus();
+    }
+    @Bean
+    RedisCache redisCache(){
+        return new RedisCache();
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        exporter.exports(MessageBus.class, redisMessageBus, "redis");
-        exporter.exports(CacheService.class, redisCache, "redis");
+        exporter.exports(MessageBus.class, redisMessageBus(), "redis");
+        exporter.exports(CacheService.class, redisCache(), "redis");
     }
 }

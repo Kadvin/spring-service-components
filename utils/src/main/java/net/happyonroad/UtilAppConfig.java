@@ -9,7 +9,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -17,7 +17,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  * <h1>Util App Config</h1>
  */
 @Configuration
-@PropertySource("file://${app.home}/config/*.properties")
+// context:property-placeholder 里面的 location 包括通配符的功能
+//  通过 @PropertySource 无法实现
+@ImportResource("classpath:META-INF/properties.xml")
 public class UtilAppConfig implements InitializingBean{
     @Autowired
     ServiceExporter exporter;
@@ -38,6 +40,6 @@ public class UtilAppConfig implements InitializingBean{
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        exporter.exports(TaskScheduler.class, taskScheduler());
+        exporter.exports(TaskScheduler.class, taskScheduler(), "system");
     }
 }

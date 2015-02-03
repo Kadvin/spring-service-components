@@ -3,11 +3,13 @@
  */
 package net.happyonroad.platform.resolver;
 
-import net.happyonroad.platform.repository.support.MybatisRepositoryScanner;
-import net.happyonroad.util.StringUtils;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
+import net.happyonroad.component.container.support.ComponentClassLoader;
 import net.happyonroad.component.core.Component;
+import net.happyonroad.platform.repository.support.ProductMybatisScanner;
+import net.happyonroad.util.StringUtils;
 import org.apache.ibatis.io.Resources;
+import org.springframework.context.ApplicationContext;
 
 import static org.springframework.context.ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS;
 
@@ -79,8 +81,10 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
         String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
         String dbConfig = component.getManifestAttribute(DB_CONFIG);
         if( StringUtils.isBlank(dbConfig)) dbConfig = "classpath?:META-INF/mybatis.xml";
-
-        MybatisRepositoryScanner scanner = new MybatisRepositoryScanner(component.getServiceApplication());
+        // 由于本类是平台定义的，所以，其加载cl一定是平台的 class loader
+        ComponentClassLoader platformClassLoader = (ComponentClassLoader) getClass().getClassLoader();
+        ApplicationContext platformApplication = platformClassLoader.getComponent().getApplication();
+        ProductMybatisScanner scanner = new ProductMybatisScanner(platformApplication, component);
         scanner.configure(dbConfig);
 
         String[] locations = StringUtils.split(dbRepository, CONFIG_LOCATION_DELIMITERS);

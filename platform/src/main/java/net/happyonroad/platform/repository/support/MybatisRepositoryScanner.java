@@ -18,6 +18,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,30 +30,34 @@ import java.util.Map;
 
 /**
  * <h1>对mybatis的scanner进行filter</h1>
+ *
+ * 支持两种使用方式
+ *
+ *
  */
-public class MybatisRepositoryScanner extends Bean implements RepositoryScanner {
+public abstract class MybatisRepositoryScanner extends Bean implements RepositoryScanner {
 
     ApplicationContext applicationContext;
     SqlSessionFactory  sqlSessionFactory;
     BeanFilter         filter;
 
     public MybatisRepositoryScanner(ApplicationContext applicationContext) {
-        this(applicationContext, applicationContext.getBean(SqlSessionFactory.class));
-    }
-
-    public MybatisRepositoryScanner(ApplicationContext applicationContext, SqlSessionFactory sqlSessionFactory) {
         this.applicationContext = applicationContext;
-        this.sqlSessionFactory = sqlSessionFactory;
+        this.sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
     }
 
     @Override
     public void configure(String config) throws Exception {
-        Resource[] resources = applicationContext.getResources(config);
+        Resource[] resources = getResourceLoader().getResources(config);
         for (Resource resource : resources) {
             if (resource == null || !resource.exists()) return;
             configByResource(resource);
         }
     }
+
+    protected abstract BeanDefinitionRegistry createBeanRegistry();
+
+    protected abstract ResourcePatternResolver getResourceLoader();
 
     void configByResource(Resource resource) throws IOException {
         logger.info("Found extra mybatis config in {}", resource);
@@ -106,7 +112,8 @@ public class MybatisRepositoryScanner extends Bean implements RepositoryScanner 
 
     @Override
     public int scan(String... packages) {
-        ClassPathMapperScanner scanner = new ClassPathMapperScanner((BeanDefinitionRegistry) applicationContext){
+        BeanDefinitionRegistry beanRegistry = createBeanRegistry();
+        ClassPathMapperScanner scanner = new ClassPathMapperScanner(beanRegistry){
             @Override
             protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
                 boolean superResult = super.checkCandidate(beanName, beanDefinition);
@@ -117,7 +124,7 @@ public class MybatisRepositoryScanner extends Bean implements RepositoryScanner 
         String sqlSessionFactoryBeanName = "sqlSessionFactory";
         scanner.setSqlSessionFactory(sqlSessionFactory);
         scanner.setSqlSessionFactoryBeanName(sqlSessionFactoryBeanName);
-        scanner.setResourceLoader(applicationContext);
+        scanner.setResourceLoader(getResourceLoader());
         scanner.setIncludeAnnotationConfig(false);
         scanner.registerFilters();
         int count = scanner.scan(packages);

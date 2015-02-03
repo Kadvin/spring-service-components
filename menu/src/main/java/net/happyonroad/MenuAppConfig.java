@@ -1,10 +1,11 @@
 /**
  * Developer: Kadvin Date: 14/12/8 下午7:57
  */
-package net.happyonroad.menu.config;
+package net.happyonroad;
 
+import net.happyonroad.menu.support.MenuItemManager;
 import net.happyonroad.spring.config.DefaultAppConfig;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -13,6 +14,10 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({DefaultAppConfig.class})
-@ComponentScan("net.happyonroad.menu.support")
 public class MenuAppConfig {
+    @Bean
+    MenuItemManager menuItemManager(){
+        return new MenuItemManager();
+    }
+
 }
