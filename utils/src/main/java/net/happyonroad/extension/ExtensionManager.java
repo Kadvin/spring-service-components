@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.commons.lang.time.DurationFormatUtils.formatDurationHMS;
+
 /**
  * The extension manager
  */
@@ -54,15 +56,19 @@ public class ExtensionManager extends ApplicationSupportBean
     public void onApplicationEvent(ContainerEvent event) {
         if (event instanceof ContainerStartedEvent) {
             try {
+                long start = System.currentTimeMillis();
                 loadExtensions();
                 publishEvent(new SystemStartedEvent(componentContext));
+                logger.info("Load extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
             } catch (Exception e) {
                 throw new BootstrapException("Can't load extensions", e);
             }
         } else if (event instanceof ContainerStoppingEvent) {
             try {
+                long start = System.currentTimeMillis();
                 publishEvent(new SystemStoppingEvent(componentContext));
                 unloadExtensions();
+                logger.info("Unload extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
             } catch (Exception e) {
                 throw new ApplicationContextException("Can't unload extensions", e);
             }
@@ -100,6 +106,7 @@ public class ExtensionManager extends ApplicationSupportBean
         Component component = componentRepository.resolveComponent(dependency);
         try {
             logger.info("Loading extension: {}", component);
+            long start = System.currentTimeMillis();
             //仅发给容器
             publishEvent(new ExtensionLoadingEvent(component));
             componentLoader.load(component);
@@ -107,7 +114,7 @@ public class ExtensionManager extends ApplicationSupportBean
             DefaultComponent comp = (DefaultComponent) component;
             registerMbean(comp, comp.getObjectName());
             publishEvent(new ExtensionLoadedEvent(component));
-            logger.info("Loaded  extension: {}", component);
+            logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
         } catch (Exception e) {
             logger.error("Can't load extension: " + component + ", ignore it and going on", e);
         }
@@ -125,12 +132,13 @@ public class ExtensionManager extends ApplicationSupportBean
 
     void unloadExtension(Component component) {
         logger.info("Unloading extension: {}", component);
+        long start = System.currentTimeMillis();
         publishEvent(new ExtensionUnloadingEvent(component));
         componentLoader.unloadSingle(component);
         loadedExtensions.remove(component);
         //这个事件就仅发给容器
         publishEvent(new ExtensionUnloadedEvent(component));
-        logger.info("Unloaded  extension: {}", component);
+        logger.info("Unloaded  extension: {}({})", component, formatDurationHMS(System.currentTimeMillis()-start));
     }
 
     @Override

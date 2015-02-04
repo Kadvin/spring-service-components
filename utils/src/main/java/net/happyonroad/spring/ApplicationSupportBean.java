@@ -50,6 +50,9 @@ public class ApplicationSupportBean extends TranslateSupportBean
      */
     public void publishEvent(ApplicationEvent event) {
         //向所有的context发布，context里面有防止重复的机制
+        // TODO 这里需要改进和优化, 主要包括:
+        // 1. PrioritySort 现在只能在同一个context里面比较，应该跨context比较
+        // 2. 提速
         for (ApplicationContext context : componentContext.getApplicationFeatures()) {
             if( context != null ) {
                 if( context instanceof ConfigurableApplicationContext){

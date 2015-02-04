@@ -18,6 +18,8 @@ public class BlockingDelegator<T>  {
     }
 
     public void setDelegate(T delegate) {
+        if( delegate == this )
+            throw new IllegalArgumentException("Can't set delegate as itself");
         this.delegate = delegate;
         if( this.delegate != null ) lock.unlock();
     }
