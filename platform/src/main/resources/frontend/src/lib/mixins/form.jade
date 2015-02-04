@@ -1,6 +1,6 @@
 //- A form with mousedown blur
 mixin form(name)
-  +base_form(name)(ng-model-options="{ updateOn: 'mousedown blur' }")
+  +base_form(name)(ng-model-options="{ updateOn: 'mousedown blur' }")&attributes(attributes)
 //- A standard form
 mixin base_form(name)
   form.form-horizontal(name=name, novalidate="novalidate", role="form")&attributes(attributes)
