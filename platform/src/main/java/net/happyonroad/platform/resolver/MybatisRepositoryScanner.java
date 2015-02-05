@@ -1,9 +1,9 @@
 /**
  * xiongjie on 14-8-6.
  */
-package net.happyonroad.platform.repository.support;
+package net.happyonroad.platform.resolver;
 
-import net.happyonroad.platform.repository.RepositoryScanner;
+import net.happyonroad.component.container.RepositoryScanner;
 import net.happyonroad.platform.util.BeanFilter;
 import net.happyonroad.spring.Bean;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -13,20 +13,18 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <h1>对mybatis的scanner进行filter</h1>
@@ -35,15 +33,22 @@ import java.util.Map;
  *
  *
  */
-public abstract class MybatisRepositoryScanner extends Bean implements RepositoryScanner {
+public class MybatisRepositoryScanner extends Bean implements RepositoryScanner {
 
+    private String[] packages;
     ApplicationContext applicationContext;
     SqlSessionFactory  sqlSessionFactory;
     BeanFilter         filter;
 
-    public MybatisRepositoryScanner(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public MybatisRepositoryScanner(ApplicationContext context, String... packages) {
+        this.applicationContext = context;
         this.sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
+        this.packages = packages;
+    }
+
+    @Override
+    public void bind(ApplicationContext context) {
+        this.applicationContext = context;
     }
 
     @Override
@@ -51,20 +56,63 @@ public abstract class MybatisRepositoryScanner extends Bean implements Repositor
         Resource[] resources = getResourceLoader().getResources(config);
         for (Resource resource : resources) {
             if (resource == null || !resource.exists()) return;
-            configByResource(resource);
+            configByResource(applicationContext, resource);
         }
     }
 
-    protected abstract BeanDefinitionRegistry createBeanRegistry();
+    protected BeanDefinitionRegistry createBeanRegistry() {
+        return (BeanDefinitionRegistry) applicationContext;
+    }
 
-    protected abstract ResourcePatternResolver getResourceLoader();
+    protected ResourcePatternResolver getResourceLoader() {
+        return applicationContext;
+    }
 
-    void configByResource(Resource resource) throws IOException {
-        logger.info("Found extra mybatis config in {}", resource);
+    @Override
+    public int scan(String... packages) {
+        List<String> targets = new ArrayList<String>();
+        targets.addAll(Arrays.asList(this.packages));
+        targets.addAll(Arrays.asList(packages));
 
+        BeanDefinitionRegistry beanRegistry = createBeanRegistry();
+        ClassPathMapperScanner scanner = new ClassPathMapperScanner(beanRegistry) {
+            @Override
+            protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition)
+                    throws IllegalStateException {
+                boolean superResult = super.checkCandidate(beanName, beanDefinition);
+                boolean accept = filter == null || filter.accept(beanName, beanDefinition);
+                return superResult && accept;
+            }
+        };
+        scanner.setSqlSessionFactory(sqlSessionFactory);
+        scanner.setResourceLoader(getResourceLoader());
+        scanner.setIncludeAnnotationConfig(false);
+        scanner.registerFilters();
+        int count = scanner.scan(targets.toArray(new String[targets.size()]));
+        if( count > 0 && logger.isDebugEnabled()){
+            logger.debug("Scanned {} mybatis repositories", count);
+
+            String[] names = scanner.getRegistry().getBeanDefinitionNames();
+            for (String beanName : names) {
+                BeanDefinition beanDefinition = scanner.getRegistry().getBeanDefinition(beanName);
+                if( (beanDefinition instanceof ScannedGenericBeanDefinition) &&
+                    ((ScannedGenericBeanDefinition) beanDefinition).getBeanClass() == MapperFactoryBean.class){
+                    logger.debug("\t{}", beanDefinition.getPropertyValues().get("mapperInterface") );
+                }
+            }
+        }
+        return count;
+    }
+
+    public void setFilter(BeanFilter filter) {
+        this.filter = filter;
+    }
+
+    public static void configByResource(ApplicationContext platformApplication, Resource resource) throws IOException {
+        Logger logger = LoggerFactory.getLogger(MybatisRepositoryScanner.class);
         InputStream stream = resource.getInputStream();
         try {
-            Configuration configuration = applicationContext.getBean(Configuration.class);
+            Configuration configuration = platformApplication.getBean(Configuration.class);
             XMLConfigBuilder builder = new XMLConfigBuilder(stream,
                                                             configuration.getEnvironment().toString(),
                                                             configuration.getVariables());
@@ -110,40 +158,4 @@ public abstract class MybatisRepositoryScanner extends Bean implements Repositor
         }
     }
 
-    @Override
-    public int scan(String... packages) {
-        BeanDefinitionRegistry beanRegistry = createBeanRegistry();
-        ClassPathMapperScanner scanner = new ClassPathMapperScanner(beanRegistry){
-            @Override
-            protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition) throws IllegalStateException {
-                boolean superResult = super.checkCandidate(beanName, beanDefinition);
-                boolean accept = filter == null || filter.accept(beanName, beanDefinition);
-                return superResult && accept;
-            }
-        };
-        String sqlSessionFactoryBeanName = "sqlSessionFactory";
-        scanner.setSqlSessionFactory(sqlSessionFactory);
-        scanner.setSqlSessionFactoryBeanName(sqlSessionFactoryBeanName);
-        scanner.setResourceLoader(getResourceLoader());
-        scanner.setIncludeAnnotationConfig(false);
-        scanner.registerFilters();
-        int count = scanner.scan(packages);
-        if( count > 0 && logger.isDebugEnabled()){
-            logger.debug("Scanned {} mybatis repositories", count);
-
-            String[] names = scanner.getRegistry().getBeanDefinitionNames();
-            for (String beanName : names) {
-                BeanDefinition beanDefinition = scanner.getRegistry().getBeanDefinition(beanName);
-                if( (beanDefinition instanceof ScannedGenericBeanDefinition) &&
-                    ((ScannedGenericBeanDefinition) beanDefinition).getBeanClass() == MapperFactoryBean.class){
-                    logger.debug("\t{}", beanDefinition.getPropertyValues().get("mapperInterface") );
-                }
-            }
-        }
-        return count;
-    }
-
-    public void setFilter(BeanFilter filter) {
-        this.filter = filter;
-    }
 }

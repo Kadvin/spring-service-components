@@ -3,8 +3,8 @@
  */
 package net.happyonroad.test.config;
 
-import net.happyonroad.platform.repository.RepositoryScanner;
-import net.happyonroad.platform.repository.support.TestMybatisScanner;
+import net.happyonroad.component.container.RepositoryScanner;
+import net.happyonroad.platform.resolver.MybatisRepositoryScanner;
 import net.happyonroad.platform.util.BeanFilter;
 import net.happyonroad.test.support.H2AsMySqlEmbeddedDsConfigurer;
 import net.happyonroad.test.support.MigrateResourcePopulator;
@@ -67,13 +67,13 @@ public abstract class RepositoryConfigWithH2 implements InitializingBean {
     }
 
     protected  String dbRepository() {
-        return "dnt.itsnow.repository";
+        return "dnt.*.repository";
     }
 
     @Bean
     public RepositoryScanner repositoryScanner(){
         BeanFilter repositoryFilter = repositoryFilter();
-        TestMybatisScanner scanner = new TestMybatisScanner(applicationContext);
+        MybatisRepositoryScanner scanner = new MybatisRepositoryScanner(applicationContext);
         scanner.setFilter(repositoryFilter);
         return scanner;
     }

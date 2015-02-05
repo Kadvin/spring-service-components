@@ -3,15 +3,16 @@
  */
 package net.happyonroad.platform.resolver;
 
+import net.happyonroad.component.container.RepositoryScanner;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
 import net.happyonroad.component.container.support.ComponentClassLoader;
 import net.happyonroad.component.core.Component;
-import net.happyonroad.platform.repository.support.ProductMybatisScanner;
 import net.happyonroad.util.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 
-import static org.springframework.context.ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS;
+import java.io.IOException;
 
 /**
  * <h2>Itsnow平台上的服务模块扩展包</h2>
@@ -41,7 +42,7 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
         //  repository(mybatis mapper)
         //68:  在Spring Service Context(65) 之后，Spring Application Context(70) 之前卸载
         // 其实没有做任何卸载动作，卸载顺序无所谓
-        super(28, 68);
+        super(20, 68);
     }
 
     @Override
@@ -79,17 +80,32 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
     @Override
     public void resolve(Component component) throws Exception {
         String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
-        String dbConfig = component.getManifestAttribute(DB_CONFIG);
-        if( StringUtils.isBlank(dbConfig)) dbConfig = "classpath?:META-INF/mybatis.xml";
         // 由于本类是平台定义的，所以，其加载cl一定是平台的 class loader
         ComponentClassLoader platformClassLoader = (ComponentClassLoader) getClass().getClassLoader();
         ApplicationContext platformApplication = platformClassLoader.getComponent().getApplication();
-        ProductMybatisScanner scanner = new ProductMybatisScanner(platformApplication, component);
-        scanner.configure(dbConfig);
+        String dbConfig = component.getManifestAttribute(DB_CONFIG);
+        if( StringUtils.isBlank(dbConfig)) dbConfig = "classpath?:META-INF/mybatis.xml";
+        configureMybatisXml(platformApplication, component, dbConfig);
 
-        String[] locations = StringUtils.split(dbRepository, CONFIG_LOCATION_DELIMITERS);
-        scanner.scan(locations);
+        RepositoryScanner scanner = new MybatisRepositoryScanner(platformApplication, dbRepository);
+        component.registerScanner(scanner);
 
         logger.info("The {} is resolved for mybatis feature", component);
     }
+
+    void configureMybatisXml(ApplicationContext platformApplication, Component component, String dbConfig)
+            throws IOException {
+        // 剔除 classpath?*:
+        if( dbConfig.contains(":"))
+            dbConfig = dbConfig.substring(dbConfig.indexOf(':') + 1);
+
+        Resource[] resources = component.getResource().getLocalResourcesUnder(dbConfig);
+        for (Resource resource : resources) {
+            if (resource == null || !resource.exists()) return;
+            logger.info("Found extra mybatis config in {}", resource);
+            MybatisRepositoryScanner.configByResource(platformApplication, resource);
+        }
+
+    }
+
 }
