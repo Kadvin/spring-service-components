@@ -10,7 +10,6 @@ import org.apache.jasper.servlet.JspServlet;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Handler;
@@ -29,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.web.SpringServletContainerInitializer;
 
 import javax.servlet.ServletContainerInitializer;
 import java.io.File;
@@ -61,9 +61,14 @@ public class JettyServer extends Bean {
         }
         try {
             server = new Server(new InetSocketAddress(host, port));
+
+            //WebAppContext jspContext = createJspContext();
             WebAppContext context = createWebContext();
-            WebAppContext jspContext = createJspContext();
-            server.setHandler(createHandlers(jspContext, context));
+            if( "true".equalsIgnoreCase(System.getProperty("platform.jsp", "false"))){
+                enableJsp(context);
+            }
+            HandlerCollection handler = createHandler(context);
+            server.setHandler(handler);
             server.setStopAtShutdown(true);
             server.start();
             logger.info("Jetty bind at {}:{}", host, port);
@@ -94,34 +99,25 @@ public class JettyServer extends Bean {
         return context;
     }
 
-    private WebAppContext createJspContext() throws Exception {
+    private void enableJsp(WebAppContext context)throws Exception{
         // Set JSP to use Standard JavaC always
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
-        File jspRoot = getJspRootResourceUri();
         File scratchDir = getScratchDir();
-        WebAppContext context = new WebAppContext();
-        context.setContextPath("/legacy");
         context.setAttribute("javax.servlet.context.tempdir", scratchDir);
         context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-          ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/.*taglibs.*\\.jar$");
-        context.setResourceBase(jspRoot.getAbsolutePath());
+                             ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/.*taglibs.*\\.jar$");
         context.setAttribute("org.eclipse.jetty.containerInitializers", jspInitializers());
         context.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
-        context.addBean(new ServletContainerInitializersStarter(context), true);
-        context.setClassLoader(classLoader);
-        context.addAliasCheck(new AllowSymLinkAliasChecker());
 
         context.addServlet(jspServletHolder(), "*.jsp");
-        return context;
+
     }
 
-    private File getJspRootResourceUri() throws IOException
-    {
-        File jspRootDir = new File(System.getProperty("app.home"), "webapp/jsp-root");
-        if (!jspRootDir.exists() && !jspRootDir.mkdirs()){
-            throw new IOException("Unable to create jsp root: " + jspRootDir);
-        }
-        return jspRootDir;
+    @SuppressWarnings("UnusedDeclaration")
+    private WebAppContext createJspContext() throws Exception {
+        WebAppContext context = new WebAppContext();
+        enableJsp(context);
+        return context;
     }
 
     /**
@@ -155,6 +151,7 @@ public class JettyServer extends Bean {
     {
         ServletHolder holderJsp = new ServletHolder("jsp", JspServlet.class);
         holderJsp.setInitOrder(0);
+        holderJsp.setAsyncSupported(true);
         holderJsp.setInitParameter("logVerbosityLevel", "DEBUG");
         holderJsp.setInitParameter("fork", "false");
         holderJsp.setInitParameter("xpoweredBy", "false");
@@ -164,7 +161,7 @@ public class JettyServer extends Bean {
         return holderJsp;
     }
 
-    private HandlerCollection createHandlers(WebAppContext... contexts) {
+    private HandlerCollection createHandler(WebAppContext... contexts) {
 
         List<Handler> handlers = new ArrayList<Handler>();
         Collections.addAll(handlers, contexts);
@@ -206,8 +203,11 @@ public class JettyServer extends Bean {
             //noinspection unchecked
             List<ContainerInitializer> initializers =
                     (List<ContainerInitializer>) context.getAttribute(AnnotationConfiguration.CONTAINER_INITIALIZERS);
-            ContainerInitializer initializer = initializers.get(0);
-            initializer.addApplicableTypeName(SpringMvcLoader.class.getName());
+            for (ContainerInitializer initializer : initializers) {
+                if( initializer.getTarget() instanceof SpringServletContainerInitializer ){
+                    initializer.addApplicableTypeName(SpringMvcLoader.class.getName());
+                }
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ import java.util.List;
 @Configuration
 //@EnableWebMvc
 @EnableTransactionManagement
+/*这句只能保证这里的web context扫描出来的对象有transaction*/
 @ComponentScan("net.happyonroad.platform.web.controller")
 public class SpringMvcConfig extends WebMvcConfigurationSupport
         implements InitializingBean {

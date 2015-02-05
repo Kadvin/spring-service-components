@@ -17,6 +17,7 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.Set;
@@ -31,7 +32,7 @@ import java.util.Set;
  * <li> /views/*  ->  ItsNow.ScalateView
  * </ul>
  */
-
+@WebServlet(name = "ItsNow.Dispatcher")
 public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer
     implements ServletContextListener{
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";

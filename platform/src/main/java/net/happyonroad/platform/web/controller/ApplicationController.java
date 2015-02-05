@@ -39,6 +39,10 @@ public class ApplicationController<T extends Record> {
     protected PageRequest pageRequest;
     protected Page<T> indexPage;
 
+    public ApplicationController() {
+        logger.trace("A debug point");
+    }
+
     @ExceptionHandler(WebClientSideException.class)
     public ResponseEntity<Object> handleWebClientSideException(WebClientSideException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), headers, ex.getStatusCode(), request);

@@ -3,6 +3,7 @@
  */
 package net.happyonroad;
 
+import net.happyonroad.component.core.ComponentContext;
 import net.happyonroad.extension.ExtensionAwareClassLoader;
 import net.happyonroad.extension.ExtensionManager;
 import net.happyonroad.platform.repository.DatabaseConfig;
@@ -15,8 +16,7 @@ import net.happyonroad.spring.config.AbstractAppConfig;
 import net.happyonroad.spring.config.DefaultAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -46,6 +46,8 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 @org.springframework.context.annotation.Configuration
 @Import({DefaultAppConfig.class, DatabaseConfig.class})
 public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
+    @Autowired
+    ComponentContext componentContext;
 
     // 用于启动WEB应用
     @Bean
@@ -81,14 +83,22 @@ public class PlatformAppConfig extends AbstractAppConfig implements ApplicationL
 
     @Override
     public void onApplicationEvent(ComponentLoadedEvent event) {
+        // Only listen to platform loaded event
+        if( !"platform".equals(event.getSource().getArtifactId())) return;
+        // componentContext.setRootContext(applicationContext);
         // 这些beans是被spring security动态注册过来的，只能在本组件加载之后，再向注册表注册
-        UserDetailsService userDetailsService = applicationContext.getBean(UserDetailsService.class);
-        AuthenticationProvider authenticationProvider = applicationContext.getBean(AuthenticationProvider.class);
-        PersistentTokenRepository persistentTokenRepository = applicationContext.getBean(PersistentTokenRepository.class);
+        try {
+            UserDetailsService userDetailsService = applicationContext.getBean(UserDetailsService.class);
+            AuthenticationProvider authenticationProvider = applicationContext.getBean(AuthenticationProvider.class);
+            PersistentTokenRepository persistentTokenRepository = applicationContext.getBean(PersistentTokenRepository.class);
 
-        // Spring Security Registered
-        exports(UserDetailsService.class, userDetailsService);
-        exports(AuthenticationProvider.class, authenticationProvider);
-        exports(PersistentTokenRepository.class, persistentTokenRepository);
+            // Spring Security Registered
+            exports(UserDetailsService.class, userDetailsService);
+            exports(AuthenticationProvider.class, authenticationProvider);
+            exports(PersistentTokenRepository.class, persistentTokenRepository);
+        } catch (BeansException e) {
+            System.err.println("Can't import beans init by spring security context : " + e.getMessage());
+            System.exit(-1);
+        }
     }
 }

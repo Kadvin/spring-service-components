@@ -4,6 +4,7 @@
 package net.happyonroad.platform.repository.support;
 
 import net.happyonroad.component.core.Component;
+import net.happyonroad.spring.context.ContextUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -27,6 +28,8 @@ public class ProductMybatisScanner extends MybatisRepositoryScanner {
     protected DefaultListableBeanFactory createBeanRegistry() {
         //这个app context 可以访问到框架的context，并存储mybatis搜索到的DAO对象
         repositoryContext = new GenericApplicationContext(applicationContext);
+        repositoryContext.setDisplayName("Repository Context for [" + component.getDisplayName() + "]");
+        ContextUtils.inheritParentProperties(applicationContext, repositoryContext);
         repositoryContext.setClassLoader(component.getClassLoader());
         repositoryContext.refresh();
         return repositoryContext.getDefaultListableBeanFactory();
