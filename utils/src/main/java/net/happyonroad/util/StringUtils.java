@@ -441,7 +441,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 return message;
             }
         } catch (NoSuchMessageException e) {
-            return null;
+            if( args.length == 1 && args[0] instanceof String )
+                return (String)args[0]; //default
+            else throw e;
         }
     }
 

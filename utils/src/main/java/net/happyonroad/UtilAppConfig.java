@@ -44,9 +44,10 @@ public class UtilAppConfig extends AbstractAppConfig {
 
     @Override
     protected void afterExports() {
-        //把 本模块的 PropertyResourceConfigurer 注册到 parent context中
-        // 以便其他模块在使用 ContextUtils.inheritParentProperties 时能够找到一个可用的
+        // 为了支持 @PropertySource + @Value 联合工作，必须有这个对象
         PropertyResourceConfigurer configurer = applicationContext.getBean(PropertyResourceConfigurer.class);
+        //在父上下文中创建一个 PropertyResourceConfigurer 注册到 parent context中
+        // 以便其他模块在使用 ContextUtils.inheritParentProperties 时能够找到一个可用的
         ApplicationContext parent = applicationContext.getParent();
         ((ConfigurableApplicationContext)parent).addBeanFactoryPostProcessor(configurer);
     }

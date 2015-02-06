@@ -4,7 +4,6 @@
 package net.happyonroad;
 
 import net.happyonroad.menu.support.MenuItemManager;
-import net.happyonroad.spring.config.DefaultAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * The menu app config
  */
 @Configuration
-@Import({DefaultAppConfig.class})
+@Import({UtilUserConfig.class})
 public class MenuAppConfig {
     @Bean
     MenuItemManager menuItemManager(){

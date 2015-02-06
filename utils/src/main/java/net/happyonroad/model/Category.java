@@ -25,7 +25,6 @@ public class Category extends JsonSupport {
     private           String         description;
     private transient Category       parent;
     private transient List<Category> children;
-    private Class resourceClass;
     private String[]  credentials;
 
     @ManagedAttribute
@@ -139,15 +138,7 @@ public class Category extends JsonSupport {
         return name.startsWith(getType());
     }
 
-    public void setResourceClass(Class resourceClass) {
-        this.resourceClass = resourceClass;
-    }
-
-    public Class getResourceClass() {
-        return resourceClass;
-    }
-
-        // find the parent type of the given type
+     // find the parent type of the given type
     public static String parentOf(String type) {
         //借file的api进行
         // 如果 type == "/", 则会返回null

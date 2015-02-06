@@ -75,15 +75,7 @@ public class MybatisRepositoryScanner extends Bean implements RepositoryScanner 
         targets.addAll(Arrays.asList(packages));
 
         BeanDefinitionRegistry beanRegistry = createBeanRegistry();
-        ClassPathMapperScanner scanner = new ClassPathMapperScanner(beanRegistry) {
-            @Override
-            protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition)
-                    throws IllegalStateException {
-                boolean superResult = super.checkCandidate(beanName, beanDefinition);
-                boolean accept = filter == null || filter.accept(beanName, beanDefinition);
-                return superResult && accept;
-            }
-        };
+        ClassPathMapperScanner scanner = new MybatisClassPathMapperScanner(beanRegistry, filter);
         scanner.setSqlSessionFactory(sqlSessionFactory);
         scanner.setResourceLoader(getResourceLoader());
         scanner.setIncludeAnnotationConfig(false);
@@ -158,4 +150,19 @@ public class MybatisRepositoryScanner extends Bean implements RepositoryScanner 
         }
     }
 
+    static class MybatisClassPathMapperScanner extends ClassPathMapperScanner {
+        final BeanFilter         filter;
+        public MybatisClassPathMapperScanner(BeanDefinitionRegistry beanRegistry, BeanFilter filter) {
+            super(beanRegistry);
+            this.filter = filter;
+        }
+
+        @Override
+        protected boolean checkCandidate(String beanName, BeanDefinition beanDefinition)
+                throws IllegalStateException {
+            boolean superResult = super.checkCandidate(beanName, beanDefinition);
+            boolean accept = filter == null || filter.accept(beanName, beanDefinition);
+            return superResult && accept;
+        }
+    }
 }

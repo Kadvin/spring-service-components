@@ -6,12 +6,15 @@ package net.happyonroad;
 import net.happyonroad.spring.config.AbstractUserConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.TaskScheduler;
 
 /**
  * <h1>Utility's用者导入配置</h1>
  */
 @Configuration
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class UtilUserConfig extends AbstractUserConfig {
     @Bean
     TaskScheduler systemTaskScheduler() {

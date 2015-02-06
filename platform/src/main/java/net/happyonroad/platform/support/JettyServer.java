@@ -10,6 +10,7 @@ import org.apache.jasper.servlet.JspServlet;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.annotations.ServletContainerInitializersStarter;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.server.Handler;
@@ -62,12 +63,12 @@ public class JettyServer extends Bean {
         try {
             server = new Server(new InetSocketAddress(host, port));
 
-            //WebAppContext jspContext = createJspContext();
+            WebAppContext jspContext = createJspContext();
             WebAppContext context = createWebContext();
-            if( "true".equalsIgnoreCase(System.getProperty("platform.jsp", "false"))){
-                enableJsp(context);
-            }
-            HandlerCollection handler = createHandler(context);
+//            if( "true".equalsIgnoreCase(System.getProperty("platform.jsp", "false"))){
+//                enableJsp(context);
+//            }
+            HandlerCollection handler = createHandler(jspContext, context);
             server.setHandler(handler);
             server.setStopAtShutdown(true);
             server.start();
@@ -116,6 +117,12 @@ public class JettyServer extends Bean {
     @SuppressWarnings("UnusedDeclaration")
     private WebAppContext createJspContext() throws Exception {
         WebAppContext context = new WebAppContext();
+        File webappJsp = new File(System.getProperty("app.home"), "webapp/jsp");
+        context.setContextPath("/legacy");
+        context.setBaseResource(Resource.newResource(webappJsp));
+        context.setClassLoader(classLoader);
+        context.addBean(new ServletContainerInitializersStarter(context), true);
+        context.addAliasCheck(new AllowSymLinkAliasChecker());
         enableJsp(context);
         return context;
     }

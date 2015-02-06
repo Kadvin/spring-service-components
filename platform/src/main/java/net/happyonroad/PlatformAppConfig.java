@@ -13,7 +13,6 @@ import net.happyonroad.platform.support.JettyServer;
 import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
-import net.happyonroad.spring.config.DefaultAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  * </pre>
  */
 @org.springframework.context.annotation.Configuration
-@Import({DefaultAppConfig.class, DatabaseConfig.class})
+@Import({UtilUserConfig.class, DatabaseConfig.class})
 public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
     @Autowired
     ComponentContext componentContext;
