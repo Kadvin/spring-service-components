@@ -86,7 +86,11 @@ public class DatabaseConfig implements InitializingBean {
     @Bean
     @Primary
     public PlatformTransactionManager transactionManager(DataSource dataSource){
-        return new DataSourceTransactionManager(dataSource);
+        DataSourceTransactionManager txManager = new DataSourceTransactionManager(dataSource);
+        // 当多个事务方法嵌套在一起执行时，由应用程序决定是否回滚，而不由tx想当然的决定是否回滚
+        // 如果不设置这个值，内部方法可预期的exception也会导致外围方法最后回滚
+        txManager.setGlobalRollbackOnParticipationFailure(false);
+        return txManager;
     }
 
     @Bean
