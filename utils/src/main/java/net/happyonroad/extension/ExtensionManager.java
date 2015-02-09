@@ -134,7 +134,7 @@ public class ExtensionManager extends ApplicationSupportBean
         logger.info("Unloading extension: {}", component);
         long start = System.currentTimeMillis();
         publishEvent(new ExtensionUnloadingEvent(component));
-        componentLoader.unloadSingle(component);
+        componentLoader.quickUnload(component);
         loadedExtensions.remove(component);
         //这个事件就仅发给容器
         publishEvent(new ExtensionUnloadedEvent(component));
