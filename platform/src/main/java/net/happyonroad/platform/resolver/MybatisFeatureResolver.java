@@ -5,7 +5,7 @@ package net.happyonroad.platform.resolver;
 
 import net.happyonroad.component.container.RepositoryScanner;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
-import net.happyonroad.component.container.support.ComponentClassLoader;
+import net.happyonroad.component.classworld.ComponentClassLoader;
 import net.happyonroad.component.core.Component;
 import net.happyonroad.util.StringUtils;
 import org.apache.ibatis.io.Resources;
