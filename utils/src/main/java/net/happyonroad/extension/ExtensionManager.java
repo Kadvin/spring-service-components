@@ -80,7 +80,7 @@ public class ExtensionManager extends ApplicationSupportBean
 
     void loadExtensions() throws Exception {
         File repository = new File(System.getProperty("app.home"), "repository");
-        if( repository.isDirectory() ) return;
+        if( !repository.isDirectory() ) return;
         Collection<File> jars = FileUtils.listFiles(repository, new String[]{"jar"}, true);
         logger.debug("Loading {} extensions from: {}", jars.size(), repository.getAbsolutePath());
         File[] packageJars = jars.toArray(new File[jars.size()]);
