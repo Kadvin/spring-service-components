@@ -5,7 +5,6 @@ package net.happyonroad.platform.resolver;
 
 import net.happyonroad.component.container.RepositoryScanner;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
-import net.happyonroad.component.classworld.ComponentClassLoader;
 import net.happyonroad.component.core.Component;
 import net.happyonroad.util.StringUtils;
 import org.apache.ibatis.io.Resources;
@@ -34,7 +33,8 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
     public static final String FEATURE   = "mybatis";
     public static final String DB_CONFIG = "DB-Config";
     public static final String DB_REPOSITORY = "DB-Repository";
-    private ClassLoader legacyClassLoader;
+    private transient ClassLoader legacyClassLoader;
+    ApplicationContext platformApplication;
 
     public MybatisFeatureResolver() {
         //28： 在Spring Service Context之后(25)， Spring Application Context之前(30)，加载
@@ -81,8 +81,6 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
     public void resolve(Component component) throws Exception {
         String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
         // 由于本类是平台定义的，所以，其加载cl一定是平台的 class loader
-        ComponentClassLoader platformClassLoader = (ComponentClassLoader) getClass().getClassLoader();
-        ApplicationContext platformApplication = platformClassLoader.getComponent().getApplication();
         String dbConfig = component.getManifestAttribute(DB_CONFIG);
         if( StringUtils.isBlank(dbConfig)) dbConfig = "classpath?:META-INF/mybatis.xml";
         configureMybatisXml(platformApplication, component, dbConfig);
@@ -108,4 +106,7 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
 
     }
 
+    public void setPlatformApplication(ApplicationContext platformApplication) {
+        this.platformApplication = platformApplication;
+    }
 }

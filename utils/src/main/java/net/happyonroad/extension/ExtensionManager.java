@@ -3,6 +3,7 @@
  */
 package net.happyonroad.extension;
 
+import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.container.ComponentLoader;
 import net.happyonroad.component.container.ComponentRepository;
 import net.happyonroad.component.container.event.ContainerEvent;
@@ -109,7 +110,11 @@ public class ExtensionManager extends ApplicationSupportBean
             long start = System.currentTimeMillis();
             //仅发给容器
             publishEvent(new ExtensionLoadingEvent(component));
+            ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+            ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
+            Thread.currentThread().setContextClassLoader(ecl);
             componentLoader.load(component);
+            Thread.currentThread().setContextClassLoader(legacy);
             loadedExtensions.add(component);
             DefaultComponent comp = (DefaultComponent) component;
             registerMbean(comp, comp.getObjectName());

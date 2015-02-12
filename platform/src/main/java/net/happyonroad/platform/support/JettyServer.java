@@ -3,7 +3,7 @@
  */
 package net.happyonroad.platform.support;
 
-import net.happyonroad.extension.ExtensionAwareClassLoader;
+import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.ibatis.io.Resources;
 import org.apache.jasper.servlet.JspServlet;
@@ -46,14 +46,14 @@ public class JettyServer extends Bean {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private ExtensionAwareClassLoader classLoader;
+    private GlobalClassLoader  classLoader;
 
     @Value("${app.host}")
-    private String             host;
+    private String  host;
     @Value("${http.port}")
-    private Integer            port;
+    private Integer port;
     // the jetty server
-    private Server             server;
+    private Server  server;
 
     public void performStart() {
         //don't bind at local ip, unless you specify 127.0.0.1
@@ -86,7 +86,7 @@ public class JettyServer extends Bean {
         }
     }
 
-    private WebAppContext createWebContext(){
+    private WebAppContext createWebContext() {
         WebAppContext context = new WebAppContext();
         context.setContextPath("/");
         File webapp = new File(System.getProperty("app.home"), "webapp");

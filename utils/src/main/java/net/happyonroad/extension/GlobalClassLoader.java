@@ -5,7 +5,6 @@ package net.happyonroad.extension;
 
 import net.happyonroad.component.core.Component;
 import net.happyonroad.service.ExtensionContainer;
-import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,13 +17,13 @@ import java.util.List;
  * 默认的类加载器(platform class loader)无法加载到这些类
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
-public class ExtensionAwareClassLoader extends ClassLoader {
-    private final ExtensionContainer container;
+public class GlobalClassLoader extends ClassLoader {
+    private final ExtensionContainer         container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
-    private       List<ApplicationContext> applications;
+    private       List<ExtensionClassLoader> ecls;
 
-    public ExtensionAwareClassLoader(ClassLoader parent, ExtensionContainer container) {
+    public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
     }
@@ -37,10 +36,10 @@ public class ExtensionAwareClassLoader extends ClassLoader {
         } catch (ClassNotFoundException e) {
             //skip
 
-            for (ApplicationContext application : getApplications()) {
+            for (ExtensionClassLoader ecl : ecls()) {
                 try {
-                    if(application == null ) continue;
-                    return application.getClassLoader().loadClass(name);
+                    if (ecl == null ) continue;
+                    return ecl.loadClass(name);
                 } catch (ClassNotFoundException ex) {
                     //try next
                 }
@@ -49,20 +48,20 @@ public class ExtensionAwareClassLoader extends ClassLoader {
         }
     }
 
-    protected List<ApplicationContext> getApplications() {
-        if (applications == null ) {
+    protected List<ExtensionClassLoader> ecls() {
+        if (ecls == null ) {
             List<Component> components = container.getExtensions();
             if (!components.isEmpty()) {
-                applications = new ArrayList<ApplicationContext>(components.size());
+                ecls = new ArrayList<ExtensionClassLoader>(components.size());
                 for (Component component : components) {
-                    applications.add(component.getApplication());
+                    ecls.add((ExtensionClassLoader) component.getClassLoader());
                 }
-                Collections.reverse(applications);
+                Collections.reverse(ecls);
             }else{
                 //noinspection unchecked
                 return Collections.EMPTY_LIST;
             }
         }
-        return applications;
+        return ecls;
     }
 }
