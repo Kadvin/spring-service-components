@@ -3,12 +3,17 @@
  */
 package net.happyonroad.extension;
 
+import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.core.Component;
+import net.happyonroad.component.core.support.ComponentURLStreamHandlerFactory;
 import net.happyonroad.service.ExtensionContainer;
+import org.apache.commons.io.FilenameUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 
 /**
  * <h1>能够从所有的组件中加载类的加载器</h1>
@@ -64,4 +69,38 @@ public class GlobalClassLoader extends ClassLoader {
         }
         return ecls;
     }
+
+    public String getClassPath() {
+        Set<URL> urls = new LinkedHashSet<URL>();
+        ClassLoader parent = getParent();
+        if( parent instanceof MainClassLoader){
+            urls.addAll(((MainClassLoader) parent).getSysUrls());
+            urls.addAll(((MainClassLoader) parent).getMainUrls());
+        }else if( parent instanceof URLClassLoader){
+            urls.addAll(Arrays.asList(((URLClassLoader) parent).getURLs()));
+        }
+        for (ExtensionClassLoader loader : ecls()) {
+            urls.addAll(Arrays.asList(loader.getURLs()));
+        }
+        StringBuilder sb = new StringBuilder();
+        ComponentURLStreamHandlerFactory factory = ComponentURLStreamHandlerFactory.getFactory();
+        Iterator<URL> it = urls.iterator();
+        while (it.hasNext()) {
+            URL url = it.next();
+            if( "component".equals(url.getProtocol()) ){
+                try {
+                    String path = factory.getMappingFile(url).getAbsolutePath();
+                    path = FilenameUtils.normalize(path);
+                    sb.append(path);
+                } catch (IOException e) {
+                    System.err.println("Can't find mapping file for " + url + ", " + e.getMessage());
+                }
+            }else{
+                sb.append(url.getFile());
+            }
+            if( it.hasNext() ) sb.append(File.pathSeparator);
+        }
+        return sb.toString();
+    }
+
 }

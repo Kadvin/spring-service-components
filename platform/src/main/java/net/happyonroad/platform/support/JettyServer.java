@@ -5,6 +5,7 @@ package net.happyonroad.platform.support;
 
 import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.spring.Bean;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.ibatis.io.Resources;
 import org.apache.jasper.servlet.JspServlet;
 import org.apache.tomcat.InstanceManager;
@@ -65,9 +66,6 @@ public class JettyServer extends Bean {
 
             WebAppContext jspContext = createJspContext();
             WebAppContext context = createWebContext();
-//            if( "true".equalsIgnoreCase(System.getProperty("platform.jsp", "false"))){
-//                enableJsp(context);
-//            }
             HandlerCollection handler = createHandler(jspContext, context);
             server.setHandler(handler);
             server.setStopAtShutdown(true);
@@ -100,6 +98,18 @@ public class JettyServer extends Bean {
         return context;
     }
 
+    private WebAppContext createJspContext() throws Exception {
+        WebAppContext context = new WebAppContext();
+        File webappJsp = new File(System.getProperty("app.home"), "webapp/jsp");
+        context.setContextPath("/legacy");
+        context.setBaseResource(Resource.newResource(webappJsp));
+        context.setClassLoader(classLoader);
+        context.addBean(new ServletContainerInitializersStarter(context), true);
+        context.addAliasCheck(new AllowSymLinkAliasChecker());
+        enableJsp(context);
+        return context;
+    }
+
     private void enableJsp(WebAppContext context)throws Exception{
         // Set JSP to use Standard JavaC always
         System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
@@ -111,20 +121,6 @@ public class JettyServer extends Bean {
         context.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
 
         context.addServlet(jspServletHolder(), "*.jsp");
-
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    private WebAppContext createJspContext() throws Exception {
-        WebAppContext context = new WebAppContext();
-        File webappJsp = new File(System.getProperty("app.home"), "webapp/jsp");
-        context.setContextPath("/legacy");
-        context.setBaseResource(Resource.newResource(webappJsp));
-        context.setClassLoader(classLoader);
-        context.addBean(new ServletContainerInitializersStarter(context), true);
-        context.addAliasCheck(new AllowSymLinkAliasChecker());
-        enableJsp(context);
-        return context;
     }
 
     /**
@@ -162,9 +158,12 @@ public class JettyServer extends Bean {
         holderJsp.setInitParameter("logVerbosityLevel", "DEBUG");
         holderJsp.setInitParameter("fork", "false");
         holderJsp.setInitParameter("xpoweredBy", "false");
-        holderJsp.setInitParameter("compilerTargetVM", "1.7");
-        holderJsp.setInitParameter("compilerSourceVM", "1.7");
         holderJsp.setInitParameter("keepgenerated", "true");
+        String[] versions = SystemUtils.JAVA_VERSION.split("\\.");
+        String mainVersion = versions[0] + "." + versions[1];
+        holderJsp.setInitParameter("compilerSourceVM", mainVersion);
+        holderJsp.setInitParameter("compilerTargetVM", mainVersion);
+        holderJsp.setInitParameter("classpath", classLoader.getClassPath());
         return holderJsp;
     }
 
