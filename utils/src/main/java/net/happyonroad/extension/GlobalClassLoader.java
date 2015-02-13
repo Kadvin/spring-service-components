@@ -7,6 +7,7 @@ import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.core.Component;
 import net.happyonroad.component.core.support.ComponentURLStreamHandlerFactory;
 import net.happyonroad.service.ExtensionContainer;
+import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -82,25 +83,22 @@ public class GlobalClassLoader extends ClassLoader {
         for (ExtensionClassLoader loader : ecls()) {
             urls.addAll(Arrays.asList(loader.getURLs()));
         }
-        StringBuilder sb = new StringBuilder();
+        Set<String> paths = new LinkedHashSet<String>();
         ComponentURLStreamHandlerFactory factory = ComponentURLStreamHandlerFactory.getFactory();
-        Iterator<URL> it = urls.iterator();
-        while (it.hasNext()) {
-            URL url = it.next();
-            if( "component".equals(url.getProtocol()) ){
+        for (URL url : urls) {
+            if ("component".equals(url.getProtocol())) {
                 try {
                     String path = factory.getMappingFile(url).getAbsolutePath();
                     path = FilenameUtils.normalize(path);
-                    sb.append(path);
+                    paths.add(path);
                 } catch (IOException e) {
                     System.err.println("Can't find mapping file for " + url + ", " + e.getMessage());
                 }
-            }else{
-                sb.append(url.getFile());
+            } else {
+                paths.add(FilenameUtils.normalize(url.getFile()));
             }
-            if( it.hasNext() ) sb.append(File.pathSeparator);
         }
-        return sb.toString();
+        return StringUtils.join(paths, File.pathSeparator);
     }
 
 }

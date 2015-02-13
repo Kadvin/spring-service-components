@@ -112,7 +112,7 @@ public class JettyServer extends Bean {
 
     private void enableJsp(WebAppContext context)throws Exception{
         // Set JSP to use Standard JavaC always
-        System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
+        //System.setProperty("org.apache.jasper.compiler.disablejsr199", "false");
         File scratchDir = getScratchDir();
         context.setAttribute("javax.servlet.context.tempdir", scratchDir);
         context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
