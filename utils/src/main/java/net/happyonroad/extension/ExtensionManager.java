@@ -26,10 +26,7 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationListener;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.apache.commons.lang.time.DurationFormatUtils.formatDurationHMS;
 
@@ -82,6 +79,12 @@ public class ExtensionManager extends ApplicationSupportBean
         File repository = new File(System.getProperty("app.home"), "repository");
         if( !repository.isDirectory() ) return;
         Collection<File> jars = FileUtils.listFiles(repository, new String[]{"jar"}, true);
+        Iterator<File> it = jars.iterator();
+        while (it.hasNext()) {
+            File jar = it.next();
+            if( !DefaultComponent.isApplication(jar.getParentFile().getName()))
+                it.remove();
+        }
         logger.debug("Loading {} extensions from: {}", jars.size(), repository.getAbsolutePath());
         File[] packageJars = jars.toArray(new File[jars.size()]);
         // sort the model packages by them inner dependency
