@@ -122,6 +122,8 @@ module.exports = {
     ],
     css: [
 //    '../vendor/angular/angular-csp.css',
+      '../vendor/angular/angular.css',
+      '../vendor/angular-animate/animate.css',
       '../vendor/bootstrap/dist/css/bootstrap-theme.css',
       '../vendor/ace-bootstrap/css/*.css',
       '../vendor/ng-grid/ng-grid.css',
@@ -132,6 +134,8 @@ module.exports = {
 //    '../vendor/fuelux/dist/css/fuelux.css'
     ],
     built_css: [
+      '<%= build_dir %>/assets/angular.css',
+      '<%= build_dir %>/assets/animate.css',
       '<%= build_dir %>/assets/bootstrap-theme.css',
       '<%= build_dir %>/assets/ace*.css',
       '<%= build_dir %>/assets/ng-grid.css',
