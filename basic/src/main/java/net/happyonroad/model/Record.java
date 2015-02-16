@@ -144,4 +144,15 @@ public class Record implements Cloneable, Serializable{
     public boolean isCascadeUpdating() {
         return cascadeUpdating;
     }
+
+    /**
+     * 将class name中的cglib生成的动态名称去除
+     *
+     * @param className class的name
+     * @return 去除之后的class name
+     */
+    public static String reduceCglibName(String className) {
+        int pos = className.indexOf("$$EnhancerByCGLIB");
+        return pos > 0 ? className.substring(0, pos) : className;
+    }
 }

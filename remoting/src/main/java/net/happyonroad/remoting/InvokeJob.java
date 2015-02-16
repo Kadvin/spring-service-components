@@ -61,7 +61,7 @@ class InvokeJob implements Runnable{
        } catch (Exception ex) {
            response.setError(ex);
        }
-       ListChannel respondQueue = exporter.getChannel(request.getReplyTo());
+       ListChannel respondQueue = exporter.getChannel(request.getServiceName());
        //收到调用的消息，现在消息服务的publish接口未定义
        byte[] rawResponse = exporter.dump(response);
        respondQueue.pushLeft(rawResponse);

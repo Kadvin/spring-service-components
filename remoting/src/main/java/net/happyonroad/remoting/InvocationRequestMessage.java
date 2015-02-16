@@ -18,8 +18,7 @@ import java.util.Map;
 @SuppressWarnings("UnusedDeclaration")
 public class InvocationRequestMessage extends InvocationMessage {
     private static final long serialVersionUID = 7093541768647287416L;
-    /** 请求的返回队列名 */
-    private String                    replyTo;
+    private String                    serviceName;
     /* 调用的方法名称 */
     private String                    methodName;
     /* 调用的参数类型 */
@@ -32,12 +31,12 @@ public class InvocationRequestMessage extends InvocationMessage {
     public InvocationRequestMessage() {
     }
 
-    public String getReplyTo() {
-        return replyTo;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setReplyTo(String replyTo) {
-        this.replyTo = replyTo;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public void setMethodName(String methodName) {
@@ -118,7 +117,7 @@ public class InvocationRequestMessage extends InvocationMessage {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("replyTo", this.replyTo)
+                .append("serviceName", this.serviceName)
                 .append("methodName", this.methodName)
                 .toString();
     }
@@ -149,14 +148,14 @@ public class InvocationRequestMessage extends InvocationMessage {
         if (!methodName.equals(that.methodName)) return false;
         if (!Arrays.equals(parameterTypes, that.parameterTypes)) return false;
         //noinspection RedundantIfStatement
-        if (!replyTo.equals(that.replyTo)) return false;
+        if (!serviceName.equals(that.serviceName)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = replyTo.hashCode();
+        int result = serviceName.hashCode();
         result = 31 * result + methodName.hashCode();
         result = 31 * result + Arrays.hashCode(parameterTypes);
         result = 31 * result + Arrays.hashCode(arguments);

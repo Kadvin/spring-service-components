@@ -117,7 +117,7 @@ public class InvokerProxyFactoryBean
 
         InvocationRequestMessage request = new InvocationRequestMessage();
         String replyTo = "Replies/" + this.queueName + "/" + UUID.randomUUID();
-        request.setReplyTo(replyTo);
+        request.setServiceName(getObjectType().getName());
         request.setMethodName(method.getName());
         request.fillParameterClasses(method.getParameterTypes());
         request.setArguments(arguments);
@@ -126,7 +126,7 @@ public class InvokerProxyFactoryBean
         //采用二进制进行对象序列化与反序列化，暂时不采用json机制
         byte[] rawRequest = dump(request);
         requestChannel.pushLeft(rawRequest);
-        ListChannel responseChannel = getChannel(request.getReplyTo());
+        ListChannel responseChannel = getChannel(request.getServiceName());
         //所以，这个方法
         byte[] rawResponse = responseChannel.blockPopRight(this.receiveTimeout);
         //没有用TimeoutException来返回，而是用null，这样可以减少栈成本
