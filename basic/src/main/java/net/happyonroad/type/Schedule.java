@@ -3,22 +3,20 @@
  */
 package net.happyonroad.type;
 
-import org.joda.time.Period;
-
 /**
  * 监控计划
  */
 public class Schedule extends TimeSpan {
     //监控频度
-    private Period frequency;
+    private TimeInterval frequency;
     //相对于频率期间的起始偏移量，单位为毫秒，用于削峰填谷
     private long   offset;
 
-    public Period getFrequency() {
+    public TimeInterval getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(Period frequency) {
+    public void setFrequency(TimeInterval frequency) {
         this.frequency = frequency;
     }
 

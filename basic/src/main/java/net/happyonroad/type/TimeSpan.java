@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * The time span
+ * The time span: 这个对象比joda的interval小得多（json之后)
  */
 public class TimeSpan {
 
