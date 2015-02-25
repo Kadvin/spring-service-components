@@ -133,7 +133,7 @@ public class InvocationRequestMessage extends InvocationMessage {
         return ParseUtils.parseJson(json, InvocationRequestMessage.class);
     }
 
-    public static class ClassAndValue{
+    public static class ClassAndValue implements Serializable{
         Class  klass;
         Object value;
 
