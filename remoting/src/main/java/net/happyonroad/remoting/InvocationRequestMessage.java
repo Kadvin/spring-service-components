@@ -4,6 +4,7 @@
 package net.happyonroad.remoting;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
 import net.happyonroad.util.ParseUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -15,16 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** 发起调用的消息 */
-@SuppressWarnings("UnusedDeclaration")
 public class InvocationRequestMessage extends InvocationMessage {
     private static final long serialVersionUID = 7093541768647287416L;
     private String                    serviceName;
     /* 调用的方法名称 */
-    private String                    methodName;
-    /* 调用的参数类型 */
-    private String[]                  parameterTypes;
-    /* 调用的参数 */
-    private Object[]                  arguments;
+    private String                    methodName;//方法的参数信息被合入arguments里面
+    private ClassAndValue[]           arguments;// pure arguments,可能包含null，会丢失类型信息
     /* 额外的调用属性 */
     private Map<String, Serializable> attributes;
 
@@ -47,45 +44,27 @@ public class InvocationRequestMessage extends InvocationMessage {
         return this.methodName;
     }
 
-    public void setParameterTypes(String[] parameterTypes) {
-
-        this.parameterTypes = parameterTypes;
-    }
-
-    public String[] getParameterTypes() {
-        return this.parameterTypes;
-    }
-
-    public void fillParameterClasses(Class[] parameterTypes) {
-
-        this.parameterTypes = new String[parameterTypes.length];
-        for (int i = 0; i < parameterTypes.length; ++i) {
-            this.parameterTypes[i] = parameterTypes[i].getName();
-            // Thread.currentThread().getContextClassLoader()
+    public void populateArguments(Class[] argTypes, Object[] arguments) {
+        if( this.arguments == null ){
+            this.arguments = new ClassAndValue[argTypes.length];
+        }
+        for (int i = 0; i < argTypes.length; i++) {
+            Class argType = argTypes[i];
+            ClassAndValue pair = new ClassAndValue();
+            pair.klass = argType;
+            pair.value = arguments[i];
+            this.arguments[i] = pair;
         }
     }
 
-    public Class<?>[] fetchParameterClasses() throws ClassNotFoundException {
-        return fetchParameterClasses(Thread.currentThread().getContextClassLoader());
+    @JsonSerialize(using = ClassAndValueSerializer.class)
+    public ClassAndValue[] getArguments() {
+        return arguments;
     }
 
-    public Class<?>[] fetchParameterClasses(ClassLoader cl) throws ClassNotFoundException {
-
-        Class<?>[] classTypes = new Class<?>[this.parameterTypes.length];
-
-        for (int i = 0; i < parameterTypes.length; ++i) {
-            classTypes[i] = Class.forName(parameterTypes[i], true, cl);
-        }
-
-        return classTypes;
-    }
-
-    public void setArguments(Object[] arguments) {
+    @JsonDeserialize(using = ClassAndValueDeserializer.class)
+    public void setArguments(ClassAndValue[] arguments) {
         this.arguments = arguments;
-    }
-
-    public Object[] getArguments() {
-        return this.arguments;
     }
 
     public void addAttribute(String key, Serializable value) throws IllegalStateException {
@@ -122,32 +101,73 @@ public class InvocationRequestMessage extends InvocationMessage {
                 .toString();
     }
 
-    public RemoteInvocation getInvocation(ClassLoader cl) throws ClassNotFoundException {
-        return new RemoteInvocation(this.getMethodName(), this.fetchParameterClasses(cl), this.getArguments());
+    public RemoteInvocation asInvocation() {
+
+        return new RemoteInvocation(this.getMethodName(), this.fetchArgumentTypes(), this.fetchArgumentValues());
     }
 
-    public RemoteInvocation asInvocation() throws ClassNotFoundException {
-
-        return new RemoteInvocation(this.getMethodName(), this.fetchParameterClasses(), this.getArguments());
+    private Class<?>[] fetchArgumentTypes(){
+        Class<?>[] argTypes = new Class[this.arguments.length];
+        for (int i = 0; i < arguments.length; i++) {
+            ClassAndValue pair = arguments[i];
+            argTypes[i] = pair.klass;
+        }
+        return argTypes;
     }
+
+    private Object[] fetchArgumentValues() {
+        Object[] argValues = new Object[this.arguments.length];
+        for (int i = 0; i < arguments.length; i++) {
+            ClassAndValue pair = arguments[i];
+            argValues[i] = pair.value;
+        }
+        return argValues;
+    }
+
 
     public String toJson() {
         return ParseUtils.toJSONString(this);
     }
 
+    public static InvocationRequestMessage parse(String json) {
+        return ParseUtils.parseJson(json, InvocationRequestMessage.class);
+    }
+
+    public static class ClassAndValue{
+        Class  klass;
+        Object value;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ClassAndValue)) return false;
+
+            ClassAndValue that = (ClassAndValue) o;
+
+            if (!klass.equals(that.klass)) return false;
+            if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = klass.hashCode();
+            result = 31 * result + (value != null ? value.hashCode() : 0);
+            return result;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof InvocationRequestMessage)) return false;
 
         InvocationRequestMessage that = (InvocationRequestMessage) o;
 
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
         if (!Arrays.equals(arguments, that.arguments)) return false;
         if (attributes != null ? !attributes.equals(that.attributes) : that.attributes != null) return false;
         if (!methodName.equals(that.methodName)) return false;
-        if (!Arrays.equals(parameterTypes, that.parameterTypes)) return false;
-        //noinspection RedundantIfStatement
         if (!serviceName.equals(that.serviceName)) return false;
 
         return true;
@@ -157,13 +177,8 @@ public class InvocationRequestMessage extends InvocationMessage {
     public int hashCode() {
         int result = serviceName.hashCode();
         result = 31 * result + methodName.hashCode();
-        result = 31 * result + Arrays.hashCode(parameterTypes);
-        result = 31 * result + Arrays.hashCode(arguments);
+        result = 31 * result + (arguments != null ? Arrays.hashCode(arguments) : 0);
         result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
         return result;
-    }
-
-    public static InvocationRequestMessage parse(String json) {
-        return ParseUtils.parseJson(json, InvocationRequestMessage.class);
     }
 }

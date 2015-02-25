@@ -119,8 +119,7 @@ public class InvokerProxyFactoryBean
         String replyTo = "Replies/" + this.queueName + "/" + UUID.randomUUID();
         request.setServiceName(getObjectType().getName());
         request.setMethodName(method.getName());
-        request.fillParameterClasses(method.getParameterTypes());
-        request.setArguments(arguments);
+        request.populateArguments(method.getParameterTypes(), arguments);
 
         ListChannel requestChannel = getChannel(this.queueName);
         //采用二进制进行对象序列化与反序列化，暂时不采用json机制
