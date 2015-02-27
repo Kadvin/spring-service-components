@@ -1,6 +1,5 @@
 package net.happyonroad.menu.repository;
 
-import net.happyonroad.menu.config.MenuItemRepositoryConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

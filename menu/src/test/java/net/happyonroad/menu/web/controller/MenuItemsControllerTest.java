@@ -1,6 +1,5 @@
 package net.happyonroad.menu.web.controller;
 
-import net.happyonroad.menu.config.MenuItemsControllerConfig;
 import net.happyonroad.menu.model.MenuItem;
 import net.happyonroad.menu.service.MenuItemService;
 import net.happyonroad.test.controller.ApplicationControllerTest;

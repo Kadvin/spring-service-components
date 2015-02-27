@@ -1,6 +1,5 @@
 package net.happyonroad.menu.support;
 
-import net.happyonroad.menu.config.MenuItemManagerConfig;
 import net.happyonroad.menu.model.MenuItem;
 import net.happyonroad.menu.service.MenuItemService;
 import org.junit.Test;
