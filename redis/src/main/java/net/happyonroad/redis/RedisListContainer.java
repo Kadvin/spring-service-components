@@ -13,7 +13,7 @@ import java.util.List;
  * Redis List container
  */
 @SuppressWarnings("unused")
-public class RedisListContainer implements ListContainer {
+class RedisListContainer implements ListContainer {
 
     private final String id;
     private RedisCache cache;

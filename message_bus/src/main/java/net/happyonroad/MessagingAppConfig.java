@@ -9,15 +9,12 @@ import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableMBeanExport;
-import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.TaskScheduler;
 
 /**
  * <h1>Messaging程序的App Config</h1>
  */
 @Configuration
-@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 @ComponentScan("net.happyonroad.messaging.support")
 public class MessagingAppConfig extends AbstractAppConfig{
     @Bean

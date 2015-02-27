@@ -13,7 +13,7 @@ import java.util.*;
  * Redis Map Container
  */
 @SuppressWarnings("unused")
-public class RedisMapContainer implements MapContainer {
+class RedisMapContainer implements MapContainer {
 
     private RedisCache cache;
     private final String id;

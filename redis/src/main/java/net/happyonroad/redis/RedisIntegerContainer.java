@@ -13,7 +13,7 @@ import java.util.*;
  * Redis integer container
  */
 @SuppressWarnings("unused")
-public class RedisIntegerContainer implements IntegerContainer {
+class RedisIntegerContainer implements IntegerContainer {
 
     private RedisCache cache;
     private final String id;

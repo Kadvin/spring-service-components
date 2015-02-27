@@ -10,7 +10,7 @@ import redis.clients.jedis.Jedis;
 /**
  * A enhanced redis factory copied from JedisFactory, to naming the connection
  */
-public class RedisFactory extends BasePoolableObjectFactory {
+class RedisFactory extends BasePoolableObjectFactory {
     // jedis connection index
     static int index = 0;
 

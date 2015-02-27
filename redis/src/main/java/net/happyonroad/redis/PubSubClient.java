@@ -6,6 +6,6 @@ package net.happyonroad.redis;
 /**
  * A shared interface
  */
-public interface PubSubClient {
+interface PubSubClient {
     void close();
 }

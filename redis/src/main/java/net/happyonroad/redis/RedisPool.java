@@ -11,7 +11,7 @@ import redis.clients.util.Pool;
 /**
  * The customized redis pool for jedis naming
  */
-public class RedisPool extends Pool<Jedis> {
+class RedisPool extends Pool<Jedis> {
 
     public RedisPool(RedisConfig config) {
         super(config,

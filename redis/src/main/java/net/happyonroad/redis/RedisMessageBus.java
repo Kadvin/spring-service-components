@@ -21,7 +21,7 @@ import java.util.Map;
 
 /** Redis消息总线 */
 @Component
-public class RedisMessageBus implements MessageBus, ApplicationContextAware {
+class RedisMessageBus implements MessageBus, ApplicationContextAware {
     private static Logger logger = LoggerFactory.getLogger(RedisMessageBus.class);
 
     private final Map<String, PubSubClient> listeners = new HashMap<String, PubSubClient>();
