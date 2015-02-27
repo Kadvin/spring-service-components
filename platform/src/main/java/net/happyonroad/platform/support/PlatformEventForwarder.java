@@ -7,6 +7,7 @@ import net.happyonroad.spring.Bean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
 /**
  * Forward application event from platform context to spring mvc context
@@ -14,7 +15,8 @@ import org.springframework.context.ApplicationListener;
  * 注意：要求构建该对象的 application context具有防止接收重复事件的能力
  * 参考： SmartApplicationEventMulticaster
  */
-public class PlatformEventForwarder extends Bean
+@Component
+class PlatformEventForwarder extends Bean
         implements ApplicationListener<ApplicationEvent> {
     ApplicationContext[] contexts;
 

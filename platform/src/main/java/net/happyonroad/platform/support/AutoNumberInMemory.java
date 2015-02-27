@@ -4,6 +4,7 @@
 package net.happyonroad.platform.support;
 
 import net.happyonroad.platform.util.NumberRule;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * 这个服务应该基于类似于Oracle的sequence服务，或者基于某张持久化表
  */
-public class AutoNumberInMemory extends AbstractAutoNumberService {
+@Component
+class AutoNumberInMemory extends AbstractAutoNumberService {
     private Map<String, Long> sequences = new ConcurrentHashMap<String, Long>();
 
 

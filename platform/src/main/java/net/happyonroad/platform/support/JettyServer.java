@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.stereotype.Component;
 import org.springframework.web.SpringServletContainerInitializer;
 
 import javax.servlet.ServletContainerInitializer;
@@ -41,7 +42,8 @@ import java.util.Collections;
 import java.util.List;
 
 /** The Jetty Server Instance */
-public class JettyServer extends Bean {
+@Component
+class JettyServer extends Bean {
     private static final String LOG_PATH = "logs/jetty_access.log";
 
     @Autowired

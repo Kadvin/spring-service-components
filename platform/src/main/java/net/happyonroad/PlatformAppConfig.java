@@ -4,14 +4,10 @@
 package net.happyonroad;
 
 import net.happyonroad.component.container.ComponentLoader;
-import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.extension.ExtensionManager;
+import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.platform.resolver.MybatisFeatureResolver;
-import net.happyonroad.platform.service.AutoNumberService;
-import net.happyonroad.platform.support.AutoNumberInMemory;
-import net.happyonroad.platform.support.JettyServer;
-import net.happyonroad.platform.support.PlatformEventForwarder;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
@@ -20,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -46,15 +43,10 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  */
 @org.springframework.context.annotation.Configuration
 @Import({UtilUserConfig.class, DatabaseConfig.class})
+@ComponentScan("net.happyonroad.platform.support")
 public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
     @Autowired
     ComponentLoader componentLoader;
-
-    // 用于启动WEB应用
-    @Bean
-    public JettyServer jettyServer() {
-        return new JettyServer();
-    }
 
     @Bean
     public GlobalClassLoader containerAwareClassLoader(ExtensionContainer container) {
@@ -70,17 +62,6 @@ public class PlatformAppConfig extends AbstractAppConfig implements ApplicationL
         return new ExtensionManager();
     }
 
-    //用于把平台context中的事件转发给 躲在dispatcher servlet 中的 Spring Mvc Context
-    @Bean
-    public PlatformEventForwarder eventForwarder() {
-        return new PlatformEventForwarder();
-    }
-
-
-    @Bean
-    public AutoNumberService autoNumberService() {
-        return new AutoNumberInMemory();
-    }
 
     @Override
     protected void beforeExports() {

@@ -15,7 +15,7 @@ import org.springframework.jmx.support.RegistrationPolicy;
  */
 @Configuration
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
-@ComponentScan("net.happyonroad.cache.support.*")
+@ComponentScan("net.happyonroad.cache.support")
 public class CacheAppConfig extends AbstractAppConfig{
 
     @Override

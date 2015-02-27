@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +32,8 @@ import java.util.regex.Pattern;
  */
 
 @ManagedResource(objectName = "net.happyonroad:name=messageBus")
-public class DefaultMessageBus implements MessageBus {
+@Component
+class DefaultMessageBus implements MessageBus {
     private static Logger                       logger        = LoggerFactory.getLogger(DefaultMessageBus.class);
     private Map<String, MessageListener> listeners     = new HashMap<String, MessageListener>();
     //channel -> listener ids
