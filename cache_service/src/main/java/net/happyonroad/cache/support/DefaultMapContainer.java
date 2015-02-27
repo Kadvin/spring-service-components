@@ -11,7 +11,7 @@ import java.util.Set;
 import net.happyonroad.cache.MapContainer;
 import org.apache.commons.lang.Validate;
 
-public class DefaultMapContainer implements MapContainer {
+class DefaultMapContainer implements MapContainer {
 
     Map<String, byte[]> values = new HashMap<String, byte[]>();
 

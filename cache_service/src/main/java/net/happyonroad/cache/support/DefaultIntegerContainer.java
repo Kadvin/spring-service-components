@@ -7,7 +7,7 @@ import net.happyonroad.cache.IntegerContainer;
 
 import java.util.*;
 
-public class DefaultIntegerContainer implements IntegerContainer {
+class DefaultIntegerContainer implements IntegerContainer {
 
     Map<String, Long> values = new HashMap<String, Long>();
 

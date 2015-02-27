@@ -4,9 +4,8 @@
 package net.happyonroad;
 
 import net.happyonroad.cache.MutableCacheService;
-import net.happyonroad.cache.support.DefaultCache;
 import net.happyonroad.spring.config.AbstractAppConfig;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.jmx.support.RegistrationPolicy;
@@ -16,12 +15,8 @@ import org.springframework.jmx.support.RegistrationPolicy;
  */
 @Configuration
 @EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
+@ComponentScan("net.happyonroad.cache.support.*")
 public class CacheAppConfig extends AbstractAppConfig{
-
-    @Bean
-    public DefaultCache defaultCache(){
-        return DefaultCache.getSharedInstance();
-    }
 
     @Override
     public void doExports() {

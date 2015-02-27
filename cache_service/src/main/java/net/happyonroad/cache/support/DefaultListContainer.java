@@ -8,7 +8,7 @@ import net.happyonroad.cache.ListContainer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultListContainer implements ListContainer {
+class DefaultListContainer implements ListContainer {
 
     List<byte[]> values = new ArrayList<byte[]>();
 
