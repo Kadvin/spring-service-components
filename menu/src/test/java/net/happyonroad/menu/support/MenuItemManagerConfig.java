@@ -1,6 +1,6 @@
 package net.happyonroad.menu.support;
 
-import net.happyonroad.menu.config.MenuItemRepositoryConfig;
+import net.happyonroad.menu.repository.MenuItemRepositoryConfig;
 import net.happyonroad.menu.service.MenuItemService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

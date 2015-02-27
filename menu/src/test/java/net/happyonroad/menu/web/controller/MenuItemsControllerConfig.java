@@ -2,7 +2,6 @@ package net.happyonroad.menu.web.controller;
 
 import net.happyonroad.menu.service.MenuItemService;
 import net.happyonroad.test.config.ApplicationControllerConfig;
-import net.happyonroad.menu.web.controller.MenuItemsController;
 import org.easymock.EasyMock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
