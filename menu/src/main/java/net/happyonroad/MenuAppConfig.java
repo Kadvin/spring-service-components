@@ -3,8 +3,7 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.menu.support.MenuItemManager;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -13,10 +12,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({UtilUserConfig.class})
+@ComponentScan("net.happyonroad.menu.support")
 public class MenuAppConfig {
-    @Bean
-    MenuItemManager menuItemManager(){
-        return new MenuItemManager();
-    }
 
 }

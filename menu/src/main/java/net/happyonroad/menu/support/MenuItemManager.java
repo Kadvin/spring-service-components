@@ -14,7 +14,7 @@ import java.util.*;
  * <h1>菜单服务实现类</h1>
  */
 @Service
-public class MenuItemManager extends Bean implements MenuItemService {
+class MenuItemManager extends Bean implements MenuItemService {
 
     @Autowired
     private MenuItemRepository repository;

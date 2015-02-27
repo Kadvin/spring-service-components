@@ -1,7 +1,7 @@
 /**
  * xiongjie on 14-8-6.
  */
-package net.happyonroad.menu.config;
+package net.happyonroad.menu.repository;
 
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.test.config.RepositoryConfigWithH2;

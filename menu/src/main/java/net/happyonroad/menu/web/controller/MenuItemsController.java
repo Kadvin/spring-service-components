@@ -28,7 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/menu_items/**")
-public class MenuItemsController extends ApplicationController {
+class MenuItemsController extends ApplicationController {
 
     @Autowired
     private MenuItemService menuItemService;

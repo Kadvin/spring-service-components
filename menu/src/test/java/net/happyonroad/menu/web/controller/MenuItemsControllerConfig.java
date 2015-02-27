@@ -1,4 +1,4 @@
-package net.happyonroad.menu.config;
+package net.happyonroad.menu.web.controller;
 
 import net.happyonroad.menu.service.MenuItemService;
 import net.happyonroad.test.config.ApplicationControllerConfig;
