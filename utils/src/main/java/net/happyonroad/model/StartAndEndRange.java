@@ -43,4 +43,8 @@ public class StartAndEndRange extends IpRange {
     public String asParam() {
         return regular(getStart() + "-" + getEnd());
     }
+
+    public String toString(){
+        return getStart() + "-" + getEnd();
+    }
 }

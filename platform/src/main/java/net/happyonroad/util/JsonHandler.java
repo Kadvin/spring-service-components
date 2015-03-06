@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.IllegalFormatException;
 
 /**
- * Location Mybatis Handler
+ * Json Mybatis Handler
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JsonHandler implements TypeHandler<Object> {

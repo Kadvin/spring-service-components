@@ -33,4 +33,8 @@ public class SingleIp extends IpRange{
     public String toJson() {
         return ip;
     }
+
+    public String toString(){
+        return ip;
+    }
 }

@@ -22,6 +22,10 @@ public class SubnetRange extends IpRange{
         this.info = new SubnetUtils(subnet, mask).getInfo();
     }
 
+    public SubnetRange(String subnet, Integer mask) {
+        this.info = new SubnetUtils(subnet + "/" + mask).getInfo();
+    }
+
     /**
      * 将 192.168.10.0 这种格式的子网按照默认的策略转换为Range对象
      * 所谓的默认策略，就是 .0 转换为 8位， .0.0转换为16位
@@ -57,5 +61,9 @@ public class SubnetRange extends IpRange{
     @Override
     public String asParam() {
         return regular(info.getAddress());
+    }
+
+    public String toString(){
+        return info.getCidrSignature();
     }
 }

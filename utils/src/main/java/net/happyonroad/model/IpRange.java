@@ -54,7 +54,10 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
             } else if (rawRange.indexOf('/') > 0) {
                 //subnetwork: 192.168.0.0/255.255.0.0
                 String[] split = rawRange.split("/");
-                ranges[i] = new SubnetRange(split[0], split[1]);
+                if( split[1].contains(".") )// 192.168.0.0/255.255.0.0
+                    ranges[i] = new SubnetRange(split[0], split[1]);
+                else // 192.168.0.0/16
+                    ranges[i] = new SubnetRange(split[0], Integer.valueOf(split[1]));
             } else {
                 //default subnetwork: 192.168.10.0
                 //single ip: 192.168.0.10
