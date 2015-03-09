@@ -4,10 +4,15 @@
 package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
+import net.happyonroad.spring.context.ContextUtils;
+import net.happyonroad.spring.support.SmartApplicationEventMulticaster;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.*;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.OrderComparator;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import javax.management.ObjectName;
@@ -15,8 +20,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * The bean support application
@@ -53,12 +57,31 @@ public class ApplicationSupportBean extends TranslateSupportBean
         // TODO 这里需要改进和优化, 主要包括:
         // 1. PrioritySort 现在只能在同一个context里面比较，应该跨context比较
         // 2. 提速
+        Set<ApplicationListener<ApplicationEvent>> listeners = new HashSet<ApplicationListener<ApplicationEvent>>();
         for (ApplicationContext context : componentContext.getApplicationFeatures()) {
             if( context != null ) {
                 if( context instanceof ConfigurableApplicationContext){
                     if( !((ConfigurableApplicationContext) context).isActive() ) continue;
                 }
-                context.publishEvent(event);
+                ApplicationEventMulticaster multicaster = (ApplicationEventMulticaster) context.getBean(
+                        AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME);
+                if( multicaster instanceof SmartApplicationEventMulticaster){
+                    SmartApplicationEventMulticaster smartOne = (SmartApplicationEventMulticaster) multicaster;
+                    Collection<ApplicationListener<?>> partListeners = smartOne.getApplicationListeners(event);
+                    for (ApplicationListener<?> listener : partListeners) {
+                        //noinspection unchecked
+                        listeners.add((ApplicationListener<ApplicationEvent>) listener);
+                    }
+                }
+            }
+        }
+        if( !listeners.isEmpty() ){
+            LinkedList<ApplicationListener<ApplicationEvent>> list = new LinkedList<ApplicationListener<ApplicationEvent>>();
+            //noinspection unchecked
+            list.addAll(listeners);
+            OrderComparator.sort(list);
+            for (ApplicationListener<ApplicationEvent> listener : list) {
+                listener.onApplicationEvent(event);
             }
         }
     }
