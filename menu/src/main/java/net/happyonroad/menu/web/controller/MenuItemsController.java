@@ -44,7 +44,7 @@ class MenuItemsController extends ApplicationController {
      */
     @RequestMapping
     @ResponseBody
-    public List<MenuItem> index(@RequestParam(value = "tree", defaultValue = "true") boolean tree) {
+    public MenuItem[] index(@RequestParam(value = "tree", defaultValue = "true") boolean tree) {
         logger.debug("Listing menuItem");
 
         List<MenuItem> list;
@@ -55,7 +55,7 @@ class MenuItemsController extends ApplicationController {
         }
 
         logger.debug("Listed menuItem number {}", list.size());
-        return list;
+        return list.toArray(new MenuItem[list.size()]);
     }
 
     /**
