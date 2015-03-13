@@ -7,13 +7,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.net.util.SubnetUtils;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 /**
  * The subnetwork range
  */
 public class SubnetRange extends IpRange{
 
-    private final SubnetUtils.SubnetInfo info;
-
+    private transient SubnetUtils.SubnetInfo info;
+    private String address, mask;
     /**
      * 构建一个子网对象
      *
@@ -24,6 +27,8 @@ public class SubnetRange extends IpRange{
     public SubnetRange(@JsonProperty("address") String subnet,
                        @JsonProperty("mask") String mask) {
         this.info = new SubnetUtils(subnet, mask).getInfo();
+        this.address = this.info.getNetworkAddress();
+        this.mask = this.info.getNetmask();
     }
 
     public SubnetRange(String subnet, Integer mask) {
@@ -47,6 +52,8 @@ public class SubnetRange extends IpRange{
         }
         if (mask == 0) throw new IllegalArgumentException("The ip should end with one .0 at least");
         this.info = new SubnetUtils(range + "/" + mask).getInfo();
+        this.address = this.info.getNetworkAddress();
+        this.mask = this.info.getNetmask();
     }
 
     @Override
@@ -55,19 +62,27 @@ public class SubnetRange extends IpRange{
     }
 
     public String getAddress(){
-        return info.getAddress();
+        return address;
     }
 
     public String getMask(){
-        return info.getNetmask();
+        return mask;
     }
 
     @Override
     public String asParam() {
-        return regular(info.getAddress());
+        return regular(address);
     }
 
     public String toString(){
         return info.getCidrSignature();
     }
+
+    private void readObject(ObjectInputStream s)
+        throws IOException, ClassNotFoundException
+    {
+        s.defaultReadObject();
+        this.info = new SubnetUtils(this.address, mask).getInfo();
+    }
+
 }

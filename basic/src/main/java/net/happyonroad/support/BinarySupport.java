@@ -65,7 +65,7 @@ public class BinarySupport implements Serializable, Cloneable, Binable {
                 if (out != null) out.close();
             }
         }catch (IOException ex){
-            throw  new IllegalStateException("Can't serialize " + object + " as binary stream");
+            throw new IllegalStateException("Can't serialize " + object + " as binary stream", ex);
         }
     }
 }

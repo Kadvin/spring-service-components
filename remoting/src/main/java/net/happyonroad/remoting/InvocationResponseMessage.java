@@ -22,9 +22,13 @@ public class InvocationResponseMessage extends InvocationMessage {
 
     @JsonIgnore
     public void setValue(Object value) {
-        pair = new ClassAndValue();
-        pair.klass = value.getClass();
-        pair.value = value;
+        if( value != null ){
+            pair = new ClassAndValue();
+            pair.klass = value.getClass();
+            pair.value = value;
+        }else{
+            pair = null;
+        }
     }
 
     @SuppressWarnings("UnusedDeclaration")
