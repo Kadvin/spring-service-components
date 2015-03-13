@@ -12,17 +12,13 @@ import java.io.IOException;
 /**
  * Serialize class and value
  */
-public class ClassAndValueSerializer extends JsonSerializer<InvocationRequestMessage.ClassAndValue[]> {
+public class ClassAndValueSerializer extends JsonSerializer<ClassAndValue> {
     @Override
-    public void serialize(InvocationRequestMessage.ClassAndValue[] pairs, JsonGenerator jgen, SerializerProvider provider)
+    public void serialize(ClassAndValue pair, JsonGenerator jgen, SerializerProvider provider)
             throws IOException{
-        jgen.writeStartArray(pairs.length);
-        for (InvocationRequestMessage.ClassAndValue pair : pairs) {
-            jgen.writeStartObject();
-            jgen.writeStringField("klass", pair.klass.getName());
-            jgen.writeObjectField("value", pair.value);
-            jgen.writeEndObject();
-        }
-        jgen.writeEndArray();
+        jgen.writeStartObject();
+        jgen.writeStringField("klass", pair.klass.getName());
+        jgen.writeObjectField("value", pair.value);
+        jgen.writeEndObject();
     }
 }

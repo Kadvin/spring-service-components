@@ -3,6 +3,8 @@
  */
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.net.util.SubnetUtils;
 
 /**
@@ -18,7 +20,9 @@ public class SubnetRange extends IpRange{
      * @param subnet 子网ip
      * @param mask   掩码
      */
-    public SubnetRange(String subnet, String mask) {
+    @JsonCreator
+    public SubnetRange(@JsonProperty("address") String subnet,
+                       @JsonProperty("mask") String mask) {
         this.info = new SubnetUtils(subnet, mask).getInfo();
     }
 

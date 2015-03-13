@@ -10,42 +10,35 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Deserialize ClassAndValue
  */
-public class ClassAndValueDeserializer extends JsonDeserializer<InvocationRequestMessage.ClassAndValue[]> {
+public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
     @Override
-    public InvocationRequestMessage.ClassAndValue[] deserialize(JsonParser jp, DeserializationContext ctxt)
+    public ClassAndValue deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
-        List<InvocationRequestMessage.ClassAndValue> pairs = new LinkedList<InvocationRequestMessage.ClassAndValue>();
-        if( jp.isExpectedStartArrayToken() ){
-            while(jp.getCurrentToken() != JsonToken.END_ARRAY){
+        if( jp.getCurrentToken() == JsonToken.START_OBJECT){
+            ClassAndValue pair = new ClassAndValue();
+            while(jp.getCurrentToken() != JsonToken.END_OBJECT){
                 jp.nextToken();
-                if( jp.getCurrentToken() == JsonToken.START_OBJECT){
-                    InvocationRequestMessage.ClassAndValue pair = new InvocationRequestMessage.ClassAndValue();
-                    while(jp.getCurrentToken() != JsonToken.END_OBJECT){
-                        jp.nextToken();
-                        if( jp.getCurrentToken() == JsonToken.FIELD_NAME){
-                            String fieldName = jp.getText();
-                            jp.nextToken();
-                            if( "klass".equals(fieldName) ){
-                                try {
-                                    pair.klass = Class.forName(jp.getText());
-                                } catch (ClassNotFoundException e) {
-                                    throw new JsonMappingException("Can't convert class " + jp.getText(), e);
-                                }
-                            }else if("value".equals(fieldName) ){
-                                pair.value = jp.readValueAs(pair.klass);
-                            }
+                if( jp.getCurrentToken() == JsonToken.FIELD_NAME){
+                    String fieldName = jp.getText();
+                    jp.nextToken();
+                    if( "klass".equals(fieldName) ){
+                        try {
+                            pair.klass = Class.forName(jp.getText());
+                        } catch (ClassNotFoundException e) {
+                            throw new JsonMappingException("Can't convert class " + jp.getText(), e);
                         }
+                    }else if("value".equals(fieldName) ){
+                        pair.value = jp.readValueAs(pair.klass);
                     }
-                    pairs.add(pair);
                 }
             }
+            return pair;
+        }else{
+            throw new JsonMappingException("It should starts with object flat: {");
         }
-        return pairs.toArray(new InvocationRequestMessage.ClassAndValue[pairs.size()]);
     }
 }

@@ -57,12 +57,12 @@ public class InvocationRequestMessage extends InvocationMessage {
         }
     }
 
-    @JsonSerialize(using = ClassAndValueSerializer.class)
+    @JsonSerialize(contentUsing = ClassAndValueSerializer.class)
     public ClassAndValue[] getArguments() {
         return arguments;
     }
 
-    @JsonDeserialize(using = ClassAndValueDeserializer.class)
+    @JsonDeserialize(contentUsing = ClassAndValueDeserializer.class)
     public void setArguments(ClassAndValue[] arguments) {
         this.arguments = arguments;
     }
@@ -131,31 +131,6 @@ public class InvocationRequestMessage extends InvocationMessage {
 
     public static InvocationRequestMessage parse(String json) {
         return ParseUtils.parseJson(json, InvocationRequestMessage.class);
-    }
-
-    public static class ClassAndValue implements Serializable{
-        Class  klass;
-        Object value;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ClassAndValue)) return false;
-
-            ClassAndValue that = (ClassAndValue) o;
-
-            if (!klass.equals(that.klass)) return false;
-            if (value != null ? !value.equals(that.value) : that.value != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = klass.hashCode();
-            result = 31 * result + (value != null ? value.hashCode() : 0);
-            return result;
-        }
     }
 
     @Override

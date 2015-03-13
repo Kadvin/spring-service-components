@@ -4,24 +4,25 @@
 package net.happyonroad.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** A single ip range*/
+/** A single IP range*/
 public class SingleIp extends IpRange{
 
-    private final String ip;
+    private final String address;
 
     @JsonCreator
-    public SingleIp(String ip) {
-        this.ip = ip;
+    public SingleIp(@JsonProperty("address") String ip) {
+        this.address = ip;
     }
 
     @Override
     public boolean include(String ip) {
-        return this.ip.equals(ip);
+        return this.address.equals(ip);
     }
 
     public String getAddress() {
-        return ip;
+        return address;
     }
 
     @Override
@@ -31,10 +32,10 @@ public class SingleIp extends IpRange{
 
     @Override
     public String toJson() {
-        return ip;
+        return address;
     }
 
     public String toString(){
-        return ip;
+        return address;
     }
 }

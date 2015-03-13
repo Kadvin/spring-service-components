@@ -43,7 +43,7 @@ public class WrapException extends RemoteInvocationFailureException {
     }
 
     public WrapException(Throwable wrapped) {
-        super(wrapped.getMessage(), null);
+        super(wrapped.getMessage(), wrapCause(wrapped));
         this.wrappedExceptionClass = wrapped.getClass().getName();
         setStackTrace(wrapped.getStackTrace());
         try {
@@ -54,9 +54,13 @@ public class WrapException extends RemoteInvocationFailureException {
         }catch (Exception ex){
             //skip
         }
-        if (wrapped.getCause() != null && wrapped.getCause() != wrapped) {
-            super.initCause(new WrapException(wrapped.getCause()));
+    }
+
+    private static Throwable wrapCause(Throwable wrapped) {
+        if( wrapped.getCause() != null && wrapped.getCause() != wrapped ){
+            return new WrapException(wrapped.getCause());
         }
+        return null;
     }
 
     public int getErrorCode() {

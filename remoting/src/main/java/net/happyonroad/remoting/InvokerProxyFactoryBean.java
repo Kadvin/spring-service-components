@@ -3,13 +3,16 @@
  */
 package net.happyonroad.remoting;
 
+import net.happyonroad.annotation.Timeout;
 import net.happyonroad.cache.CacheService;
 import net.happyonroad.cache.ListChannel;
 import net.happyonroad.cache.MutableCacheService;
+import net.happyonroad.type.TimeInterval;
 import org.apache.commons.proxy.Invoker;
 import org.apache.commons.proxy.ProxyFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +24,7 @@ import java.util.UUID;
 /** 在使用端的配置的代理bean，代表了远程服务 */
 public class InvokerProxyFactoryBean
         implements FactoryBean<Object>, InitializingBean, Invoker {
+    static String DEFAULT_TIMEOUT = "2m"; //默认一次调用，2分钟以内应该返回
 
     private Class serviceInterface;
     private Object serviceProxy;
@@ -29,11 +33,6 @@ public class InvokerProxyFactoryBean
      * 设置一个队列名
      */
     private String queueName;
-    /**
-     * 消息的timeout时间(单位 seconds)
-     * TODO 这个timeout时间应该每次调用都可以设置的
-     */
-    private int receiveTimeout = 120;
 
     //默认binary
     private InvocationMessageConverter converter;
@@ -102,17 +101,30 @@ public class InvokerProxyFactoryBean
         return true;
     }
 
-    /**
-     * 设置接收消息的timeout时间(单位 second)
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public void setReceiveTimeout(int receiveTimeout) {
-        this.receiveTimeout = receiveTimeout;
-    }
-
     public Object invoke(Object proxy, Method method, Object[] arguments) throws Throwable {
-        if("equals".equals(method.getName())) {
+        String methodName = method.getName();
+        if("equals".equals(methodName)) {
             return false;
+        } else if ("toString".equals(methodName)) {
+            return "Proxy<" + getObjectType().getSimpleName() + ">";
+        } else if ("hashCode".equals(methodName)) {
+            return Integer.MIN_VALUE;
+        } else if ("notify".equals(methodName) || "notifyAll".equals(methodName)) {
+            return Void.TYPE;
+        } else if ("getClass".equals(methodName)) {
+            return getObjectType();
+        }
+
+        // 获取超时时间
+        Timeout timeoutConfig = AnnotationUtils.findAnnotation(method, Timeout.class);
+        if( timeoutConfig == null ) {
+            timeoutConfig = AnnotationUtils.findAnnotation(this.serviceInterface, Timeout.class);
+        }
+        String timeout;
+        if( timeoutConfig == null ){
+            timeout = DEFAULT_TIMEOUT;
+        }else {
+            timeout = timeoutConfig.value();
         }
 
         InvocationRequestMessage request = new InvocationRequestMessage();
@@ -127,7 +139,7 @@ public class InvokerProxyFactoryBean
         requestChannel.pushLeft(rawRequest);
         ListChannel responseChannel = getChannel(request.getServiceName());
         //所以，这个方法
-        byte[] rawResponse = responseChannel.blockPopRight(this.receiveTimeout);
+        byte[] rawResponse = responseChannel.blockPopRight((int)new TimeInterval(timeout).getMilliseconds());
         //没有用TimeoutException来返回，而是用null，这样可以减少栈成本
         if (null == rawResponse)
             throw new RemoteAccessException("Invoke  `" + getObjectType().getSimpleName() + "#" + method.getName() +

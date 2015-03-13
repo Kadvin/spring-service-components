@@ -3,6 +3,9 @@
  */
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The ip range
  */
@@ -12,7 +15,9 @@ public class StartAndEndRange extends IpRange {
     /* the end ip, can be null*/
     private String endIp;
 
-    public StartAndEndRange(String startIp, String endIp) {
+    @JsonCreator
+    public StartAndEndRange(@JsonProperty("start") String startIp,
+                            @JsonProperty("end") String endIp) {
         this.startIp = startIp;
         this.endIp = endIp;
         if (this.startIp == null && this.endIp == null)

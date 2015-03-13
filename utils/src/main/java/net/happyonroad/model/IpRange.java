@@ -4,6 +4,7 @@
 
 package net.happyonroad.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import net.happyonroad.support.JsonSupport;
 import net.happyonroad.util.ParseUtils;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * Judge a ip in the range or not
  */
+@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property = "class")
 public abstract class IpRange extends JsonSupport implements PathParameter {
     public abstract boolean include(String ip);
 

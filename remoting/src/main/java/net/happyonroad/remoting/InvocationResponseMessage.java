@@ -4,17 +4,38 @@
 package net.happyonroad.remoting;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import net.happyonroad.util.ParseUtils;
 
 /** 调用返回的消息 */
 public class InvocationResponseMessage extends InvocationMessage {
     private static final long serialVersionUID = -491976407273382425L;
-    private Object    value;
+    private ClassAndValue pair;
     private WrapException error;
 
+    @JsonIgnore
+    public Object getValue() {
+        return pair == null ? null : pair.value;
+    }
+
+    @JsonIgnore
     public void setValue(Object value) {
-        this.value = value;
+        pair = new ClassAndValue();
+        pair.klass = value.getClass();
+        pair.value = value;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @JsonSerialize(using = ClassAndValueSerializer.class)
+    public ClassAndValue getPair() {
+        return pair;
+    }
+    @SuppressWarnings("UnusedDeclaration")
+    @JsonDeserialize(using = ClassAndValueDeserializer.class)
+    public void setPair(ClassAndValue pair) {
+        this.pair = pair;
     }
 
     @JsonDeserialize(as = WrapException.class)
@@ -46,10 +67,6 @@ public class InvocationResponseMessage extends InvocationMessage {
         return error.recreate();
     }
 
-    public Object getValue() {
-        return value;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,14 +75,15 @@ public class InvocationResponseMessage extends InvocationMessage {
         InvocationResponseMessage that = (InvocationResponseMessage) o;
 
         if (error != null ? !error.equals(that.error) : that.error != null) return false;
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        //noinspection RedundantIfStatement
+        if (pair != null ? !pair.equals(that.pair) : that.pair != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = value != null ? value.hashCode() : 0;
+        int result = pair != null ? pair.hashCode() : 0;
         result = 31 * result + (error != null ? error.hashCode() : 0);
         return result;
     }
