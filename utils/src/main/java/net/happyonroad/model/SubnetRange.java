@@ -31,27 +31,8 @@ public class SubnetRange extends IpRange{
         this.mask = this.info.getNetmask();
     }
 
-    public SubnetRange(String subnet, Integer mask) {
-        this.info = new SubnetUtils(subnet + "/" + mask).getInfo();
-    }
-
-    /**
-     * 将 192.168.10.0 这种格式的子网按照默认的策略转换为Range对象
-     * 所谓的默认策略，就是 .0 转换为 8位， .0.0转换为16位
-     *
-     * @param range ip范围
-     */
     public SubnetRange(String range) {
-        String[] dots = range.split("\\.");
-        if (dots.length != 4) throw new IllegalArgumentException("Wrong range format " + range);
-        int mask = 32;
-        for (int i = 3; i > 0; i--) {
-            int value = Integer.parseInt(dots[i]);
-            if (value != 0) break;
-            mask -= 8;
-        }
-        if (mask == 0) throw new IllegalArgumentException("The ip should end with one .0 at least");
-        this.info = new SubnetUtils(range + "/" + mask).getInfo();
+        this.info = new SubnetUtils(range).getInfo();
         this.address = this.info.getNetworkAddress();
         this.mask = this.info.getNetmask();
     }

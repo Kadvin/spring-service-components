@@ -16,7 +16,7 @@ import org.junit.Test;
 public class IpRangeTest {
     @Test
     public void testParseSubnetRange(){
-        IpRange[] ranges = IpRange.parse("192.168.12.0");
+        IpRange[] ranges = IpRange.parse("192.168.12.0/24");
         Assert.assertTrue(ranges[0] instanceof SubnetRange);
         SubnetRange range = (SubnetRange) ranges[0];
         Assert.assertEquals("192.168.12.0", range.getAddress());
@@ -38,7 +38,7 @@ public class IpRangeTest {
 
     @Test
     public void testParseCombinedRange(){
-        IpRange[] ranges = IpRange.parse("192.168.12.0,192.168.12.21,192.168.12.21-192.168.12.42");
+        IpRange[] ranges = IpRange.parse("192.168.12.0/24,192.168.12.21,192.168.12.21-192.168.12.42");
         Assert.assertTrue(ranges[0] instanceof SubnetRange);
         Assert.assertTrue(ranges[1] instanceof SingleIp);
         Assert.assertTrue(ranges[2] instanceof StartAndEndRange);
@@ -46,7 +46,7 @@ public class IpRangeTest {
 
     @Test
     public void testSubnetRangeToAndFromJson() throws Exception {
-        IpRange[] ranges = IpRange.parse("192.168.12.0");
+        IpRange[] ranges = IpRange.parse("192.168.12.0/24");
         SubnetRange range = (SubnetRange) ranges[0];
         String json = range.toJson();
         System.out.println(json);
