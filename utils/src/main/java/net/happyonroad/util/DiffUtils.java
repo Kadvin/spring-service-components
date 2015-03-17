@@ -30,9 +30,17 @@ public class DiffUtils {
             for (Map.Entry<String, PropertyDescriptor> entry : descriptors.entrySet()) {
                 if(Arrays.binarySearch(ignores, entry.getKey()) >= 0 ) continue;
                 Object oneProperty = PropertyUtils.getProperty(one, entry.getKey());
-                oneProperties.put(entry.getKey(), oneProperty);
+                if( oneProperty != null && oneProperty.getClass().isArray()){
+                    oneProperties.put(entry.getKey(), Arrays.asList((Object[])oneProperty));
+                }else{
+                    oneProperties.put(entry.getKey(), oneProperty);
+                }
                 Object anotherProperty = PropertyUtils.getProperty(another, entry.getKey());
-                anotherProperties.put(entry.getKey(), anotherProperty);
+                if( anotherProperty != null && anotherProperty.getClass().isArray()){
+                    anotherProperties.put(entry.getKey(), Arrays.asList((Object[])anotherProperty));
+                }else{
+                    anotherProperties.put(entry.getKey(), anotherProperty);
+                }
             }
             return Maps.difference(oneProperties, anotherProperties);
         }catch (Exception ex){

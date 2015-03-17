@@ -115,4 +115,9 @@ public class SnmpPassport implements Serializable {
         result = 31 * result + (context != null ? context.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return userName + "(******)";
+    }
 }

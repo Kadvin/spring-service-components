@@ -92,4 +92,8 @@ public class SshCredential implements Credential {
         result = 31 * result + timeout;
         return result;
     }
+
+    public String toString(){
+        return "SshCredential(" + user + ")";
+    }
 }

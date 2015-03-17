@@ -128,4 +128,8 @@ public class SnmpCredential implements Credential {
         result = 31 * result + (passport != null ? passport.hashCode() : 0);
         return result;
     }
+
+    public String toString(){
+        return "SnmpCredential(" + community + "@" + version + ")";
+    }
 }

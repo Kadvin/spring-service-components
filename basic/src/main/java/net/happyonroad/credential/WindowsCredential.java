@@ -4,6 +4,7 @@
 package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,7 +16,6 @@ import java.util.Map;
  * <li> WMI
  * <li> WinRM
  * </ul>
- *
  */
 public class WindowsCredential implements Credential {
     private static final long serialVersionUID = 1008151410229282958L;
@@ -58,5 +58,13 @@ public class WindowsCredential implements Credential {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String toString() {
+        if (StringUtils.isEmpty(domain)) {
+            return "WindowCredential(" + user + ")";
+        } else {
+            return "WindowCredential(" + user + "@" + domain + ")";
+        }
     }
 }

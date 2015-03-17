@@ -10,4 +10,8 @@ import net.happyonroad.model.Credential;
 public class LocalCredential implements Credential {
 
     private static final long serialVersionUID = -7566065997165248098L;
+
+    public String toString(){
+        return "LocalCredential";
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-6-16 下午5:53
  */
-package net.happyonroad.support;
+package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
 
