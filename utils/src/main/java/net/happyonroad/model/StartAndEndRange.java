@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * The ip range
  */
 public class StartAndEndRange extends IpRange {
+    private static final long serialVersionUID = 1116632019398537876L;
     /* the start ip, can be null*/
     private String startIp;
     /* the end ip, can be null*/

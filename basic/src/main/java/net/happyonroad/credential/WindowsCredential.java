@@ -18,6 +18,7 @@ import java.util.Map;
  *
  */
 public class WindowsCredential implements Credential {
+    private static final long serialVersionUID = 1008151410229282958L;
     //认证域，可以为空
     private String domain;
     //如果用户有限定在某个主机

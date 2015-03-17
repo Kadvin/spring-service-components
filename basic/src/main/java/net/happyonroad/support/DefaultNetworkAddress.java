@@ -6,9 +6,10 @@ package net.happyonroad.support;
 import net.happyonroad.model.Address;
 
 /**
- * Description here
+ * The default network address
  */
 public class DefaultNetworkAddress extends JsonSupport implements Address {
+    private static final long serialVersionUID = -6139003363957900976L;
     private String address;
     private String mask;
 

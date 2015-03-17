@@ -3,10 +3,13 @@
  */
 package net.happyonroad.type;
 
+import java.io.Serializable;
+
 /**
  * 地址
  */
-public class Location {
+public class Location implements Serializable{
+    private static final long serialVersionUID = -81235008536377194L;
     private float latitude, longitude;
 
     public Location(float latitude, float longitude) {

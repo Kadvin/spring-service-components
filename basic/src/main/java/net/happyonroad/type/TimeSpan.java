@@ -3,14 +3,16 @@
  */
 package net.happyonroad.type;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * The time span: 这个对象比joda的interval小得多（json之后)
  */
-public class TimeSpan {
+public class TimeSpan implements Serializable{
 
+    private static final long serialVersionUID = 640946156242165862L;
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private Date startAt;

@@ -13,6 +13,7 @@ import java.util.Map;
  * 通过 hypervisor 访问（具体使用方式尚不清楚）
  */
 public class HypervisorCredential implements Credential {
+    private static final long serialVersionUID = 1241488875878014909L;
     private boolean https;
     private String user;
     private String password;
@@ -22,7 +23,7 @@ public class HypervisorCredential implements Credential {
     }
 
     public HypervisorCredential(Map map) {
-        if(map.containsKey("https")){
+        if (map.containsKey("https")) {
             https = (Boolean) map.get("https");
         }
         this.user = (String) map.get("user");

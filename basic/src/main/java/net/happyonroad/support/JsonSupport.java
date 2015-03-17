@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import net.happyonroad.model.Jsonable;
 import net.happyonroad.util.ParseUtils;
 
-/** Description */
+/**
+ * <h1>Common Json Support </h1>
+ */
 public class JsonSupport extends BinarySupport implements Jsonable {
     private static final long serialVersionUID = -5873792929187680622L;
 

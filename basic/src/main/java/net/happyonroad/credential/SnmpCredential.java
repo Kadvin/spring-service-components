@@ -23,11 +23,12 @@ import static net.happyonroad.util.ParseUtils.parseString;
  *
  */
 public class SnmpCredential implements Credential {
+    private static final long serialVersionUID = 5338739467961515785L;
     private String version; //v1, v2c, v3
     private String community;//shared between read/write
-    private int port; //161
-    private int timeout; // 60000 milliseconds = 1 minutes
-    private int retries; // 3 times
+    private int    port; //161
+    private int    timeout; // 60000 milliseconds = 1 minutes
+    private int    retries; // 3 times
 
     //仅仅在version=v3的时候需要有该属性
     private SnmpPassport passport;
@@ -44,8 +45,8 @@ public class SnmpCredential implements Credential {
         setTimeout(parseInt(map.get("timeout"), 60000));
         setRetries(parseInt(map.get("retries"), 3));
 
-        Map<String,Object> passport = (Map<String,Object>) map.get("passport");
-        if(passport != null )
+        Map<String, Object> passport = (Map<String, Object>) map.get("passport");
+        if (passport != null)
             setPassport(new SnmpPassport(passport));
         else
             setPassport(new SnmpPassport());

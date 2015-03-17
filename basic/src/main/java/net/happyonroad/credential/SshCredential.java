@@ -15,6 +15,7 @@ import java.util.Map;
  * 但其实Windows主机也可以在开通SSH服务之后，采用SSH认证/PowerShell, Batch, VBS采集方式
  */
 public class SshCredential implements Credential {
+    private static final long serialVersionUID = 6186435172976706185L;
     private String user, password;
     //SSH的端口
     private int port = 22;

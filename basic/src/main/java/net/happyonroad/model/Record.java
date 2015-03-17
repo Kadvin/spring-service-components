@@ -20,7 +20,10 @@ import java.sql.Timestamp;
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
 public class Record implements Cloneable, Serializable{
 
-    public static String[] HELP_ATTRS = {"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting", "cascadeCreating", "hierarchyDeleting"};
+    private static final long serialVersionUID = 3209170950751539327L;
+    public static String[] HELP_ATTRS =
+            {"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
+             "cascadeCreating", "hierarchyDeleting"};
 
     protected static ObjectMapper mapper = new ObjectMapper();
 

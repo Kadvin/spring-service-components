@@ -16,6 +16,8 @@ import java.util.Map;
  */
 @JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property = "class")
 public abstract class IpRange extends JsonSupport implements PathParameter {
+    private static final long serialVersionUID = 2981551139388564607L;
+
     public abstract boolean include(String ip);
 
     protected String regular(String ip){

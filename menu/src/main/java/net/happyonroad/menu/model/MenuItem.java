@@ -18,26 +18,27 @@ import java.util.Collections;
  */
 public class MenuItem extends Record implements Comparable<MenuItem>{
 
+    private static final long serialVersionUID = -505459385582952169L;
     // 父菜单ID
-    private Long parentId;
+    private Long     parentId;
     @JsonIgnore
     // 父菜单
     private MenuItem parent;
 
     // 菜单名称
     @NotBlank
-    private String name;
+    private String         name;
     // 菜单对应的angular state
     @NotBlank
-    private String state;
+    private String         state;
     // 菜单的样式
-    private String css;
+    private String         css;
     // 菜单的描述
-    private String description;
+    private String         description;
     // 菜单的展示顺序
-    private Long position;
+    private Long           position;
     // 菜单的快捷键
-    private String shortcut;
+    private String         shortcut;
     // 子菜单
     private List<MenuItem> children;
 

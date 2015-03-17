@@ -10,6 +10,7 @@ import java.util.Properties;
  */
 public class PropertiesSupportRecord extends Record{
 
+    private static final long serialVersionUID = -8053789424127958797L;
     // 扩展属性
     private Properties properties;
 

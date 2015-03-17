@@ -15,8 +15,10 @@ import java.io.ObjectInputStream;
  */
 public class SubnetRange extends IpRange{
 
+    private static final long serialVersionUID = -50738278123230056L;
     private transient SubnetUtils.SubnetInfo info;
     private String address, mask;
+
     /**
      * 构建一个子网对象
      *

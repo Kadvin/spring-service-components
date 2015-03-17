@@ -7,10 +7,11 @@ package net.happyonroad.type;
  * 监控计划
  */
 public class Schedule extends TimeSpan {
+    private static final long serialVersionUID = 4754218267494981545L;
     //监控频度
     private TimeInterval frequency;
     //相对于频率期间的起始偏移量，单位为毫秒，用于削峰填谷
-    private long   offset;
+    private long         offset;
 
     public TimeInterval getFrequency() {
         return frequency;

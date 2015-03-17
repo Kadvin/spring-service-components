@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /** A single IP range*/
 public class SingleIp extends IpRange{
 
+    private static final long serialVersionUID = 6746242273258267020L;
     private final String address;
 
     @JsonCreator

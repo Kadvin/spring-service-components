@@ -11,4 +11,5 @@ import java.util.Properties;
  * Properties which implements Credential interface
  */
 public class CredentialProperties extends Properties implements Credential {
+    private static final long serialVersionUID = -5943166126247555544L;
 }

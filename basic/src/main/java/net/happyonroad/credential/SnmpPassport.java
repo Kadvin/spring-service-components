@@ -5,6 +5,7 @@ package net.happyonroad.credential;
 
 import net.happyonroad.util.ParseUtils;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -12,8 +13,9 @@ import java.util.Map;
  * <h1>The snmp passport for V3</h1>
  */
 @SuppressWarnings("UnusedDeclaration")
-public class SnmpPassport  {
+public class SnmpPassport implements Serializable {
 
+    private static final long serialVersionUID = -3830687286331116754L;
     private String authenticateMethod;//身份验证类型 MD5/SHA
     private String encryptMethod;//加密类型 DES/AES
     private String privateKey;//数据加密密钥

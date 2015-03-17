@@ -4,7 +4,6 @@
 package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
-import net.happyonroad.spring.context.ContextUtils;
 import net.happyonroad.spring.support.SmartApplicationEventMulticaster;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -44,6 +43,13 @@ public class ApplicationSupportBean extends TranslateSupportBean
             mbeanExporter = applicationContext.getBean(MBeanExportOperations.class);
         }catch (NoSuchBeanDefinitionException ex){
             mbeanExporter = null;
+        }
+        if( componentContext == null ){
+            try {
+                componentContext = applicationContext.getBean(ComponentContext.class);
+            } catch (BeansException e) {
+                //skip
+            }
         }
     }
 
