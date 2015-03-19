@@ -32,4 +32,15 @@ public final class IpUtils {
         }
         return localAddresses;
     }
+
+    /**
+     * <h3>规范化MAC地址</h3>
+     * MAC地址有多种表达形式，可能以空格，减号，冒号分割，规范化之后，都以冒号分割
+     *
+     * @param macAddress mac地址
+     * @return 规范化之后的mac地址
+     */
+    public static String regularMAC(String macAddress) {
+        return macAddress.replaceAll("[\\s:-]", ":").toLowerCase();
+    }
 }
