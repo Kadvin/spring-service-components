@@ -7,6 +7,7 @@ package net.happyonroad.event;
  * <h1>对象通不过校验</h1>
  */
 public class ObjectValidateOnUpdateFailureEvent<Model>  extends ObjectValidateFailureEvent<Model> {
+    private static final long serialVersionUID = -5276449295177529663L;
     private final Model updated;
 
     public ObjectValidateOnUpdateFailureEvent(Model source, Model updated, Exception e) {

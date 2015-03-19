@@ -8,6 +8,8 @@ package net.happyonroad.event;
  */
 public class ObjectDestroyFailureEvent<Model> extends ObjectFailureEvent<Model> {
 
+    private static final long serialVersionUID = -8878483379653729848L;
+
     public ObjectDestroyFailureEvent(Model source, Exception e) {
         super(source, e);
     }

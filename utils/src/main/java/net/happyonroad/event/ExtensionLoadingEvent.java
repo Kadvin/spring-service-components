@@ -9,6 +9,8 @@ import net.happyonroad.component.core.Component;
  * the service package is loading
  */
 public class ExtensionLoadingEvent extends ExtensionEvent {
+    private static final long serialVersionUID = -1757774726942039005L;
+
     public ExtensionLoadingEvent(Component source) {
         super(source);
     }

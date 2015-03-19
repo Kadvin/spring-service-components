@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationEvent;
  * 所有服务包的事件
  */
 public class SystemEvent extends ApplicationEvent {
+    private static final long serialVersionUID = -3156784322713769605L;
+
     public SystemEvent(ComponentContext source) {
         super(source);
     }

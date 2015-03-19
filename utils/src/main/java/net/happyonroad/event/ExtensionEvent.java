@@ -11,6 +11,8 @@ import org.springframework.context.ApplicationEvent;
  */
 public class ExtensionEvent extends ApplicationEvent {
 
+    private static final long serialVersionUID = 478329591968992530L;
+
     public ExtensionEvent(Component source) {
         super(source);
     }

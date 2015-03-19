@@ -3,6 +3,8 @@
  */
 package net.happyonroad.event;
 
+import com.fasterxml.jackson.annotation.*;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -28,8 +30,13 @@ import org.springframework.context.ApplicationEvent;
  * </ol>
  *
  */
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public class ObjectEvent<Model> extends ApplicationEvent{
-    public ObjectEvent(Model source) {
+    private static final long serialVersionUID = 2208172696199646808L;
+
+    @JsonCreator
+    public ObjectEvent(@JsonProperty("source") Model source) {
         super(source);
     }
 
@@ -37,5 +44,19 @@ public class ObjectEvent<Model> extends ApplicationEvent{
     public Model getSource() {
         //noinspection unchecked
         return (Model) super.getSource();
+    }
+
+    // FOR JSON
+
+    /**
+     * @deprecated Don't use it
+     * @param timestamp the timestamp
+     */
+    public void setTimestamp(long timestamp){
+        try {
+            FieldUtils.writeField(this, "timestamp", timestamp, true);
+        } catch (IllegalAccessException e) {
+            //ignore it
+        }
     }
 }
