@@ -4,7 +4,7 @@
 package net.happyonroad.menu.repository;
 
 import net.happyonroad.platform.repository.DatabaseConfig;
-import net.happyonroad.test.config.RepositoryConfigWithH2;
+import net.happyonroad.test.config.RepositoryConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(DatabaseConfig.class)
-public class MenuItemRepositoryConfig extends RepositoryConfigWithH2 {
+public class MenuItemRepositoryConfig extends RepositoryConfig {
     @Override
     protected String dbRepository() {
         return "net.happyonroad.menu.repository";

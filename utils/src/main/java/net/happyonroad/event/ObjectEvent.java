@@ -41,6 +41,7 @@ public class ObjectEvent<Model> extends ApplicationEvent{
     }
 
     @Override
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
     public Model getSource() {
         //noinspection unchecked
         return (Model) super.getSource();

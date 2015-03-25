@@ -137,6 +137,7 @@ public class MigrateResourcePopulator implements DatabasePopulator {
     @Override
     public void populate(Connection connection) throws ScriptException {
         for (ResourceWithDir resource : this.scripts) {
+
             ScriptUtils.executeSqlScript(connection,
                     encodeScript(resource.script, resource.direction),
                     this.continueOnError,
@@ -188,6 +189,17 @@ public class MigrateResourcePopulator implements DatabasePopulator {
         }
     }
 
+    public void reset() {
+        this.scripts.clear();
+    }
+
+    public void reverse() {
+        Collections.reverse(this.scripts);
+        for (ResourceWithDir script : scripts) {
+            script.reverse();
+        }
+    }
+
     static class ResourceWithDir{
         Resource script;
         String direction;
@@ -195,6 +207,19 @@ public class MigrateResourcePopulator implements DatabasePopulator {
         public ResourceWithDir(Resource script, String direction) {
             this.script = script;
             this.direction = direction;
+
+        }
+
+        public void reverse() {
+            if(StringUtils.equalsIgnoreCase(direction, "up") ){
+                direction = "down";
+            }else if (StringUtils.equalsIgnoreCase(direction, "down")){
+                direction = "up";
+            }else {
+                throw new UnsupportedOperationException("Can't not reverse the sql script, " +
+                                                        "there is a script " + script +
+                                                        " with unknown direction " + direction);
+            }
 
         }
     }

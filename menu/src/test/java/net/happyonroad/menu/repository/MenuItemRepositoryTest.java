@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
  * <h1>测试CommonMenuItemRepository的MyBatis的Mapping配置是否正确</h1>
  */
 @ContextConfiguration(classes = MenuItemRepositoryConfig.class)
-@ActiveProfiles("test")
+@ActiveProfiles({"test"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class MenuItemRepositoryTest {
 
