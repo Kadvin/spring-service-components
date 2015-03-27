@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -82,7 +82,7 @@ public class Record implements Cloneable, Serializable{
      */
     public void apply( Record another) {
         try {
-            BeanUtils.copyProperties(this, another);
+            PropertyUtils.copyProperties(this, another);
         } catch (Exception e) {
             throw new RuntimeException("Can't apply record properties", e);
         }

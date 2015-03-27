@@ -18,6 +18,7 @@ import java.util.Map;
  */
 public class SshCredential implements Credential {
     private static final long serialVersionUID = 6186435172976706185L;
+    public static final int DEFAULT_TIMEOUT = 1000 * 30;
     private String user, password;
     private String permFile;
     //SSH的端口
@@ -32,14 +33,14 @@ public class SshCredential implements Credential {
         this.user = user;
         this.password = password;
         this.port = 22;
-        this.timeout = 1000;
+        this.timeout = DEFAULT_TIMEOUT;
     }
 
     public SshCredential(String user, File permFile) {
         this.user = user;
         this.permFile = permFile.getAbsolutePath();
         this.port = 22;
-        this.timeout = 1000;
+        this.timeout = DEFAULT_TIMEOUT;
     }
 
     public SshCredential(Map map) {
@@ -47,7 +48,7 @@ public class SshCredential implements Credential {
         this.password = (String) map.get("password");
         this.permFile = (String) map.get("permFile");
         this.port = ParseUtils.parseInt(map.get("port"), 22);
-        this.timeout = ParseUtils.parseInt(map.get("timeout"), 1000);
+        this.timeout = ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT);
     }
 
     public String getUser() {
