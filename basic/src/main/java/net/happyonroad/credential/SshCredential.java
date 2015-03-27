@@ -5,7 +5,9 @@ package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
 import net.happyonroad.util.ParseUtils;
+import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import java.util.Map;
 public class SshCredential implements Credential {
     private static final long serialVersionUID = 6186435172976706185L;
     private String user, password;
+    private String permFile;
     //SSH的端口
     private int port = 22;
     private int timeout;
@@ -32,9 +35,17 @@ public class SshCredential implements Credential {
         this.timeout = 1000;
     }
 
+    public SshCredential(String user, File permFile) {
+        this.user = user;
+        this.permFile = permFile.getAbsolutePath();
+        this.port = 22;
+        this.timeout = 1000;
+    }
+
     public SshCredential(Map map) {
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
+        this.permFile = (String) map.get("permFile");
         this.port = ParseUtils.parseInt(map.get("port"), 22);
         this.timeout = ParseUtils.parseInt(map.get("timeout"), 1000);
     }
@@ -53,6 +64,14 @@ public class SshCredential implements Credential {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPermFile() {
+        return permFile;
+    }
+
+    public void setPermFile(String permFile) {
+        this.permFile = permFile;
     }
 
     public int getPort() {
@@ -95,5 +114,13 @@ public class SshCredential implements Credential {
 
     public String toString(){
         return "SshCredential(" + user + ")";
+    }
+
+    public boolean hasPassword() {
+        return !StringUtils.isEmpty(password);
+    }
+
+    public boolean hasPermFile() {
+        return !StringUtils.isEmpty(permFile);
     }
 }

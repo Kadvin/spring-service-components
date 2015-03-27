@@ -48,8 +48,6 @@ public class SnmpCredential implements Credential {
         Map<String, Object> passport = (Map<String, Object>) map.get("passport");
         if (passport != null)
             setPassport(new SnmpPassport(passport));
-        else
-            setPassport(new SnmpPassport());
     }
 
     public String getVersion() {

@@ -38,6 +38,11 @@ public class PropertiesSupportRecord extends Record{
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        PropertiesSupportRecord cloned = (PropertiesSupportRecord) super.clone();
+        if( this.properties != null ) {
+            cloned.properties = new Properties();
+            cloned.properties.putAll(this.properties);
+        }
+        return cloned;
     }
 }

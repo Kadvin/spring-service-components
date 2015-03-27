@@ -8,8 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import net.happyonroad.support.JsonSupport;
 import net.happyonroad.util.ParseUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Judge a ip in the range or not
@@ -32,13 +31,18 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
             Map<String, String> map = ParseUtils.parseJson(content, HashMap.class);
             return (T)new SubnetRange(map.get("address"), map.get("mask"));
         }else if (theClass == SingleIp.class ){
-
             // "192.168.21.10"
             return (T) new SingleIp(content);
         }else if( theClass == StartAndEndRange.class ){
             // {"start" : "192.168.21.10", "end" : "192.168.21.200"}
             Map<String, String> map = ParseUtils.parseJson(content, HashMap.class);
             return (T) new StartAndEndRange(map.get("start"), map.get("end"));
+        }else if( theClass == CollectionRange.class ){
+            //["192.168.0.1","192.168.0.2"]
+            String[] values = ParseUtils.parseJson(content, String[].class);
+            Set<String> addresses = new HashSet<String>();
+            addresses.addAll(Arrays.asList(values));
+            return (T) new CollectionRange(addresses);
         }else if( IpRange.class.isAssignableFrom(theClass)){
             throw new UnsupportedOperationException("Can't parse json for ip range class:" + theClass);
         }else {
@@ -63,6 +67,11 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
                     ranges[i] = new SubnetRange(split[0], split[1]);
                 else // 192.168.0.0/16
                     ranges[i] = new SubnetRange(rawRange);
+            } else if (rawRange.indexOf(',') > 0 ){
+                String[] split = rawRange.split(",");
+                Set<String> addresses = new HashSet<String>();
+                addresses.addAll(Arrays.asList(split));
+                ranges[i] = new CollectionRange(addresses);
             } else {
                 //single ip: 192.168.0.10
                 ranges[i] = new SingleIp(rawRange);
