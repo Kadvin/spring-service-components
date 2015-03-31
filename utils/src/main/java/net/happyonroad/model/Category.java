@@ -17,22 +17,22 @@ import java.util.List;
  * 对象类型
  */
 @ManagedResource(description = "系统模型分类")
-@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
+@JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class)
 public class Category extends JsonSupport {
+    private static final long serialVersionUID = 692069687667087167L;
     private           String         name;
     private           String         alias;
     private           String         label;
     private           String         description;
     private transient Category       parent;
     private transient List<Category> children;
-    private String[]  credentials;
+    private           String[]       credentials;
 
     @ManagedAttribute
     public String getType() {
-        if (getParent() != null)
-        {
+        if (getParent() != null) {
             String parentType = getParent().getType();
-            if( parentType.endsWith("/") )
+            if (parentType.endsWith("/"))
                 return parentType + getName();
             else
                 return parentType + "/" + getName();
@@ -101,7 +101,7 @@ public class Category extends JsonSupport {
     }
 
     @ManagedAttribute
-    public int getChildrenSize(){
+    public int getChildrenSize() {
         return children == null ? 0 : children.size();
     }
 
@@ -110,7 +110,7 @@ public class Category extends JsonSupport {
     }
 
     public void addChild(Category category) {
-        if( children == null ){
+        if (children == null) {
             children = new LinkedList<Category>();
         }
         children.add(category);
@@ -131,6 +131,7 @@ public class Category extends JsonSupport {
      *  resource model = network
      *  resource model = network.router
      * </pre>
+     *
      * @param name 资源类别
      * @return 是否包含
      */
@@ -138,7 +139,7 @@ public class Category extends JsonSupport {
         return name.startsWith(getType());
     }
 
-     // find the parent type of the given type
+    // find the parent type of the given type
     public static String parentOf(String type) {
         //借file的api进行
         // 如果 type == "/", 则会返回null
