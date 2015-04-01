@@ -42,7 +42,7 @@ public class SnmpCredential implements Credential {
         setVersion(parseString(map.get("version"), "v2c"));
         setCommunity(parseString(map.get("community"), "public"));
         setPort(parseInt(map.get("port"), 161));
-        setTimeout(parseInt(map.get("timeout"), 60000));
+        setTimeout(parseInt(map.get("timeout"), 15000));/*15s timeout for snmp, same as windows*/
         setRetries(parseInt(map.get("retries"), 3));
 
         Map<String, Object> passport = (Map<String, Object>) map.get("passport");
