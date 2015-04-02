@@ -11,9 +11,8 @@ import java.util.*;
  * IP地址工具
  */
 public final class IpUtils {
-
-    public static Set<String> getLocalAddresses(){
-        Set<String> localAddresses = new HashSet<String>(2); ;
+    public static List<String> getLocalAddresses(){
+        List<IndexAndIp> localAddresses = new ArrayList<IndexAndIp>(2);
         try {
             Enumeration<NetworkInterface> nics = NetworkInterface.getNetworkInterfaces();
             while (nics.hasMoreElements()) {
@@ -24,13 +23,19 @@ public final class IpUtils {
                     String hostAddress = address.getHostAddress();
                     if(hostAddress.contains(":")) continue; // ipv6
                     if("127.0.0.1".equals(hostAddress)) continue;
-                    localAddresses.add(hostAddress);
+                    localAddresses.add(new IndexAndIp(nic.getIndex() , hostAddress) );
                 }
             }
         } catch (Exception e) {
             throw new UnsupportedOperationException("Can't find local address", e);
         }
-        return localAddresses;
+        //按照网卡接口号先后排序
+        Collections.sort(localAddresses);
+        List<String> addresses = new ArrayList<String>();
+        for (IndexAndIp indexAndIp : localAddresses) {
+            addresses.add(indexAndIp.ip);
+        }
+        return addresses;
     }
 
     /**
@@ -42,5 +47,21 @@ public final class IpUtils {
      */
     public static String regularMAC(String macAddress) {
         return macAddress.replaceAll("[\\s:-]", ":").toLowerCase();
+    }
+
+    static class IndexAndIp implements Comparable<IndexAndIp>{
+        private int index;
+        private String ip;
+
+        public IndexAndIp(int index, String ip) {
+            this.index = index;
+            this.ip = ip;
+        }
+
+        @Override
+
+        public int compareTo(@SuppressWarnings("NullableProblems") IndexAndIp another) {
+            return this.index - another.index;
+        }
     }
 }

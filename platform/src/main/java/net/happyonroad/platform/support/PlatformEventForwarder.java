@@ -9,6 +9,10 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * Forward application event from platform context to spring mvc context
  *
@@ -18,12 +22,24 @@ import org.springframework.stereotype.Component;
 @Component
 class PlatformEventForwarder extends Bean
         implements ApplicationListener<ApplicationEvent> {
-    ApplicationContext[] contexts;
+    ApplicationContext[]                contexts;
+    Class<? extends ApplicationEvent>[] eventClasses;
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
+        if (eventClasses == null) return;
+        if (eventClasses.length == 0) return;
         if (contexts == null) return;
         if (contexts.length == 0) return;
+
+        boolean pass = false;
+        for (Class<? extends ApplicationEvent> eventClass : eventClasses) {
+            if (eventClass.isAssignableFrom(event.getClass())) {
+                pass = true;
+                break;
+            }
+        }
+        if (!pass) return;
         for (ApplicationContext context : contexts) {
             context.publishEvent(event);
         }
@@ -31,5 +47,10 @@ class PlatformEventForwarder extends Bean
 
     public void bind(ApplicationContext... targets){
         this.contexts = targets;
+    }
+
+    public void forward(Class... classes){
+        //noinspection unchecked
+        this.eventClasses = classes;
     }
 }

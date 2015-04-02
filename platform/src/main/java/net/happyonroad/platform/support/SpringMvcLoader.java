@@ -3,6 +3,9 @@
  */
 package net.happyonroad.platform.support;
 
+import net.happyonroad.component.container.event.ContainerEvent;
+import net.happyonroad.event.ObjectEvent;
+import net.happyonroad.event.SystemEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -106,6 +109,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         if( applicationContext != null){
             servletAppContext.setParent(applicationContext);
             PlatformEventForwarder forwarder = applicationContext.getBean(PlatformEventForwarder.class);
+            forwarder.forward(ObjectEvent.class, ContainerEvent.class, SystemEvent.class);
             forwarder.bind(securityAppContext, servletAppContext);
         }
         webAppContext = servletAppContext;

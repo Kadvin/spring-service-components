@@ -36,11 +36,11 @@ public class TimeSpan implements Serializable{
 
     @Override
     public String toString() {
-        return "TimeSpan(" + format(startAt) + " -> " + format(endAt) + ")";
+        return "TimeSpan(" + format(startAt, "ever") + " -> " + format(endAt, "forever") + ")";
     }
 
-    private String format(Date date) {
-        return date == null ? "null" : sdf.format(date);
+    String format(Date date, String defaults) {
+        return date == null ? defaults : sdf.format(date);
     }
 
     @Override
