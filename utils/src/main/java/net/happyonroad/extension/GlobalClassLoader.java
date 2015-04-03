@@ -60,7 +60,8 @@ public class GlobalClassLoader extends ClassLoader {
             if (!components.isEmpty()) {
                 ecls = new ArrayList<ExtensionClassLoader>(components.size());
                 for (Component component : components) {
-                    ecls.add((ExtensionClassLoader) component.getClassLoader());
+                    if( component.getClassLoader() instanceof ExtensionClassLoader )
+                        ecls.add((ExtensionClassLoader) component.getClassLoader());
                 }
                 Collections.reverse(ecls);
             }else{
