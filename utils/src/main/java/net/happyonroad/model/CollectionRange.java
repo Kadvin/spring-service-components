@@ -45,4 +45,21 @@ public class CollectionRange extends IpRange{
     public Set<String> getAddresses() {
         return addresses;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CollectionRange)) return false;
+
+        CollectionRange that = (CollectionRange) o;
+
+        if (!addresses.equals(that.addresses)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return addresses.hashCode();
+    }
 }

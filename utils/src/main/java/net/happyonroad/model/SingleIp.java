@@ -39,4 +39,21 @@ public class SingleIp extends IpRange{
     public String toString(){
         return address;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SingleIp)) return false;
+
+        SingleIp singleIp = (SingleIp) o;
+
+        if (!address.equals(singleIp.address)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return address.hashCode();
+    }
 }

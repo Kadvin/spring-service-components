@@ -68,4 +68,23 @@ public class SubnetRange extends IpRange{
         this.info = new SubnetUtils(this.address, mask).getInfo();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SubnetRange)) return false;
+
+        SubnetRange that = (SubnetRange) o;
+
+        if (!address.equals(that.address)) return false;
+        if (!mask.equals(that.mask)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = address.hashCode();
+        result = 31 * result + mask.hashCode();
+        return result;
+    }
 }

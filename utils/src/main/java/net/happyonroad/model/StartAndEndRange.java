@@ -53,4 +53,24 @@ public class StartAndEndRange extends IpRange {
     public String toString(){
         return getStart() + "-" + getEnd();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StartAndEndRange)) return false;
+
+        StartAndEndRange that = (StartAndEndRange) o;
+
+        if (!endIp.equals(that.endIp)) return false;
+        if (!startIp.equals(that.startIp)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = startIp.hashCode();
+        result = 31 * result + endIp.hashCode();
+        return result;
+    }
 }

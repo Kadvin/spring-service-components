@@ -3,6 +3,9 @@
  */
 package net.happyonroad.util;
 
+import net.happyonroad.model.SocketAddress;
+import net.happyonroad.support.DefaultSocketAddress;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
@@ -11,6 +14,8 @@ import java.util.*;
  * IP地址工具
  */
 public final class IpUtils {
+
+
     public static List<String> getLocalAddresses(){
         List<IndexAndIp> localAddresses = new ArrayList<IndexAndIp>(2);
         try {
@@ -48,6 +53,29 @@ public final class IpUtils {
     public static String regularMAC(String macAddress) {
         return macAddress.replaceAll("[\\s:-]", ":").toLowerCase();
     }
+
+    /**
+     * <h2>将形如 主机:端口 的地址转换为SocketAddress</h2>
+     * @param address  形如 主机:端口
+     * @return SocketAddress
+     */
+    public static SocketAddress parseSocketAddress(String address){
+        String[] hostAndPort = address.split(":");
+        if( hostAndPort.length != 2 ){
+            throw new IllegalArgumentException("The address should be formatted as host:port, " +
+                                               "instead of " + address);
+        }
+        String host = hostAndPort[0];
+        int port;
+        try {
+            port = Integer.valueOf(hostAndPort[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("The address should be formatted as host:port, " +
+                                               "instead of " + address);
+        }
+        return new DefaultSocketAddress(host, port);
+    }
+
 
     static class IndexAndIp implements Comparable<IndexAndIp>{
         private int index;
