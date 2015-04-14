@@ -36,11 +36,7 @@ public class TimeSpan implements Serializable{
 
     @Override
     public String toString() {
-        return "TimeSpan(" + format(startAt, "ever") + " -> " + format(endAt, "forever") + ")";
-    }
-
-    String format(Date date, String defaults) {
-        return date == null ? defaults : sdf.format(date);
+        return "TimeSpan(" + format(startAt, "ever") + " .. " + format(endAt, "forever") + ")";
     }
 
     @Override
@@ -62,4 +58,20 @@ public class TimeSpan implements Serializable{
         result = 31 * result + (endAt != null ? endAt.hashCode() : 0);
         return result;
     }
+
+    public boolean include(long time) {
+        // 判断是否在开始时间之前
+        if( startAt != null && time < startAt.getTime())
+            return false;
+        // 判断是否在结束时间之后
+        if( endAt != null && time > endAt.getTime() )
+            return false;
+        return true;
+    }
+
+    static String format(Date date, String defaults) {
+        return date == null ? defaults : sdf.format(date);
+    }
+
+
 }
