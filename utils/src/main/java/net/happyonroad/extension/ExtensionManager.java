@@ -110,19 +110,24 @@ public class ExtensionManager extends ApplicationSupportBean
         Dependency dependency = Dependency.parse(jar);
         Component component = componentRepository.resolveComponent(dependency);
         try {
+            //由于现在将扩展统一放在 repository 目录，其实有些系统依赖的组件已经加载过了
+            // 现在这样只是提示下，让外部用户以为我们将其当做扩展加载
             logger.info("Loading extension: {}", component);
             long start = System.currentTimeMillis();
-            //仅发给容器
-            publishEvent(new ExtensionLoadingEvent(component));
-            ClassLoader legacy = Thread.currentThread().getContextClassLoader();
-            ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
-            Thread.currentThread().setContextClassLoader(ecl);
-            componentLoader.load(component);
-            Thread.currentThread().setContextClassLoader(legacy);
-            loadedExtensions.add(component);
-            DefaultComponent comp = (DefaultComponent) component;
-            registerMbean(comp, comp.getObjectName());
-            publishEvent(new ExtensionLoadedEvent(component));
+            if( !componentLoader.isLoaded(component) ){
+                //仅发给容器
+                publishEvent(new ExtensionLoadingEvent(component));
+                ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+                ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
+                Thread.currentThread().setContextClassLoader(ecl);
+
+                componentLoader.load(component);
+                Thread.currentThread().setContextClassLoader(legacy);
+                loadedExtensions.add(component);
+                DefaultComponent comp = (DefaultComponent) component;
+                registerMbean(comp, comp.getObjectName());
+                publishEvent(new ExtensionLoadedEvent(component));
+            }
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
         } catch (Exception e) {
             logger.error("Can't load extension: " + component + ", ignore it and going on", e);
