@@ -36,6 +36,11 @@ public class WindowsCredential implements Credential {
         this.password = (String) map.get("password");
     }
 
+    @Override
+    public String name() {
+        return Windows;
+    }
+
     public String getDomain() {
         return domain;
     }

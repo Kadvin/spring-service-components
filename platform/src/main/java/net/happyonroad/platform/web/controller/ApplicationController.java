@@ -26,6 +26,8 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang.exception.ExceptionUtils.getRootCauseMessage;
+
 /** The Rest Controller */
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 @Transactional
@@ -50,13 +52,13 @@ public class ApplicationController<T extends Record> {
 
     @ExceptionHandler(WebServerSideException.class)
     public ResponseEntity<Object> handleWebServerSideException(WebServerSideException ex, WebRequest request) {
-        logger.warn("Caught server side exception: " + ex.getMessage(), ex);
+        logger.warn("Caught server side exception {}", getRootCauseMessage(ex));
         return handleExceptionInternal(ex, ex.getMessage(), headers, ex.getStatusCode(), request);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleWebServerSideException(Throwable ex, WebRequest request) {
-        logger.error("Caught unhandled exception: " + ex.getMessage(), ex);
+        logger.error("Caught unhandled exception {}", getRootCauseMessage(ex));
         return handleExceptionInternal(ex, ex.getMessage(), headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

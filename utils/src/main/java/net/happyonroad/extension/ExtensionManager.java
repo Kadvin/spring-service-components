@@ -127,6 +127,8 @@ public class ExtensionManager extends ApplicationSupportBean
                 DefaultComponent comp = (DefaultComponent) component;
                 registerMbean(comp, comp.getObjectName());
                 publishEvent(new ExtensionLoadedEvent(component));
+            }else{
+                loadedExtensions.add(component);
             }
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
         } catch (Exception e) {
@@ -147,11 +149,15 @@ public class ExtensionManager extends ApplicationSupportBean
     void unloadExtension(Component component) {
         logger.info("Unloading extension: {}", component);
         long start = System.currentTimeMillis();
-        publishEvent(new ExtensionUnloadingEvent(component));
-        componentLoader.quickUnload(component);
-        loadedExtensions.remove(component);
-        //这个事件就仅发给容器
-        publishEvent(new ExtensionUnloadedEvent(component));
+        if( componentLoader.isLoaded(component) ){
+            publishEvent(new ExtensionUnloadingEvent(component));
+            componentLoader.quickUnload(component);
+            loadedExtensions.remove(component);
+            //这个事件就仅发给容器
+            publishEvent(new ExtensionUnloadedEvent(component));
+        }else{
+            loadedExtensions.remove(component);
+        }
         logger.info("Unloaded  extension: {}({})", component, formatDurationHMS(System.currentTimeMillis()-start));
     }
 

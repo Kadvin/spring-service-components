@@ -64,7 +64,13 @@ public class ApplicationSupportBean extends TranslateSupportBean
 
         // 2. 提速
         Set<ApplicationListener<ApplicationEvent>> listeners = new HashSet<ApplicationListener<ApplicationEvent>>();
-        for (ApplicationContext context : componentContext.getApplicationFeatures()) {
+        List<ApplicationContext> contexts = componentContext.getApplicationFeatures();
+        //在启动过程中，当前的context还没有被注册到组件上下文已经加载的特性中
+        //这会导致启动过程中发出的消息，本组件内部的其他listener反而听不到
+        if( !contexts.contains(applicationContext) ){
+            contexts.add(applicationContext);
+        }
+        for (ApplicationContext context : contexts) {
             if( context != null ) {
                 if( context instanceof ConfigurableApplicationContext){
                     if( !((ConfigurableApplicationContext) context).isActive() ) continue;

@@ -3,10 +3,13 @@
  */
 package net.happyonroad.type;
 
+import java.io.Serializable;
+
 /**
  * 尺寸大小
  */
-public class Size {
+public class Size implements Serializable{
+    private static final long serialVersionUID = -5473196418893325374L;
     public int width;
     public int height;
 

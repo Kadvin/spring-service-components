@@ -3,10 +3,13 @@
  */
 package net.happyonroad.type;
 
+import java.io.Serializable;
+
 /**
  * The point
  */
-public class Point {
+public class Point implements Serializable{
+    private static final long serialVersionUID = 2670264160317357006L;
     public double x;
 
     public double y;

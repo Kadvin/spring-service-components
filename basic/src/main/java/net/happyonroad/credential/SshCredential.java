@@ -51,6 +51,11 @@ public class SshCredential implements Credential {
         this.timeout = ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT);
     }
 
+    @Override
+    public String name() {
+        return Ssh;
+    }
+
     public String getUser() {
         return user;
     }

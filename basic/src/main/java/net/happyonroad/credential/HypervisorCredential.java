@@ -30,6 +30,11 @@ public class HypervisorCredential implements Credential {
         this.password = (String) map.get("password");
     }
 
+    @Override
+    public String name() {
+        return Hypervisor;
+    }
+
     public boolean isHttps() {
         return https;
     }

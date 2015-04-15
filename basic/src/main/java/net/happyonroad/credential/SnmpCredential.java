@@ -50,6 +50,11 @@ public class SnmpCredential implements Credential {
             setPassport(new SnmpPassport(passport));
     }
 
+    @Override
+    public String name() {
+        return Snmp;
+    }
+
     public String getVersion() {
         return version;
     }

@@ -11,6 +11,11 @@ public class LocalCredential implements Credential {
 
     private static final long serialVersionUID = -7566065997165248098L;
 
+    @Override
+    public String name() {
+        return Local;
+    }
+
     public String toString(){
         return "LocalCredential";
     }

@@ -3,16 +3,19 @@
  */
 package net.happyonroad.type;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** 时间字符串格式化/解析工具 */
-public class TimeInterval {
-    static Pattern pattern = Pattern.compile("(?:(\\d+)(y))?(?:(\\d+)(M))?(?:(\\d+)(d))?(?:(\\d+)(h))?(?:(\\d+)(m))?(?:(\\d+)(s))?(?:(\\d+)(ms))?");
+public class TimeInterval implements Serializable{
+    private static final long serialVersionUID = -2549444675116336461L;
+    static Pattern pattern = Pattern.compile(
+            "(?:(\\d+)(y))?(?:(\\d+)(M))?(?:(\\d+)(d))?(?:(\\d+)(h))?(?:(\\d+)(m))?(?:(\\d+)(s))?(?:(\\d+)(ms))?");
     static Pattern digital = Pattern.compile("(\\d+)");
 
     private String interval;
-    private long milliseconds;
+    private long   milliseconds;
 
     @SuppressWarnings("UnusedDeclaration") //for serialization
     public TimeInterval() {
