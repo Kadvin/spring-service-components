@@ -3,6 +3,7 @@
  */
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 
 import java.util.Properties;
@@ -12,6 +13,12 @@ import java.util.Properties;
  */
 public class CredentialProperties extends Properties implements Credential {
     private static final long serialVersionUID = -5943166126247555544L;
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 40;
+    }
 
     @Override
     public String name() {

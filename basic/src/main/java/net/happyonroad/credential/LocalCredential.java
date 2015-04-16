@@ -1,5 +1,6 @@
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 
 /**
@@ -10,6 +11,12 @@ import net.happyonroad.model.Credential;
 public class LocalCredential implements Credential {
 
     private static final long serialVersionUID = -7566065997165248098L;
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 0;
+    }
 
     @Override
     public String name() {

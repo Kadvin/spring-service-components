@@ -3,6 +3,7 @@
  */
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 
 import java.util.Collections;
@@ -35,6 +36,12 @@ public class SnmpCredential implements Credential {
 
     public SnmpCredential() {
         this(Collections.emptyMap());
+    }
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 10;
     }
 
     @SuppressWarnings("unchecked")

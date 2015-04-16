@@ -3,6 +3,7 @@
  */
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 
 import java.util.Collections;
@@ -28,6 +29,12 @@ public class HypervisorCredential implements Credential {
         }
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
+    }
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 30;
     }
 
     @Override

@@ -3,6 +3,7 @@
  */
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +35,12 @@ public class WindowsCredential implements Credential {
     public WindowsCredential(Map map) {
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
+    }
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 20;
     }
 
     @Override

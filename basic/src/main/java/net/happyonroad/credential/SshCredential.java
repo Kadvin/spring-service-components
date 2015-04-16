@@ -3,6 +3,7 @@
  */
 package net.happyonroad.credential;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 import net.happyonroad.util.ParseUtils;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,12 @@ public class SshCredential implements Credential {
         this.permFile = (String) map.get("permFile");
         this.port = ParseUtils.parseInt(map.get("port"), 22);
         this.timeout = ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT);
+    }
+
+    @JsonIgnore
+    @Override
+    public int getOrder() {
+        return 20;
     }
 
     @Override

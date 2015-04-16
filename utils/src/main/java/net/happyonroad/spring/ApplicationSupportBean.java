@@ -67,7 +67,7 @@ public class ApplicationSupportBean extends TranslateSupportBean
         List<ApplicationContext> contexts = componentContext.getApplicationFeatures();
         //在启动过程中，当前的context还没有被注册到组件上下文已经加载的特性中
         //这会导致启动过程中发出的消息，本组件内部的其他listener反而听不到
-        if( !contexts.contains(applicationContext) ){
+        if(applicationContext != null && !contexts.contains(applicationContext) ){
             contexts.add(applicationContext);
         }
         for (ApplicationContext context : contexts) {
