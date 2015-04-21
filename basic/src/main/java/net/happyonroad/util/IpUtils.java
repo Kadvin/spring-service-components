@@ -15,8 +15,7 @@ import java.util.*;
  */
 public final class IpUtils {
 
-
-    public static List<String> getLocalAddresses(){
+    public static List<String> getLocalAddresses() {
         List<IndexAndIp> localAddresses = new ArrayList<IndexAndIp>(2);
         try {
             Enumeration<NetworkInterface> nics = NetworkInterface.getNetworkInterfaces();
@@ -26,9 +25,9 @@ public final class IpUtils {
                 while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
                     String hostAddress = address.getHostAddress();
-                    if(hostAddress.contains(":")) continue; // ipv6
-                    if("127.0.0.1".equals(hostAddress)) continue;
-                    localAddresses.add(new IndexAndIp(nic.getIndex() , hostAddress) );
+                    if (hostAddress.contains(":")) continue; // ipv6
+                    if ("127.0.0.1".equals(hostAddress)) continue;
+                    localAddresses.add(new IndexAndIp(nic.getIndex(), hostAddress));
                 }
             }
         } catch (Exception e) {
@@ -56,12 +55,13 @@ public final class IpUtils {
 
     /**
      * <h2>将形如 主机:端口 的地址转换为SocketAddress</h2>
-     * @param address  形如 主机:端口
+     *
+     * @param address 形如 主机:端口
      * @return SocketAddress
      */
-    public static SocketAddress parseSocketAddress(String address){
+    public static SocketAddress parseSocketAddress(String address) {
         String[] hostAndPort = address.split(":");
-        if( hostAndPort.length != 2 ){
+        if (hostAndPort.length != 2) {
             throw new IllegalArgumentException("The address should be formatted as host:port, " +
                                                "instead of " + address);
         }
@@ -77,8 +77,8 @@ public final class IpUtils {
     }
 
 
-    static class IndexAndIp implements Comparable<IndexAndIp>{
-        private int index;
+    static class IndexAndIp implements Comparable<IndexAndIp> {
+        private int    index;
         private String ip;
 
         public IndexAndIp(int index, String ip) {
@@ -92,4 +92,40 @@ public final class IpUtils {
             return this.index - another.index;
         }
     }
+
+    public static String toMask(int netMask){
+        return toMask(toArray(netMask));
+    }
+
+    public static String toMask(String hexFormat){
+        int[] array = new int[4];
+        array[0] = Integer.parseInt(hexFormat.substring(2,4), 16);
+        array[1] = Integer.parseInt(hexFormat.substring(4,6), 16);
+        array[2] = Integer.parseInt(hexFormat.substring(6,8), 16);
+        array[3] = Integer.parseInt(hexFormat.substring(8,10), 16);
+        return toMask(array);
+    }
+
+    /*
+     * Convert a packed integer address into a 4-element array
+     */
+    static int[] toArray(int val) {
+        int ret[] = new int[4];
+        for (int j = 3; j >= 0; --j) {
+            ret[j] |= ((val >>> 8 * (3 - j)) & (0xff));
+        }
+        return ret;
+    }
+
+    public static String toMask(int[] octets) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < octets.length; ++i) {
+            str.append(octets[i]);
+            if (i != octets.length - 1) {
+                str.append(".");
+            }
+        }
+        return str.toString();
+    }
+
 }

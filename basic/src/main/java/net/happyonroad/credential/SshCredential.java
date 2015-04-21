@@ -4,7 +4,6 @@
 package net.happyonroad.credential;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.happyonroad.model.Credential;
 import net.happyonroad.util.ParseUtils;
 import org.springframework.util.StringUtils;
 
@@ -17,7 +16,7 @@ import java.util.Map;
  * 虽然在现实中，几乎只有*nix主机采用SSH认证后采集方式
  * 但其实Windows主机也可以在开通SSH服务之后，采用SSH认证/PowerShell, Batch, VBS采集方式
  */
-public class SshCredential implements Credential {
+public class SshCredential implements ShellCredential {
     private static final long serialVersionUID = 6186435172976706185L;
     public static final int DEFAULT_TIMEOUT = 1000 * 30;
     private String user, password;
