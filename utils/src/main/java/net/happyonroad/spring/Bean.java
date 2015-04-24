@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
 
 /**
  * <h2>基本的Spring Bean</h2>
@@ -63,13 +62,11 @@ public class Bean implements SmartLifecycle, PriorityOrdered {
         }
     }
 
-    @ManagedAttribute
     @Override
     public boolean isRunning() {
         return running;
     }
 
-    @ManagedAttribute
     @Override
     public int getPhase() {
         return phase;

@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * 没有任何多线程控制，空值检测等保障手段
  */
 
-@ManagedResource(objectName = "net.happyonroad:name=messageBus")
+@ManagedResource(objectName = "net.happyonroad:type=service,name=messageBus")
 @Component
 class DefaultMessageBus implements MessageBus {
     private static Logger                       logger        = LoggerFactory.getLogger(DefaultMessageBus.class);

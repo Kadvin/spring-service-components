@@ -12,7 +12,7 @@ import java.util.*;
 
 /** 最简单的Cache实现 */
 @Component
-@ManagedResource(objectName = "net.happyonroad:name=defaultCache")
+@ManagedResource(objectName = "net.happyonroad:type=service,name=defaultCache")
 class DefaultCache extends Bean implements MutableCacheService {
     /* 某个jvm内存中共享的实例 */
     private static DefaultCache shared;
