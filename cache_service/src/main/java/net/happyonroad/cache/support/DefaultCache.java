@@ -5,14 +5,12 @@ package net.happyonroad.cache.support;
 
 import net.happyonroad.cache.*;
 import net.happyonroad.spring.Bean;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 /** 最简单的Cache实现 */
 @Component
-@ManagedResource(objectName = "net.happyonroad:type=service,name=defaultCache")
 class DefaultCache extends Bean implements MutableCacheService {
     /* 某个jvm内存中共享的实例 */
     private static DefaultCache shared;

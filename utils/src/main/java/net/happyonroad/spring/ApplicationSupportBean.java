@@ -4,7 +4,10 @@
 package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
+import net.happyonroad.event.SystemEvent;
+import net.happyonroad.event.SystemStartedEvent;
 import net.happyonroad.spring.support.SmartApplicationEventMulticaster;
+import net.happyonroad.util.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +94,10 @@ public class ApplicationSupportBean extends TranslateSupportBean
             //noinspection unchecked
             list.addAll(listeners);
             OrderComparator.sort(list);
+            if( logger.isInfoEnabled() )
+                if( event instanceof SystemEvent){
+                    logger.info("Publish {} to {}", event.getClass().getSimpleName(), StringUtils.join(list,","));
+                }
             for (ApplicationListener<ApplicationEvent> listener : list) {
                 listener.onApplicationEvent(event);
             }
@@ -107,6 +114,16 @@ public class ApplicationSupportBean extends TranslateSupportBean
         //TODO 在系统刚刚启动时构建的对象没有被export
         if( mbeanExporter != null )
             mbeanExporter.registerManagedResource(bean, name);
+    }
+
+    /**
+     * un-register a mBean with specified object name
+     *
+     * @param name the object name of the bean
+     */
+    protected void unRegisterMbean(ObjectName name) {
+        if( mbeanExporter != null )
+            mbeanExporter.unregisterManagedResource(name);
     }
 
     protected static String formatViolation(Collection violations){
