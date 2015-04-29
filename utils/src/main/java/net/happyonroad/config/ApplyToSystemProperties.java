@@ -6,6 +6,8 @@ package net.happyonroad.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.Lifecycle;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,21 +22,23 @@ import java.util.regex.Pattern;
 /**
  * Apply configured properties to system property
  */
+@ManagedResource(objectName = "net.happyonroad:type=service,name=configProperties")
 public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
     private static final Pattern INTERPOLATE_PTN = Pattern.compile("[#|$]\\{([^}]+)\\}");
     Logger logger = LoggerFactory.getLogger(ApplyToSystemProperties.class);
     private boolean running;
+    private Properties properties;
 
     @Override
     public void start() {
         running = true;
-        Properties properties = listProperties(System.getProperty("app.home"));
+        properties = listProperties(System.getProperty("app.home"));
         // support value with ${variable} or #{variable}
         Enumeration<?> en = properties.propertyNames();
         while (en.hasMoreElements()) {
-          String key = (String) en.nextElement();
-          String value = properties.getProperty(key);
-          String newValue = interpolate(value, properties);
+            String key = (String) en.nextElement();
+            String value = properties.getProperty(key);
+            String newValue = interpolate(value, properties);
             properties.setProperty(key, newValue);
         }
         applyProperties(properties);
@@ -65,6 +69,11 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
                 logger.error("Can't load properties from: "+ propertyFile.getPath(), e);
             }
         }
+        return properties;
+    }
+
+    @ManagedAttribute
+    public Properties getProperties(){
         return properties;
     }
 
