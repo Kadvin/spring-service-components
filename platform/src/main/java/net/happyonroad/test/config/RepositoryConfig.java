@@ -8,8 +8,8 @@ import net.happyonroad.platform.resolver.MybatisRepositoryScanner;
 import net.happyonroad.platform.util.BeanFilter;
 import net.happyonroad.test.support.H2AsMySqlEmbeddedDsConfigurer;
 import net.happyonroad.test.support.MigrateResourcePopulator;
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +119,7 @@ public abstract class RepositoryConfig extends AbstractTestExecutionListener
             try {
                 populator.populate(connection);
             } catch (Exception ex){
-                System.err.println("Can't reset mysql db, because of: " + ExceptionUtils.getRootCauseMessage(ex));
+                System.err.println("Can't reset mysql db, because of: " + MiscUtils.describeException(ex));
             } finally {
                 connection.close();
                 destroyed = true;

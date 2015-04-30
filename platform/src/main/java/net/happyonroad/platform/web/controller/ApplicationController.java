@@ -10,6 +10,7 @@ import net.happyonroad.platform.util.Sort;
 import net.happyonroad.platform.web.annotation.BeforeFilter;
 import net.happyonroad.platform.web.exception.WebClientSideException;
 import net.happyonroad.platform.web.exception.WebServerSideException;
+import net.happyonroad.util.MiscUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -25,8 +26,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.apache.commons.lang.exception.ExceptionUtils.getRootCauseMessage;
 
 /** The Rest Controller */
 @Scope(WebApplicationContext.SCOPE_REQUEST)
@@ -52,13 +51,13 @@ public class ApplicationController<T extends Record> {
 
     @ExceptionHandler(WebServerSideException.class)
     public ResponseEntity<Object> handleWebServerSideException(WebServerSideException ex, WebRequest request) {
-        logger.warn("Caught server side exception {}", getRootCauseMessage(ex));
+        logger.warn("Caught server side exception {}", MiscUtils.describeException(ex));
         return handleExceptionInternal(ex, ex.getMessage(), headers, ex.getStatusCode(), request);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleWebServerSideException(Throwable ex, WebRequest request) {
-        logger.error("Caught unhandled exception {}", getRootCauseMessage(ex));
+        logger.error("Caught unhandled exception {}", MiscUtils.describeException(ex));
         return handleExceptionInternal(ex, ex.getMessage(), headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

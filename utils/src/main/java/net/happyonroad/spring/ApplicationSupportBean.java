@@ -4,10 +4,9 @@
 package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
-import net.happyonroad.event.SystemEvent;
-import net.happyonroad.event.SystemStartedEvent;
 import net.happyonroad.spring.support.SmartApplicationEventMulticaster;
-import net.happyonroad.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,9 @@ import org.springframework.context.*;
 import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.OrderComparator;
+import org.springframework.core.Ordered;
 import org.springframework.jmx.export.MBeanExportOperations;
+
 import javax.management.ObjectName;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -28,11 +29,13 @@ import java.util.*;
  */
 public class ApplicationSupportBean extends TranslateSupportBean
         implements ApplicationContextAware, ApplicationEventPublisher {
-    protected static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    protected static Validator validator = factory.getValidator();
+    private static   Logger           eventLogger = LoggerFactory.getLogger(ApplicationEvent.class);
+
+    protected static ValidatorFactory factory     = Validation.buildDefaultValidatorFactory();
+    protected static Validator        validator   = factory.getValidator();
 
     @Autowired
-    private ComponentContext componentContext;
+    private   ComponentContext   componentContext;
     protected ApplicationContext applicationContext;
 
     private MBeanExportOperations mbeanExporter;
@@ -41,12 +44,12 @@ public class ApplicationSupportBean extends TranslateSupportBean
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
         super.setMessageSource(applicationContext);
-        try{
+        try {
             mbeanExporter = applicationContext.getBean(MBeanExportOperations.class);
-        }catch (NoSuchBeanDefinitionException ex){
+        } catch (NoSuchBeanDefinitionException ex) {
             mbeanExporter = null;
         }
-        if( componentContext == null ){
+        if (componentContext == null) {
             try {
                 componentContext = applicationContext.getBean(ComponentContext.class);
             } catch (BeansException e) {
@@ -69,7 +72,7 @@ public class ApplicationSupportBean extends TranslateSupportBean
         List<ApplicationContext> contexts = componentContext.getApplicationFeatures();
         //在启动过程中，当前的context还没有被注册到组件上下文已经加载的特性中
         //这会导致启动过程中发出的消息，本组件内部的其他listener反而听不到
-        if(applicationContext != null && !contexts.contains(applicationContext) ){
+        if (applicationContext != null && !contexts.contains(applicationContext)) {
             contexts.add(applicationContext);
         }
         for (ApplicationContext context : contexts) {
@@ -94,10 +97,22 @@ public class ApplicationSupportBean extends TranslateSupportBean
             //noinspection unchecked
             list.addAll(listeners);
             OrderComparator.sort(list);
-            if( logger.isInfoEnabled() )
-                if( event instanceof SystemEvent){
-                    logger.info("Publish {} to {}", event.getClass().getSimpleName(), StringUtils.join(list,","));
+            if( eventLogger.isInfoEnabled() ){
+                StringBuilder sb = new StringBuilder();
+                Iterator<ApplicationListener<ApplicationEvent>> it = list.iterator();
+                while (it.hasNext()) {
+                    ApplicationListener<ApplicationEvent> listener = it.next();
+                    sb.append(listener.getClass().getSimpleName()).append("(");
+                    if( listener instanceof Ordered ){
+                        sb.append(((Ordered) listener).getOrder());
+                    }else{
+                        sb.append("0");
+                    }
+                    sb.append(")");
+                    if( it.hasNext() ) sb.append(",");
                 }
+                eventLogger.info("Publish {} to {}", event.getClass().getSimpleName(), sb);
+            }
             for (ApplicationListener<ApplicationEvent> listener : list) {
                 listener.onApplicationEvent(event);
             }
