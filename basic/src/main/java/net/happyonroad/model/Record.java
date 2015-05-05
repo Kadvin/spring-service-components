@@ -11,6 +11,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h1>一般的业务对象</h1>
@@ -79,10 +81,20 @@ public class Record implements Cloneable, Serializable{
      * 将另外一个对象的属性设置到本对象上来
      *
      * @param another 另外一个对象
+     * @param excludeProperties 不需要设置的属性
      */
-    public void apply( Record another) {
+    public void apply( Record another, String... excludeProperties) {
         try {
+            Map<String, Object> originValues = new HashMap<String, Object>(excludeProperties.length);
+            for (String property : excludeProperties) {
+                Object originValue = PropertyUtils.getProperty(this, property);
+                originValues.put(property, originValue);
+            }
             PropertyUtils.copyProperties(this, another);
+            for (String property : excludeProperties) {
+                Object originValue = originValues.get(property);
+                PropertyUtils.setProperty(this, property, originValue);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Can't apply record properties", e);
         }
