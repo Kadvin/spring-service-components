@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  * @author Jay Xiong
  */
-public class LocalCredential implements ShellCredential {
+public class LocalCredential implements ShellCredential, WmiCredential {
 
     private static final long serialVersionUID = -7566065997165248098L;
 

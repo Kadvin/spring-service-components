@@ -18,7 +18,7 @@ import java.util.Map;
  * <li> WinRM
  * </ul>
  */
-public class WindowsCredential implements Credential {
+public class WindowsCredential implements WmiCredential {
     private static final long serialVersionUID = 1008151410229282958L;
     //认证域，可以为空
     private String domain;
