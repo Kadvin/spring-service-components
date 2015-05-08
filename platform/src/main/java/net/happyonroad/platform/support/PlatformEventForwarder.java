@@ -25,6 +25,10 @@ class PlatformEventForwarder extends Bean
     ApplicationContext[]                contexts;
     Class<? extends ApplicationEvent>[] eventClasses;
 
+    public PlatformEventForwarder() {
+        setOrder(1000);
+    }
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (eventClasses == null) return;

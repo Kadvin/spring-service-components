@@ -111,7 +111,8 @@ public class ApplicationSupportBean extends TranslateSupportBean
                     sb.append(")");
                     if( it.hasNext() ) sb.append(",");
                 }
-                eventLogger.info("Publish {} to {}", event.getClass().getSimpleName(), sb);
+                eventLogger.info("Publish {} of {} to {}", event.getClass().getSimpleName(),
+                                 event.getSource().getClass().getSimpleName(), sb);
             }
             for (ApplicationListener<ApplicationEvent> listener : list) {
                 listener.onApplicationEvent(event);
