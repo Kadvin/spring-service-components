@@ -59,10 +59,6 @@ class JettyServer extends Bean {
     private Server  server;
 
     public void performStart() {
-        //don't bind at local ip, unless you specify 127.0.0.1
-        if ("localhost".equalsIgnoreCase(host)) {
-            host = "0.0.0.0";
-        }
         try {
             server = new Server(new InetSocketAddress(host, port));
 
