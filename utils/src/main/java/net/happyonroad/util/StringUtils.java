@@ -30,6 +30,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static final Pattern ERROR_CODE_PATTERN = Pattern.compile("(\\d{6})\\:");
     public static final Pattern EVENT_CODE_PATTERN = Pattern.compile("(\\d{5})\\:");
     public static final Pattern ARGUMENT_EXTRACTOR = Pattern.compile("`([^`]*)`");
+    public static final Pattern INTERPOLATE_PTN    = Pattern.compile("\\$\\{([^}]+)\\}");
 
     static {
         plural("$", "s");
@@ -80,6 +81,72 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         irregular("sex", "sexes");
         irregular("move", "moves");
         uncountable("equipment", "information", "rice", "money", "species", "series", "fish", "sheep");
+    }
+
+    /**
+     * <h2>将字符串中的 ${key} 里面的内容替换为map里面key的内容</h2>
+     *
+     * @param origin  原始字符串
+     * @param context 上下文
+     * @return 替换之后的字符串
+     */
+    public static String interpolate(String origin, Map<String, Object> context) {
+        return interpolate(origin, INTERPOLATE_PTN, new VariableResolver.MapResolver(context));
+    }
+
+    /**
+     * <h2>将字符串中的 ${key} 里面的内容替换为bean的对应属性</h2>
+     *
+     * @param origin 原始字符串
+     * @param bean   对象
+     * @return 替换之后的字符串
+     */
+    public static String interpolate(String origin, Object bean) {
+        return interpolate(origin, INTERPOLATE_PTN, new VariableResolver.BeanResolver(bean));
+    }
+
+    /**
+     * <h2>将字符串中的 ${key} 里面的内容替换为对应的参数</h2>
+     *
+     * @param origin 原始字符串
+     * @param args   参数
+     * @return 替换之后的字符串
+     */
+    public static String interpolate(String origin, Object... args) {
+        return interpolate(origin, INTERPOLATE_PTN, new VariableResolver.ArrayResolver(args));
+    }
+
+    /**
+     * <h2>将特定字符串中符合某些pattern的内容替换为另外的内容</h2>
+     *
+     * @param origin   原始字符串
+     * @param pattern  抽取需要替换内容的正则表达式，其中应该有一个捕获型分组
+     * @param resolver 可以抽取出来的key转换为实际需要替换的内容的对象
+     * @return 替换之后的字符串
+     */
+    public static String interpolate(String origin, Pattern pattern, VariableResolver resolver) {
+        Matcher m = pattern.matcher(origin);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String variable = m.group(1);
+            Object replacement = resolver.resolve(variable);
+            if (replacement == null) {
+                throw new IllegalArgumentException("Can't find " + variable + " by " + resolver);
+            }
+            String value = replacement.toString();
+            //解析出来的变量可能还需要再解析
+            if (pattern.matcher(value).find()) {
+                value = interpolate(value, resolver);
+            }
+            try {
+                m.appendReplacement(sb, value);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();//just for catch it to debug
+                throw e;
+            }
+        }
+        m.appendTail(sb);
+        return sb.toString().trim();
     }
 
     // check str only contains [a-zA-Z] or [.]
@@ -139,7 +206,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      * @param name the string formed in underscore
      * @return camel string
      */
-    public static String titlize(final String name){
+    public static String titlize(final String name) {
         final StringBuilder builder = new StringBuilder();
         for (final String part : name.split("_")) {
             builder.append(Character.toTitleCase(part.charAt(0)))
@@ -427,22 +494,22 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return args.toArray(new String[args.size()]);
     }
 
-    public static String translate(MessageSource msg, String code, Object... args){
+    public static String translate(MessageSource msg, String code, Object... args) {
         try {
             Locale locale = Locale.getDefault();
             String message = msg.getMessage(code, args, locale);
-            if( locale.equals(Locale.CHINA) ){
+            if (locale.equals(Locale.CHINA)) {
                 try {
                     return new String(message.getBytes("iso8859-1"), "utf-8");
                 } catch (UnsupportedEncodingException e) {
                     return message;
                 }
-            }else{
+            } else {
                 return message;
             }
         } catch (NoSuchMessageException e) {
-            if( args.length == 1 && args[0] instanceof String )
-                return (String)args[0]; //default
+            if (args.length == 1 && args[0] instanceof String)
+                return (String) args[0]; //default
             else throw e;
         }
     }
@@ -462,6 +529,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
             return null;
         }
     }
+
     public static String resolveEventCode(String message) {
         Matcher matcher = EVENT_CODE_PATTERN.matcher(message);
         if (matcher.find()) {

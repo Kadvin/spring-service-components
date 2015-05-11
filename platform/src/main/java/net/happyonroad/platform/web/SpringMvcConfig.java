@@ -8,6 +8,7 @@ import net.happyonroad.platform.web.interceptor.BeforeFilterInterceptor;
 import net.happyonroad.platform.web.support.ExtendedRequestMappingHandlerMapping;
 import net.happyonroad.platform.web.support.PageRequestResponseBodyMethodProcessor;
 import org.apache.commons.lang.reflect.FieldUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -115,8 +117,9 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //前端的静态资源映射
         ResourceHandlerRegistration registration = registry.addResourceHandler("/**") ;
-        registration.addResourceLocations("/build/", "/deploy/", "/public/");
-        int oneYear = 60 * 60 * 24 * 30 * 365;
+        List<String> locations = staticResourceLocations();
+        registration.addResourceLocations(locations.toArray(new String[locations.size()]));
+        int oneYear = (int) (DateUtils.MILLIS_PER_DAY/1000 * 365);
         registration.setCachePeriod(oneYear);
         //favicon映射
         registration = registry.addResourceHandler("/favicon.ico");
@@ -126,5 +129,12 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         registration.setCachePeriod(oneYear);
     }
 
+    protected List<String> staticResourceLocations(){
+        List<String> locations = new ArrayList<String>();
+        locations.add("/build/");
+        locations.add("/deploy/");
+        locations.add("/public/");
+        return locations;
+    }
 
 }
