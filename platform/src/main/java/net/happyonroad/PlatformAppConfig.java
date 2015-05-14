@@ -62,6 +62,11 @@ public class PlatformAppConfig extends AbstractAppConfig implements ApplicationL
         return new ExtensionManager();
     }
 
+    @Override
+    protected void doExports() {
+        super.doExports();
+        exports(ExtensionContainer.class);
+    }
 
     @Override
     protected void beforeExports() {

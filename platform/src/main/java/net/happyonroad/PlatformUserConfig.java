@@ -3,6 +3,7 @@
  */
 package net.happyonroad;
 
+import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractUserConfig;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +51,11 @@ public class PlatformUserConfig extends AbstractUserConfig{
     @Bean
     org.apache.ibatis.session.Configuration dbConfiguration(){
         return imports(org.apache.ibatis.session.Configuration.class);
+    }
+
+    @Bean
+    ExtensionContainer extensionContainer(){
+        return imports(ExtensionContainer.class);
     }
 
 }

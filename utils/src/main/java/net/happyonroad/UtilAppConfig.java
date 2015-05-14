@@ -4,7 +4,6 @@
 package net.happyonroad;
 
 import net.happyonroad.config.ApplyToSystemProperties;
-import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -41,7 +40,6 @@ public class UtilAppConfig extends AbstractAppConfig {
     @Override
     public void doExports()  {
         exports(TaskScheduler.class, "system");
-        exports(ExtensionContainer.class);
     }
 
     @Override
