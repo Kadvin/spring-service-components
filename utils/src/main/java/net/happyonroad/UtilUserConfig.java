@@ -3,6 +3,7 @@
  */
 package net.happyonroad;
 
+import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractUserConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,5 +17,10 @@ public class UtilUserConfig extends AbstractUserConfig {
     @Bean
     TaskScheduler systemTaskScheduler() {
         return imports(TaskScheduler.class, "system");
+    }
+
+    @Bean
+    ExtensionContainer extensionContainer(){
+        return imports(ExtensionContainer.class);
     }
 }

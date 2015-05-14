@@ -19,6 +19,7 @@ import net.happyonroad.event.*;
 import net.happyonroad.exception.ExtensionException;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
+import net.happyonroad.util.MiscUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,10 +106,16 @@ public class ExtensionManager extends ApplicationSupportBean
         logger.debug("Sorted extensions is list as: \n{}", sb);
     }
 
-    void loadExtension(File jar)
-            throws InvalidComponentNameException, DependencyNotMeetException, ExtensionException {
-        Dependency dependency = Dependency.parse(jar);
-        Component component = componentRepository.resolveComponent(dependency);
+    public Component loadExtension(File file) throws ExtensionException {
+        Component component;
+        try {
+            Dependency dependency = Dependency.parse(file);
+            component = componentRepository.resolveComponent(dependency);
+        } catch (InvalidComponentNameException e) {
+            throw new ExtensionException("The extension file path is illegal", e);
+        } catch (DependencyNotMeetException e) {
+            throw new ExtensionException("There is some other depends is not meet", e);
+        }
         try {
             //由于现在将扩展统一放在 repository 目录，其实有些系统依赖的组件已经加载过了
             // 现在这样只是提示下，让外部用户以为我们将其当做扩展加载
@@ -131,8 +138,10 @@ public class ExtensionManager extends ApplicationSupportBean
                 loadedExtensions.add(component);
             }
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
+            return component;
         } catch (Exception e) {
-            logger.error("Can't load extension: " + component + ", ignore it and going on", e);
+            logger.error("Can't load extension: " + component + ", ignore it: {}", MiscUtils.describeException(e));
+            return null;
         }
     }
 
@@ -143,6 +152,18 @@ public class ExtensionManager extends ApplicationSupportBean
         Collections.reverse(extensions);
         for (Component component : extensions) {
             unloadExtension(component);
+        }
+    }
+
+    public void unloadExtension(File file) throws ExtensionException{
+        try {
+            Dependency dependency = Dependency.parse(file);
+            Component component = componentRepository.resolveComponent(dependency);
+            unloadExtension(component);
+        } catch (InvalidComponentNameException e) {
+            throw new ExtensionException("The extension file path is illegal", e);
+        } catch (DependencyNotMeetException e) {
+            throw new ExtensionException("There is some other depends is not meet", e);
         }
     }
 
