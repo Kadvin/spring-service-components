@@ -22,28 +22,28 @@ public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K
     public Boolean getBoolean(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).intValue() != 0 ;
-        return v == null ? null : Boolean.getBoolean(v.toString());
+        return v == null ? null : Boolean.getBoolean(v.toString().trim());
     }
 
     @Override
     public Integer getInteger(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).intValue();
-        return v == null ? 0 : Integer.valueOf(v.toString());
+        return v == null ? 0 : Integer.valueOf(v.toString().trim());
     }
 
     @Override
     public Short getShort(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).shortValue();
-        return v == null ? 0 : Short.valueOf(v.toString());
+        return v == null ? 0 : Short.valueOf(v.toString().trim());
     }
 
     @Override
     public Byte getByte(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).byteValue();
-        return v == null ? 0 : Byte.valueOf(v.toString());
+        return v == null ? 0 : Byte.valueOf(v.toString().trim());
     }
 
     @Override
@@ -57,13 +57,13 @@ public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K
     public Float getFloat(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).floatValue();
-        return v == null ? 0 : Float.valueOf(v.toString());
+        return v == null ? 0 : Float.valueOf(v.toString().trim());
     }
 
     @Override
     public Double getDouble(K key) {
         V v = get(key);
         if( v instanceof Number) return ((Number) v).doubleValue();
-        return v == null ? 0 : Double.valueOf(v.toString());
+        return v == null ? 0 : Double.valueOf(v.toString().trim());
     }
 }

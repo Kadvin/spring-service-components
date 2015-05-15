@@ -18,15 +18,15 @@ import java.util.List;
  */
 @ManagedResource(description = "系统模型分类")
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class)
-public class Category extends JsonSupport {
+public class ResourceType extends JsonSupport {
     private static final long serialVersionUID = 692069687667087167L;
-    private           String         name;
-    private           String         alias;
-    private           String         label;
-    private           String         description;
-    private transient Category       parent;
-    private transient List<Category> children;
-    private           String[]       credentials;
+    private           String             name;
+    private           String             alias;
+    private           String             label;
+    private           String             description;
+    private transient ResourceType       parent;
+    private transient List<ResourceType> children;
+    private           String[]           credentials;
 
     @ManagedAttribute
     public String getType() {
@@ -88,15 +88,15 @@ public class Category extends JsonSupport {
         this.credentials = credentials;
     }
 
-    public Category getParent() {
+    public ResourceType getParent() {
         return parent;
     }
 
-    public void setParent(Category parent) {
+    public void setParent(ResourceType parent) {
         this.parent = parent;
     }
 
-    public List<Category> getChildren() {
+    public List<ResourceType> getChildren() {
         return children;
     }
 
@@ -105,15 +105,15 @@ public class Category extends JsonSupport {
         return children == null ? 0 : children.size();
     }
 
-    public void setChildren(List<Category> children) {
+    public void setChildren(List<ResourceType> children) {
         this.children = children;
     }
 
-    public void addChild(Category category) {
+    public void addChild(ResourceType resourceType) {
         if (children == null) {
-            children = new LinkedList<Category>();
+            children = new LinkedList<ResourceType>();
         }
-        children.add(category);
+        children.add(resourceType);
     }
 
     @Override
