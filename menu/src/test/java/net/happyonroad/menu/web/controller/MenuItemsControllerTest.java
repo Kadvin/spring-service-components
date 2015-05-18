@@ -2,15 +2,19 @@ package net.happyonroad.menu.web.controller;
 
 import net.happyonroad.menu.model.MenuItem;
 import net.happyonroad.menu.service.MenuItemService;
-import net.happyonroad.test.controller.ApplicationControllerTest;
 import net.happyonroad.util.ParseUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,20 +22,25 @@ import java.util.List;
 
 import static org.easymock.EasyMock.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ContextConfiguration(classes = MenuItemsControllerConfig.class)
-public class MenuItemsControllerTest extends ApplicationControllerTest {
+public class MenuItemsControllerTest {
 
+    @Autowired
+    protected WebApplicationContext wac;
     @Autowired
     MenuItemService commonMenuItemService;
 
     List<MenuItem> menuItemList;
 
     MenuItem menuItem;
+    protected MockMvc browser;
 
     @Before
     public void setup() {
+        this.browser = MockMvcBuilders.webAppContextSetup(this.wac).build();
 
         menuItemList = new ArrayList<MenuItem>();
         menuItem = new MenuItem();
@@ -93,4 +102,14 @@ public class MenuItemsControllerTest extends ApplicationControllerTest {
         verify(commonMenuItemService);
     }
 
+    protected MockHttpServletRequestBuilder decorate(MockHttpServletRequestBuilder request){
+        request.contentType(MediaType.APPLICATION_JSON);
+        return request;
+    }
+
+    protected ResultActions decorate(ResultActions result) throws Exception{
+        result.andDo(MockMvcResultHandlers.print());
+        result.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        return result;
+    }
 }

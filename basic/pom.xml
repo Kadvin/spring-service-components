@@ -45,5 +45,9 @@
             <artifactId>joda-time</artifactId>
             <version>${version.joda}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
     </dependencies>
 </project>
