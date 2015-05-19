@@ -138,14 +138,18 @@ public class MigrateResourcePopulator implements DatabasePopulator {
     public void populate(Connection connection) throws ScriptException {
         for (ResourceWithDir resource : this.scripts) {
 
-            ScriptUtils.executeSqlScript(connection,
-                    encodeScript(resource.script, resource.direction),
-                    this.continueOnError,
-                    this.ignoreFailedDrops,
-                    this.commentPrefix,
-                    this.separator,
-                    this.blockCommentStartDelimiter,
-                    this.blockCommentEndDelimiter);
+            try {
+                ScriptUtils.executeSqlScript(connection,
+                        encodeScript(resource.script, resource.direction),
+                        this.continueOnError,
+                        this.ignoreFailedDrops,
+                        this.commentPrefix,
+                        this.separator,
+                        this.blockCommentStartDelimiter,
+                        this.blockCommentEndDelimiter);
+            } catch (ScriptException e) {
+                throw new RuntimeException("Can't execute " + resource, e);
+            }
         }
     }
 
@@ -221,6 +225,11 @@ public class MigrateResourcePopulator implements DatabasePopulator {
                                                         " with unknown direction " + direction);
             }
 
+        }
+
+        @Override
+        public String toString() {
+            return direction + ":" + script;
         }
     }
 
