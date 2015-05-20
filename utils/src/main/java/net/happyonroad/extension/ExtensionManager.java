@@ -48,6 +48,10 @@ public class ExtensionManager extends ApplicationSupportBean
     //  最被依赖的最先被加载，排在最前面
     List<Component> loadedExtensions = new LinkedList<Component>();
 
+    public ExtensionManager() {
+        setOrder(100);
+    }
+
     public List<Component> getExtensions() {
         return Collections.unmodifiableList(loadedExtensions);
     }
