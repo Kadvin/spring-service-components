@@ -5,6 +5,7 @@ import net.happyonroad.menu.service.MenuItemService;
 import net.happyonroad.util.ParseUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ContextConfiguration(classes = MenuItemsControllerConfig.class)
+@Ignore
 public class MenuItemsControllerTest {
 
     @Autowired

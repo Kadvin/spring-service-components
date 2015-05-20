@@ -16,7 +16,7 @@ import java.util.Map;
  * 虽然在现实中，几乎只有*nix主机采用SSH认证后采集方式
  * 但其实Windows主机也可以在开通SSH服务之后，采用SSH认证/PowerShell, Batch, VBS采集方式
  */
-public class SshCredential implements ShellCredential {
+public class SshCredential implements CliCredential {
     private static final long serialVersionUID = 6186435172976706185L;
     public static final int DEFAULT_TIMEOUT = 1000 * 30;
     private String user, password;

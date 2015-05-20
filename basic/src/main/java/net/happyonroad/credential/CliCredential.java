@@ -7,5 +7,5 @@ import net.happyonroad.model.Credential;
  *
  * @author Jay Xiong
  */
-public interface ShellCredential extends Credential {
+public interface CliCredential extends Credential {
 }
