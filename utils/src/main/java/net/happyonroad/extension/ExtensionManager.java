@@ -62,17 +62,17 @@ public class ExtensionManager extends ApplicationSupportBean
             try {
                 long start = System.currentTimeMillis();
                 loadExtensions();
+                logger.info("Loaded  extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
                 publishEvent(new SystemStartedEvent(componentContext));
-                logger.info("Load extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
             } catch (Exception e) {
                 throw new BootstrapException("Can't load extensions", e);
             }
         } else if (event instanceof ContainerStoppingEvent) {
             try {
-                long start = System.currentTimeMillis();
                 publishEvent(new SystemStoppingEvent(componentContext));
+                long start = System.currentTimeMillis();
                 unloadExtensions();
-                logger.info("Unload extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
+                logger.info("Unloaded  extensions took {}", formatDurationHMS(System.currentTimeMillis() - start));
             } catch (Exception e) {
                 throw new ApplicationContextException("Can't unload extensions", e);
             }

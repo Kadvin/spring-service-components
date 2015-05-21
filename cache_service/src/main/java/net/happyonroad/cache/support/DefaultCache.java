@@ -11,7 +11,7 @@ import java.util.*;
 
 /** 最简单的Cache实现 */
 @Component
-class DefaultCache extends Bean implements MutableCacheService {
+public class DefaultCache extends Bean implements MutableCacheService {
     /* 某个jvm内存中共享的实例 */
     private static DefaultCache shared;
 

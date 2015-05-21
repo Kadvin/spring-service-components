@@ -4,14 +4,13 @@
 package net.happyonroad.platform.support;
 
 import net.happyonroad.spring.Bean;
+import net.happyonroad.spring.context.ContextUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Arrays;
 
 /**
  * Forward application event from platform context to spring mvc context
@@ -44,9 +43,7 @@ class PlatformEventForwarder extends Bean
             }
         }
         if (!pass) return;
-        for (ApplicationContext context : contexts) {
-            context.publishEvent(event);
-        }
+        ContextUtils.publishEvent(Arrays.asList(contexts), event);
     }
 
     public void bind(ApplicationContext... targets){
