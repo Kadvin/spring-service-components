@@ -12,6 +12,36 @@ import java.util.HashMap;
 public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K,V>{
     private static final long serialVersionUID = -8898499680831724783L;
 
+    private boolean sensitive;
+
+    public DefaultGeneralMap() {
+        this(true);
+    }
+
+    public DefaultGeneralMap(boolean sensitive) {
+        this.sensitive = sensitive;
+    }
+
+    @Override
+    public V get(Object key) {
+        //noinspection unchecked
+        key = convertKey((K) key);
+        return super.get(key);
+    }
+
+    @Override
+    public V put(K key, V value) {
+        key = convertKey(key);
+        return super.put(key, value);
+    }
+
+    K convertKey(K key){
+        if( key != null && key instanceof String && !sensitive){
+            //noinspection unchecked
+            return (K)key.toString().toLowerCase();
+        }else return key;
+    }
+
     @Override
     public String getString(K key) {
         V v = get(key);
