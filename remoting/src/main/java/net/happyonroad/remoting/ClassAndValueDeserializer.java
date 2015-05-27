@@ -38,7 +38,7 @@ public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
             }
             return pair;
         }else{
-            throw new JsonMappingException("It should starts with object flat: {");
+            throw new JsonMappingException("It should starts with object flag: {");
         }
     }
 }

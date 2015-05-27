@@ -15,7 +15,13 @@ import java.io.InputStream;
 public final class ParseUtils {
     public static ObjectMapper mapper = new ObjectMapper();
 
+    static {
+        JacksonJmxModule module = new JacksonJmxModule();
+        mapper.registerModule(module);
+    }
+
     private ParseUtils() {
+
     }
 
     public static int parseInt(Object string, int defaultValue) {
