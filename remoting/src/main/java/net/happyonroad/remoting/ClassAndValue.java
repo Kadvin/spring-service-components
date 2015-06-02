@@ -9,7 +9,8 @@ import java.io.Serializable;
 * <h1>The class and value</h1>
 */
 public class ClassAndValue implements Serializable {
-    Class  klass;
+    private static final long serialVersionUID = 4859225378353995506L;
+    Class klass;
     Object value;
 
     @Override
@@ -30,5 +31,13 @@ public class ClassAndValue implements Serializable {
         int result = klass.hashCode();
         result = 31 * result + (value != null ? value.hashCode() : 0);
         return result;
+    }
+
+    public Class getKlass() {
+        return klass;
+    }
+
+    public Object getValue() {
+        return value;
     }
 }
