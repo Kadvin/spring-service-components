@@ -1,9 +1,8 @@
 /**
  * xiongjie on 14-8-6.
  */
-package net.happyonroad.platform.support;
+package net.happyonroad.util;
 
-import net.happyonroad.platform.util.NumberRule;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

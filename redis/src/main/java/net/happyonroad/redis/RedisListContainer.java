@@ -86,6 +86,16 @@ class RedisListContainer implements ListContainer {
         });
     }
 
+    @Override
+    public void pushLeft(final String value) {
+        cache.withRunnable(new RedisRunnable() {
+            @Override
+            public void run(Jedis jedis) {
+                jedis.lpush(id, value);
+            }
+        });
+    }
+
     public void pushRight(final List<String> values) {
         cache.withRunnable(new RedisRunnable() {
             @Override

@@ -28,6 +28,7 @@ public final class MiscUtils {
         String message = ExceptionUtils.getRootCauseMessage(ex);
         String[] traces = ExceptionUtils.getRootCauseStackTrace(ex);
         if (traces.length > 2)
+            //TODO: 检查这个trace的包名，如果不是应用包名，则向上一直追溯到应用的包名开头
             return message + traces[1];
         else return message;
     }

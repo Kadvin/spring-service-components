@@ -45,7 +45,6 @@ public class AckStatusHandler implements TypeHandler<AckStatus>{
     private AckStatus ackStatusByValue(int raw) {
         switch (raw){
             case 0: return AckStatus.Unacked;
-            case 2: return AckStatus.Cleared;
             case 1:
             default: return AckStatus.Acked;
         }

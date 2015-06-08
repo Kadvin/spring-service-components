@@ -8,8 +8,7 @@ package net.happyonroad.type;
  */
 public enum AckStatus {
     Unacked(0),
-    Acked(1),
-    Cleared(2);
+    Acked(1);
 
     private int value;
 

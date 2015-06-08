@@ -90,8 +90,23 @@ public class ApplicationController<T extends Record> {
         pageRequest = new PageRequest(page - 1, count, theSort);
     }
 
+    // sort = "name desc, age (asc)"
     private Sort parseSort(String sort) {
-        // TODO PARSE SORT correctly
-        return null;// new Sort(sort);
+        String[] segments = sort.split(",");
+        Sort.Order[] orders = new Sort.Order[segments.length];
+        for (int i = 0; i < segments.length; i++) {
+            String segment = segments[i];
+            String[] propAndDir = segment.split("\\s+");
+            String prop;
+            Sort.Direction dir;
+            prop = propAndDir[0];
+            if( propAndDir.length == 2){
+                dir = Sort.Direction.fromString(propAndDir[1]);
+            }else{
+                dir = Sort.Direction.ASC;
+            }
+            orders[i] = new Sort.Order(dir, prop);
+        }
+        return new Sort(orders);
     }
 }

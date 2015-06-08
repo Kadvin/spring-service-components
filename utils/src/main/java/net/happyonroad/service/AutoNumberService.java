@@ -1,7 +1,7 @@
 /**
  * xiongjie on 14-8-6.
  */
-package net.happyonroad.platform.service;
+package net.happyonroad.service;
 
 /**
  * <h1>自动序号服务</h1>

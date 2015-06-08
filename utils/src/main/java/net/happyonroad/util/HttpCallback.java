@@ -20,7 +20,6 @@ import java.util.Collection;
 /**
  * The http adapter for message listener
  *
- * TODO:
  * <ul>
  *     <li>支持Keep-Alive</li>
  *     <li>支持Cache-Control</li>

@@ -79,6 +79,12 @@ class DefaultListContainer implements ListContainer {
     }
 
     @Override
+    public void pushLeft(String value) {
+        values.add(0, toBytes(value));
+        this.notify();
+    }
+
+    @Override
     public synchronized void pushRight(List<String> value) {
         values.addAll(toBytesArray(value));
         this.notify();

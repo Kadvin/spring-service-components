@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.util;
 
+import net.happyonroad.util.NumberRule;
 import org.junit.Assert;
 import org.junit.Test;
 

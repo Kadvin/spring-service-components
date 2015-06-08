@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14/11/5 上午9:59
  */
-package net.happyonroad.platform.util;
+package net.happyonroad.util;
 
 /**
  * <h1>The number rule</h1>

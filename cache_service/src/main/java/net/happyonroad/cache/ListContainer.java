@@ -37,11 +37,18 @@ public interface ListContainer extends ListChannel{
 
 
     /**
-     * 向 list 的右边插入一个值
+     * 向 list 的右边插入一个字符串值
      *
      * @param value 值
      */
     void pushRight(String value);
+
+    /**
+     * 向 list 的左边插入一个字符串值
+     *
+     * @param value 值
+     */
+    void pushLeft(String value);
 
     /**
      * 向 list 的右边插入一系列值

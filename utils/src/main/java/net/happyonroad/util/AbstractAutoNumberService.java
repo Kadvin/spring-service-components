@@ -1,10 +1,9 @@
 /**
  * xiongjie on 14-8-6.
  */
-package net.happyonroad.platform.support;
+package net.happyonroad.util;
 
-import net.happyonroad.platform.service.AutoNumberService;
-import net.happyonroad.platform.util.NumberRule;
+import net.happyonroad.service.AutoNumberService;
 
 import java.util.HashMap;
 import java.util.Map;

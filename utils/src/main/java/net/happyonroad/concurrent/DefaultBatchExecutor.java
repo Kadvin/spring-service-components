@@ -4,6 +4,7 @@
 package net.happyonroad.concurrent;
 
 import net.happyonroad.spring.Bean;
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.NamedThreadFactory;
 
 import java.util.ArrayDeque;
@@ -21,8 +22,8 @@ public class DefaultBatchExecutor<T> extends Bean
     private volatile ArrayDeque<T> payloads = new ArrayDeque<T>(500);
     private NamedThreadFactory threadFactory;
     private int                threads;
+    private BatchCallback<T>   callback;
     private int interval = 500; //批量检测间隔，越大，批量处理数据可能就越大，但时效性就降低
-    private BatchCallback<T> callback;
 
     @Override
     protected void performStart() {
@@ -39,15 +40,27 @@ public class DefaultBatchExecutor<T> extends Bean
     @Override
     public void callbackWith(BatchCallback<T> callback) {
         this.callback = callback;
+        synchronized (this){
+            notifyAll(); // notify all threads
+        }
     }
 
     @Override
     public void run() {
+        if (callback == null)
+        {
+            try {
+                synchronized (this) {
+                    wait();
+                }
+                //wait the callback is set
+            } catch (InterruptedException e) {
+                //skip
+            }
+        }
         ArrayDeque<T> local = new ArrayDeque<T>(100);
         while (isRunning()) {
             synchronized (this) {
-                if (callback == null)
-                    throw new IllegalStateException("The batch callback is not bind");
                 if (payloads.isEmpty()) {
                     //在高峰情况，这个wait之后，可能会有n次submit，导致payloads里面积压许多数据
                     try {
@@ -56,7 +69,7 @@ public class DefaultBatchExecutor<T> extends Bean
                         //skip
                     }
                 }
-                if(payloads.isEmpty())
+                if (payloads.isEmpty())
                     continue;
                 // redis hmset do not accept empty collection(map)
                 if (local.isEmpty()) {
@@ -72,7 +85,7 @@ public class DefaultBatchExecutor<T> extends Bean
                 try {
                     callback.batchPerform(local);
                 } catch (Exception ex) {
-                    logger.error("Error while perform batch task", ex);
+                    logger.error("Error while perform batch task", MiscUtils.describeException(ex));
                 } finally {
                     local.clear();
                 }
