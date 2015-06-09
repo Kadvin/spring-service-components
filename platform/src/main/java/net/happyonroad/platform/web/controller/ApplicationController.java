@@ -11,6 +11,7 @@ import net.happyonroad.platform.web.annotation.BeforeFilter;
 import net.happyonroad.platform.web.exception.WebClientSideException;
 import net.happyonroad.platform.web.exception.WebServerSideException;
 import net.happyonroad.util.MiscUtils;
+import net.happyonroad.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -92,6 +93,7 @@ public class ApplicationController<T extends Record> {
 
     // sort = "name desc, age (asc)"
     private Sort parseSort(String sort) {
+        if(StringUtils.isBlank(sort)) return null;
         String[] segments = sort.split(",");
         Sort.Order[] orders = new Sort.Order[segments.length];
         for (int i = 0; i < segments.length; i++) {

@@ -10,7 +10,6 @@ package net.happyonroad.type;
  * <ul>
  * <li>可用
  * <li>不可用
- * <li>测试中
  * <li>未知
  * </ul>
  * 资源或者组件的可用性往往需要依据某个关键指标的计算，如：
@@ -38,10 +37,6 @@ public enum Availability {
      * 不可用
      */
     Unavailable,// Operational status: Down
-    /**
-     * 测试中
-     */
-    Testing,    // Operational status: Testing
     /**
      * 未知
      */
