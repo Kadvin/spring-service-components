@@ -88,12 +88,12 @@ public interface VariableResolver {
             if( keyAndDefault.length == 2 ){
                 String newKey = keyAndDefault[0];
                 String defaultValue = keyAndDefault[1];
-                Object value = resolve(newKey);
+                Object value = resolver.resolve(newKey);
                 if( value == null ) value = defaultValue;
                 return value;
             }else{
-                //原样委托
-                return resolver.resolve(key);
+                //原样委托 可能为 source=
+                return resolver.resolve(keyAndDefault[0]);
             }
         }
     }
