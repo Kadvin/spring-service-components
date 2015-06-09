@@ -12,7 +12,11 @@ import java.util.Map;
 public interface VariableResolver {
     Object resolve(String key);
 
-    public class MapResolver implements VariableResolver{
+    /**
+     * <h1>根据替换字符串体内的字符，到map中寻找对应的表项</h1>
+     * 如: ${name} 的 map resolver 将会 去map中找键为name的value
+     */
+    public class MapResolver implements VariableResolver {
         private Map<String, Object> map;
 
         public MapResolver(Map<String, Object> map) {
@@ -25,7 +29,11 @@ public interface VariableResolver {
         }
     }
 
-    public class BeanResolver implements VariableResolver{
+    /**
+     * <h1>根据替换字符串体内的字符，到bean中寻找对应的属性值</h1>
+     * 如: ${name} 的 bean resolver 将会去读取bean的name属性
+     */
+    public class BeanResolver implements VariableResolver {
         private Object bean;
 
         public BeanResolver(Object bean) {
@@ -42,7 +50,11 @@ public interface VariableResolver {
         }
     }
 
-    public class ArrayResolver implements VariableResolver{
+    /**
+     * <h1>根据替换字符串体内的位置index，到array中寻找对应的表项</h1>
+     * 如: ${2} 的 array resolver 将会去读取array的第三个元素
+     */
+    public class ArrayResolver implements VariableResolver {
         private Object[] args;
 
         public ArrayResolver(Object[] args) {
@@ -52,10 +64,37 @@ public interface VariableResolver {
         @Override
         public Object resolve(String key) {
             int index = Integer.valueOf(key);
-            if( index >= args.length)
+            if (index >= args.length)
                 throw new IllegalArgumentException("Can't get value from " +
                                                    StringUtils.join(args, ",") + " at position " + index);
             return args[index];
+        }
+    }
+
+    /**
+     * <h1>能够理解缺省字符串</h1>
+     * 如: ${name=xxx} 的 Default Aware resolver 将会委托下级resolver读取name值，如果没有读到，则返回 xxx
+     */
+    public class DefaultAwareResolver implements VariableResolver {
+        private VariableResolver resolver;
+
+        public DefaultAwareResolver(VariableResolver resolver) {
+            this.resolver = resolver;
+        }
+
+        @Override
+        public Object resolve(String key) {
+            String[] keyAndDefault = key.split("=");
+            if( keyAndDefault.length == 2 ){
+                String newKey = keyAndDefault[0];
+                String defaultValue = keyAndDefault[1];
+                Object value = resolve(newKey);
+                if( value == null ) value = defaultValue;
+                return value;
+            }else{
+                //原样委托
+                return resolver.resolve(key);
+            }
         }
     }
 }
