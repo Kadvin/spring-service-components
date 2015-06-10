@@ -11,14 +11,24 @@ import java.util.Set;
  */
 public enum ConfigStatus {
     // 配置变化与否未知
-    Unknown, //ordinal = 0
+    Unknown("U"), //ordinal = 0
     // 配置发生变更
-    Unchanged,//ordinal = 1
+    Unchanged("N"),//ordinal = 1
     // 配置未变更
-    Changed; //ordinal = 2
+    Changed("C"); //ordinal = 2
 
 
     public static ConfigStatus highest(Set<ConfigStatus> configStatuses) {
         return Collections.max(configStatuses);
+    }
+
+    private String flag;
+
+    ConfigStatus(String flag) {
+        this.flag = flag;
+    }
+
+    public String getFlag() {
+        return flag;
     }
 }

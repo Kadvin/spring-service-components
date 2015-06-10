@@ -32,13 +32,23 @@ public enum Availability {
     /**
      * 可用
      */
-    Available, //  Operational status: Up
+    Available("A"), //  Operational status: Up
     /**
      * 不可用
      */
-    Unavailable,// Operational status: Down
+    Unavailable("N"),// Operational status: Down
     /**
      * 未知
      */
-    Unknown
+    Unknown("U");
+
+    private String flag;
+
+    Availability(String flag) {
+        this.flag = flag;
+    }
+
+    public String getFlag() {
+        return flag;
+    }
 }

@@ -72,7 +72,8 @@ public class DatabaseConfig implements InitializingBean {
     @Bean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
-        factory.setConfigLocation(application.getResource("classpath:META-INF/mybatis.xml"));
+        //故意取名与应用模块的名称不一样，这样保证在测试等情况下，默认的平台配置不会被应用的遮盖
+        factory.setConfigLocation(application.getResource("classpath:META-INF/mybatis@platform.xml"));
         factory.setDataSource(dataSource);
         factory.setPlugins(new Interceptor[]{statementInterceptor()});
         return factory.getObject();

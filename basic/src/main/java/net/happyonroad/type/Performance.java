@@ -19,13 +19,19 @@ import java.util.Set;
  */
 public enum Performance implements Comparable<Performance>{
     // Unknown, 性能状态未知, ordinal = 0
-    Unknown,
+    Unknown("U"),
     // Normal: 正常工作中，对应绿色，ordinal = 1
-    Normal,
+    Normal("N"),
     // Warning: 警告状态，对应黄色，或者叫做 “轻微超标”，ordinal = 2
-    Warning,// Minor in Mocha
+    Warning("W"),// Minor in Mocha
     // Error：错误状态，对应红色，或者叫做 “严重超标”， ordinal = 3
-    Critical;  // Serious in Mocha
+    Critical("C");// Serious in Mocha
+
+    private String flag;
+
+    Performance(String flag) {
+        this.flag = flag;
+    }
 
     /**
      * <h2>下一级性能状态</h2>
@@ -43,5 +49,9 @@ public enum Performance implements Comparable<Performance>{
 
     public static Performance highest(Set<Performance> set) {
         return Collections.max(set);
+    }
+
+    public String getFlag() {
+        return flag;
     }
 }

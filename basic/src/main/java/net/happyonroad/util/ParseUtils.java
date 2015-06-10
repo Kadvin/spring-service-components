@@ -5,6 +5,8 @@ package net.happyonroad.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +45,18 @@ public final class ParseUtils {
      * @return target instance
      */
     public static <T> T parseJson(String content, Class<T> theClass) {
+        return parseJson(content, theClass, null);
+    }
+
+    public static <T> T parseJson(String content, Class<T> theClass, Class viewClass) {
         T t;
         try {
-            t = mapper.readValue(content, theClass);
+            if (viewClass != null) {
+                ObjectReader reader = mapper.readerWithView(viewClass).withType(theClass);
+                return reader.readValue(content);
+            } else {
+                t = mapper.readValue(content, theClass);
+            }
         } catch (IOException e) {
             throw new IllegalArgumentException("Can't parse " + content + " to " + theClass.getSimpleName(), e);
         }
@@ -55,7 +66,7 @@ public final class ParseUtils {
         return t;
     }
 
-    public static <T> T  parseJson(InputStream stream, Class<T> clazz) {
+    public static <T> T parseJson(InputStream stream, Class<T> clazz) {
         T t;
         try {
             t = mapper.readValue(stream, clazz);
@@ -69,8 +80,17 @@ public final class ParseUtils {
     }
 
     public static String toJSONString(Object any) {
+        return toJSONString(any, null);
+    }
+
+    public static String toJSONString(Object any, Class viewClass) {
         try {
-            return mapper.writeValueAsString(any);
+            if (viewClass != null) {
+                ObjectWriter writer = mapper.writerWithView(viewClass);
+                return writer.writeValueAsString(any);
+            } else {
+                return mapper.writeValueAsString(any);
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while convert: " + any + " as json", e);
         }
