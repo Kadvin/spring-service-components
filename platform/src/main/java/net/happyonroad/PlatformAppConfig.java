@@ -3,17 +3,12 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.component.container.ComponentLoader;
 import net.happyonroad.extension.ExtensionManager;
 import net.happyonroad.extension.GlobalClassLoader;
-import net.happyonroad.platform.repository.DatabaseConfig;
-import net.happyonroad.platform.resolver.MybatisFeatureResolver;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -42,11 +37,9 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  * </pre>
  */
 @org.springframework.context.annotation.Configuration
-@Import({UtilUserConfig.class, DatabaseConfig.class})
+@Import({UtilUserConfig.class})
 @ComponentScan("net.happyonroad.platform.support")
 public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
-    @Autowired
-    ComponentLoader componentLoader;
 
     @Bean
     public GlobalClassLoader containerAwareClassLoader(ExtensionContainer container) {
@@ -66,16 +59,6 @@ public class PlatformAppConfig extends AbstractAppConfig implements ApplicationL
     protected void doExports() {
         super.doExports();
         exports(ExtensionContainer.class);
-    }
-
-    @Override
-    protected void beforeExports() {
-        MybatisFeatureResolver resolver = componentLoader.getFeatureResolver(MybatisFeatureResolver.FEATURE);
-        if (resolver != null) {
-            resolver.setPlatformApplication(applicationContext);
-        } else{
-            throw new ApplicationContextException("Can't find mybatis feature resolver!");
-        }
     }
 
     @Override

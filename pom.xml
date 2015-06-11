@@ -20,8 +20,8 @@
     <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
-        <version.component-framework>[2.3.0,)</version.component-framework>
-        <version.strict.component-framework>2.3.0</version.strict.component-framework>
+        <version.component-framework>[2.4.0,)</version.component-framework>
+        <version.strict.component-framework>2.4.0</version.strict.component-framework>
         <version.guava>10.0.1</version.guava>
     </properties>
 
@@ -32,6 +32,7 @@
         <module>cache_service</module>
         <module>redis</module>
         <module>remoting</module>
+        <module>database</module>
         <module>platform</module>
         <module>menu</module>
     </modules>
@@ -96,6 +97,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>database</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${version.guava}</version>
@@ -103,22 +109,5 @@
 
         </dependencies>
     </dependencyManagement>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.happyonroad</groupId>
-                <artifactId>spring-component-builder</artifactId>
-                <version>${version.strict.component-framework}</version>
-                <executions>
-                    <execution>
-                        <id>index-detail</id>
-                        <goals>
-                            <goal>detail</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
