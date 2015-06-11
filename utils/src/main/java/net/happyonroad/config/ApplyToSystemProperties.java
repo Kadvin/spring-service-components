@@ -3,6 +3,8 @@
  */
 package net.happyonroad.config;
 
+import net.happyonroad.util.StringUtils;
+import net.happyonroad.util.VariableResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.Lifecycle;
@@ -13,10 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Matcher;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -33,12 +32,18 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
     public void start() {
         running = true;
         properties = listProperties(System.getProperty("app.home"));
+        Map<String, Object> map = new HashMap<String, Object>();
+        Set<String> propertyNames = properties.stringPropertyNames();
+        for (String propertyName : propertyNames) {
+            map.put(propertyName, properties.getProperty(propertyName));
+        }
+        VariableResolver resolver = new VariableResolver.MapResolver(map);
         // support value with ${variable} or #{variable}
         Enumeration<?> en = properties.propertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             String value = properties.getProperty(key);
-            String newValue = interpolate(value, properties);
+            String newValue = interpolate(value, resolver);
             properties.setProperty(key, newValue);
         }
         applyProperties(properties);
@@ -46,7 +51,12 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
 
     @Override
     public boolean accept(File dir, String name) {
-        return name.endsWith(".properties");
+        String configFile = System.getProperty("app.config");
+        if(StringUtils.isBlank(configFile))
+            return name.endsWith(".properties");
+        else{
+            return name.equalsIgnoreCase(configFile);
+        }
     }
 
     private Properties listProperties(String home) {
@@ -101,31 +111,7 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
         return running;
     }
 
-    public String interpolate(String origin, Properties props) {
-        Matcher m = INTERPOLATE_PTN.matcher(origin);
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            String variable = m.group(1);
-            String replacement = props.getProperty(variable);
-            if (replacement == null) replacement = System.getProperty(variable);
-            if (replacement == null) replacement = System.getenv(variable);
-            if (replacement == null) {
-                System.err.println("Undefined variable ${" + variable + "} " +
-                                   " in current properties file or system properties/evn" );
-                continue;
-            }
-            //解析出来的变量可能还需要再解析
-            if (INTERPOLATE_PTN.matcher(replacement).find()) {
-                replacement = interpolate(replacement, props);
-            }
-            try {
-                m.appendReplacement(sb, replacement);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();//just for catch it to debug
-                throw e;
-            }
-        }
-        m.appendTail(sb);
-        return sb.toString().trim();
+    public String interpolate(String origin, VariableResolver resolver) {
+        return StringUtils.interpolate(origin, INTERPOLATE_PTN, resolver);
     }
 }

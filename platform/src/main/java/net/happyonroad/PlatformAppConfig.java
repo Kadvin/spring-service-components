@@ -37,7 +37,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  *   |   |    |    |- SpringMvcLoader
  *   |   |    |    |    |- SpringSecurityConfig
  *   |   |    |    |    |   |- SpringMvcConfig
- *   |   |- ServicePackageManager
+ *   |   |- ExtensionManager
  *   |   |    | - All kinds of service app in repository folder
  * </pre>
  */

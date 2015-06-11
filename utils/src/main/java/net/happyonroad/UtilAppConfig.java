@@ -11,6 +11,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -21,6 +22,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 // context:property-placeholder 里面的 location 包括通配符的功能
 //  通过 @PropertySource 无法实现
 @ImportResource("classpath:META-INF/properties.xml")
+//@PropertySource("file://${app.home}/config/${app.config}")
 public class UtilAppConfig extends AbstractAppConfig {
 
     @Bean
