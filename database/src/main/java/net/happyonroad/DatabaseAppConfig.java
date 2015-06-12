@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-14 下午4:22
  */
-package net.happyonroad.platform;
+package net.happyonroad;
 
 import net.happyonroad.UtilUserConfig;
 import net.happyonroad.component.container.ComponentLoader;

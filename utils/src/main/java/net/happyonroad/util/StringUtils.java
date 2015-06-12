@@ -136,7 +136,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
             String value = replacement.toString();
             //解析出来的变量可能还需要再解析
             if (pattern.matcher(value).find()) {
-                value = interpolate(value, resolver);
+                value = interpolate(value, pattern, resolver);
             }
             try {
                 m.appendReplacement(sb, value);

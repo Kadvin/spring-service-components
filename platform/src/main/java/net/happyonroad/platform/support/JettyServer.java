@@ -6,7 +6,6 @@ package net.happyonroad.platform.support;
 import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.ibatis.io.Resources;
 import org.apache.jasper.servlet.JspServlet;
 import org.apache.tomcat.InstanceManager;
 import org.apache.tomcat.SimpleInstanceManager;
@@ -91,8 +90,6 @@ class JettyServer extends Bean {
         context.getServletContext().setAttribute("application", applicationContext);
         context.setConfigurations(new Configuration[]{new JettyAnnotationConfiguration()});
         context.addAliasCheck(new AllowSymLinkAliasChecker());
-        // Set the global class loader
-        Resources.setDefaultClassLoader(classLoader);
         return context;
     }
 
