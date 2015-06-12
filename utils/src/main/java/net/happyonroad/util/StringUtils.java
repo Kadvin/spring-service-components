@@ -139,6 +139,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 value = interpolate(value, pattern, resolver);
             }
             try {
+                value = value.replaceAll("[$]", "\\\\\\$");
                 m.appendReplacement(sb, value);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();//just for catch it to debug
