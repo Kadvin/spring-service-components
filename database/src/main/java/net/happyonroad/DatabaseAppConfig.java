@@ -3,11 +3,12 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.UtilUserConfig;
 import net.happyonroad.component.container.ComponentLoader;
+import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.platform.repository.DatabaseConfig;
 import net.happyonroad.platform.resolver.MybatisFeatureResolver;
 import net.happyonroad.spring.config.AbstractAppConfig;
+import org.apache.ibatis.io.Resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.ComponentScan;
@@ -39,13 +40,17 @@ public class DatabaseAppConfig extends AbstractAppConfig  {
     @Autowired
     ComponentLoader componentLoader;
 
+    @Autowired
+    GlobalClassLoader classLoader;
+
 
     @Override
     protected void beforeExports() {
+        Resources.setDefaultClassLoader(classLoader);
         MybatisFeatureResolver resolver = componentLoader.getFeatureResolver(MybatisFeatureResolver.FEATURE);
         if (resolver != null) {
             resolver.setPlatformApplication(applicationContext);
-        } else{
+        } else {
             throw new ApplicationContextException("Can't find mybatis feature resolver!");
         }
     }

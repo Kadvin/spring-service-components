@@ -3,9 +3,7 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractUserConfig;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -21,10 +19,5 @@ import org.springframework.context.annotation.Configuration;
 //  2. service/manager: 当transaction从服务开始时
 //  3. repository: 当transaction从DAO开始时
 public class PlatformUserConfig extends AbstractUserConfig{
-
-    @Bean
-    ExtensionContainer extensionContainer(){
-        return imports(ExtensionContainer.class);
-    }
 
 }

@@ -4,6 +4,9 @@
 package net.happyonroad;
 
 import net.happyonroad.config.ApplyToSystemProperties;
+import net.happyonroad.extension.ExtensionManager;
+import net.happyonroad.extension.GlobalClassLoader;
+import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
 import org.springframework.beans.factory.config.PropertyResourceConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -11,7 +14,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -39,9 +41,25 @@ public class UtilAppConfig extends AbstractAppConfig {
         return scheduler;
     }
 
+    @Bean
+    public GlobalClassLoader containerAwareClassLoader(ExtensionContainer container) {
+        // 用 Thread上下文的Class Loader(main class loader)
+        //  比 application 的 Class loader(platform class loader)
+        // 更为有效，其可以看到除动态加载的类; Extension Aware特性再看到其他
+        return new GlobalClassLoader(Thread.currentThread().getContextClassLoader(), container);
+    }
+
+    // 用于加载扩展服务模块
+    @Bean
+    public ExtensionManager pkgManager() {
+        return new ExtensionManager();
+    }
+
     @Override
     public void doExports()  {
         exports(TaskScheduler.class, "system");
+        exports(ExtensionContainer.class);
+        exports(GlobalClassLoader.class);
     }
 
     @Override
@@ -53,4 +71,5 @@ public class UtilAppConfig extends AbstractAppConfig {
         ApplicationContext parent = applicationContext.getParent();
         ((ConfigurableApplicationContext)parent).addBeanFactoryPostProcessor(configurer);
     }
+
 }

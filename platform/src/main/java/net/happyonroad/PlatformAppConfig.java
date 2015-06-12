@@ -3,14 +3,11 @@
  */
 package net.happyonroad;
 
-import net.happyonroad.extension.ExtensionManager;
-import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.config.AbstractAppConfig;
 import net.happyonroad.spring.event.ComponentLoadedEvent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -41,19 +38,6 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 @ComponentScan("net.happyonroad.platform.support")
 public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
 
-    @Bean
-    public GlobalClassLoader containerAwareClassLoader(ExtensionContainer container) {
-        // 用 Thread上下文的Class Loader(main class loader)
-        //  比 application 的 Class loader(platform class loader)
-        // 更为有效，其可以看到除动态加载的类; Extension Aware特性再看到其他
-        return new GlobalClassLoader(Thread.currentThread().getContextClassLoader(), container);
-    }
-
-    // 用于加载扩展服务模块
-    @Bean
-    public ExtensionManager pkgManager() {
-        return new ExtensionManager();
-    }
 
     @Override
     protected void doExports() {
