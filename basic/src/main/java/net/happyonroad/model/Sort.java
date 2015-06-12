@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:24
  */
-package net.happyonroad.platform.util;
+package net.happyonroad.model;
 
 /**
  * Description here

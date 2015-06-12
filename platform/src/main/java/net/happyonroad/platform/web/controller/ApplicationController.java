@@ -4,9 +4,9 @@
 package net.happyonroad.platform.web.controller;
 
 import net.happyonroad.model.Record;
-import net.happyonroad.platform.service.Page;
-import net.happyonroad.platform.util.PageRequest;
-import net.happyonroad.platform.util.Sort;
+import net.happyonroad.model.Page;
+import net.happyonroad.model.PageRequest;
+import net.happyonroad.model.Sort;
 import net.happyonroad.platform.web.annotation.BeforeFilter;
 import net.happyonroad.platform.web.exception.WebClientSideException;
 import net.happyonroad.platform.web.exception.WebServerSideException;

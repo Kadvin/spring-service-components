@@ -1,9 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:27
  */
-package net.happyonroad.platform.util;
-
-import net.happyonroad.platform.service.Pageable;
+package net.happyonroad.model;
 
 import java.io.Serializable;
 
@@ -88,7 +86,7 @@ public abstract class AbstractPageRequest implements Pageable, Serializable {
 	public abstract Pageable next();
 
 	/**
-	 * Returns the {@link Pageable} requesting the previous {@link net.happyonroad.platform.service.Page}.
+	 * Returns the {@link Pageable} requesting the previous {@link net.happyonroad.model.Page}.
 	 *
 	 * @return
 	 */

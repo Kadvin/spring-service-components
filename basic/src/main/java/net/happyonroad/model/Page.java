@@ -1,7 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:21
  */
-package net.happyonroad.platform.service;
+package net.happyonroad.model;
 
 /**
  * A page is a sublist of a list of objects. It allows gain information about the position of it in the containing

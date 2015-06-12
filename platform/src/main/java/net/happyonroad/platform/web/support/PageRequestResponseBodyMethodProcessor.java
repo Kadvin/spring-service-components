@@ -3,7 +3,7 @@
  */
 package net.happyonroad.platform.web.support;
 
-import net.happyonroad.platform.service.Page;
+import net.happyonroad.model.Page;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;

@@ -1,10 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:32
  */
-package net.happyonroad.platform.util;
-
-import net.happyonroad.platform.service.Page;
-import net.happyonroad.platform.service.Pageable;
+package net.happyonroad.model;
 
 import java.util.List;
 

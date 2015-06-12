@@ -1,10 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:33
  */
-package net.happyonroad.platform.util;
-
-import net.happyonroad.platform.service.Pageable;
-import net.happyonroad.platform.service.Slice;
+package net.happyonroad.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A chunk of data restricted by the configured {@link net.happyonroad.platform.service.Pageable}.
+ * A chunk of data restricted by the configured {@link net.happyonroad.model.Pageable}.
  *
  * @author Oliver Gierke
  * @since 1.8

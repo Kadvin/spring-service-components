@@ -1,9 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:21
  */
-package net.happyonroad.platform.service;
-
-import net.happyonroad.platform.util.Sort;
+package net.happyonroad.model;
 
 /**
  * Abstract interface for pagination information.

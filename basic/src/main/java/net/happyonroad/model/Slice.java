@@ -1,9 +1,7 @@
 /**
  * Developer: Kadvin Date: 14-7-18 下午3:22
  */
-package net.happyonroad.platform.service;
-
-import net.happyonroad.platform.util.Sort;
+package net.happyonroad.model;
 
 import java.util.List;
 
