@@ -22,22 +22,18 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  * 加载的逻辑顺序为:
  * <pre>
  * Spring Component AppLauncher
- *   |- Platform App Config
- *   |   |- Database module
+ *   |- Web App Config
  *   |   |- JettyServer
  *   |   |    |- AnnotationConfiguration
  *   |   |    |    |- SpringMvcLoader
  *   |   |    |    |    |- SpringSecurityConfig
  *   |   |    |    |    |   |- SpringMvcConfig
- *   |   |- ExtensionManager
- *   |   |    | - All kinds of service app in repository folder
  * </pre>
  */
 @org.springframework.context.annotation.Configuration
-@Import({UtilUserConfig.class})
+@Import({UtilUserConfig.class, DatabaseUserConfig.class})
 @ComponentScan("net.happyonroad.platform.support")
-public class PlatformAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
-
+public class WebAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
 
     @Override
     protected void doExports() {

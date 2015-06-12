@@ -10,11 +10,11 @@
         <version>1.7.0</version>
     </parent>
 
-    <artifactId>platform</artifactId>
+    <artifactId>webapp</artifactId>
 
-    <name>Components Platform</name>
+    <name>Web Container</name>
     <description>
-        The platform support general spring app, including spring mvc, mybatis
+        The web container support general spring app, including spring mvc
     </description>
 
     <dependencies>
@@ -93,6 +93,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.happyonroad</groupId>
+            <artifactId>database</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
         </dependency>
@@ -138,7 +143,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <App-Config>net.happyonroad.PlatformAppConfig</App-Config>
+                            <App-Config>net.happyonroad.WebAppConfig</App-Config>
                         </manifestEntries>
                     </archive>
                 </configuration>

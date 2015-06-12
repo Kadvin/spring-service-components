@@ -28,6 +28,8 @@ import static java.lang.String.format;
 
 /**
  * <h1>关于数据库的配置</h1>
+ *
+ * 之所以不把这部分工作完全放到 DatabaseAppConfig 中，是因为许多测试程序也都要直接引用之
  */
 @Configuration
 public class DatabaseConfig implements InitializingBean {
@@ -106,6 +108,8 @@ public class DatabaseConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        //测试场景 exporter == null
+        // 真实场景
         if( exporter == null ) return;
         //数据库模块暴露的服务由数据库模块自行负责
         SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource());

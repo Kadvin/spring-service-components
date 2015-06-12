@@ -33,7 +33,7 @@
         <module>redis</module>
         <module>remoting</module>
         <module>database</module>
-        <module>platform</module>
+        <module>webapp</module>
         <module>menu</module>
     </modules>
 
@@ -103,7 +103,7 @@
             </dependency>
             <dependency>
                 <groupId>net.happyonroad</groupId>
-                <artifactId>platform</artifactId>
+                <artifactId>webapp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -36,13 +36,12 @@ import org.springframework.context.annotation.Import;
 @org.springframework.context.annotation.Configuration
 @Import({UtilUserConfig.class, DatabaseConfig.class})
 @ComponentScan("net.happyonroad.platform.support")
-public class DatabaseAppConfig extends AbstractAppConfig  {
+public class DatabaseAppConfig extends AbstractAppConfig {
     @Autowired
     ComponentLoader componentLoader;
 
     @Autowired
     GlobalClassLoader classLoader;
-
 
     @Override
     protected void beforeExports() {

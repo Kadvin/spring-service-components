@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.happyonroad</groupId>
-            <artifactId>platform</artifactId>
+            <artifactId>webapp</artifactId>
         </dependency>
         <dependency>
             <groupId>net.happyonroad</groupId>

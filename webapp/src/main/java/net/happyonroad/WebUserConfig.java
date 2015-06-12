@@ -18,6 +18,6 @@ import org.springframework.context.annotation.Configuration;
 //  1. controller: 当transaction从控制器开始时
 //  2. service/manager: 当transaction从服务开始时
 //  3. repository: 当transaction从DAO开始时
-public class PlatformUserConfig extends AbstractUserConfig{
+public class WebUserConfig extends AbstractUserConfig{
 
 }
