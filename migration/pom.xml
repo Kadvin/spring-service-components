@@ -47,7 +47,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <App-Config>org.apache.ibatis.MigrationAppConfig</App-Config>
+                            <App-Config>net.happyonroad.MigrationAppConfig</App-Config>
                         </manifestEntries>
                     </archive>
                 </configuration>
