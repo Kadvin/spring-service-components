@@ -209,9 +209,14 @@ class JettyServer extends Bean {
                     (List<ContainerInitializer>) context.getAttribute(AnnotationConfiguration.CONTAINER_INITIALIZERS);
             for (ContainerInitializer initializer : initializers) {
                 if( initializer.getTarget() instanceof SpringServletContainerInitializer ){
-                    initializer.addApplicableTypeName(SpringMvcLoader.class.getName());
+                    initializer.addApplicableTypeName(getMvcLoaderName());
                 }
             }
         }
     }
+
+    protected static String getMvcLoaderName() {
+        return System.getProperty("spring_mvc.loader", SpringMvcLoader.class.getName());
+    }
+
 }
