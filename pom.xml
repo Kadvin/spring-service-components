@@ -33,6 +33,7 @@
         <module>redis</module>
         <module>remoting</module>
         <module>database</module>
+        <module>migration</module>
         <module>webapp</module>
         <module>menu</module>
     </modules>
