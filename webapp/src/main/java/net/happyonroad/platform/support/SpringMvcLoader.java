@@ -205,7 +205,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
      * @param filterName the filter name
      * @param filter the filter
      */
-    private void registerFilter(ServletContext servletContext, boolean prepend, String filterName, Filter filter) {
+    protected void registerFilter(ServletContext servletContext, boolean prepend, String filterName, Filter filter) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filter);
         if(registration == null) {
             throw new IllegalStateException("Duplicate Filter registration for '" + filterName
