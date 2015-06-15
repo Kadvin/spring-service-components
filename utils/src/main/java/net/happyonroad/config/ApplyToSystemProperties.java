@@ -31,12 +31,13 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
     @Override
     public void start() {
         running = true;
-        properties = new Properties();
-        properties.putAll(System.getProperties());
-        Properties configured = listProperties(System.getProperty("app.home"));
-        properties.putAll(configured);
+        properties = listProperties(System.getProperty("app.home"));
         Map<String, Object> map = new HashMap<String, Object>();
-        Set<String> propertyNames = properties.stringPropertyNames();
+        Set<String> propertyNames = System.getProperties().stringPropertyNames();
+        for (String propertyName : propertyNames) {
+            map.put(propertyName, System.getProperty(propertyName));
+        }
+        propertyNames = properties.stringPropertyNames();
         for (String propertyName : propertyNames) {
             map.put(propertyName, properties.getProperty(propertyName));
         }
