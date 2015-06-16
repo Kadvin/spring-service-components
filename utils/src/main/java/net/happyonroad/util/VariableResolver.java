@@ -2,6 +2,7 @@ package net.happyonroad.util;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -27,6 +28,11 @@ public interface VariableResolver {
         public Object resolve(String key) {
             return map.get(key);
         }
+
+        @Override
+        public String toString() {
+            return "MapResolver(" + map + ')';
+        }
     }
 
     /**
@@ -48,6 +54,11 @@ public interface VariableResolver {
                 throw new IllegalArgumentException("Can't get property " + key + " from " + bean, e);
             }
         }
+
+        @Override
+        public String toString() {
+            return "BeanResolver(" + bean + ')';
+        }
     }
 
     /**
@@ -68,6 +79,11 @@ public interface VariableResolver {
                 throw new IllegalArgumentException("Can't get value from " +
                                                    StringUtils.join(args, ",") + " at position " + index);
             return args[index];
+        }
+
+        @Override
+        public String toString() {
+            return "ArrayResolver("  + Arrays.toString(args) + ')';
         }
     }
 
@@ -95,6 +111,11 @@ public interface VariableResolver {
                 //原样委托 可能为 source=
                 return resolver.resolve(keyAndDefault[0]);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "DefaultAwareResolver{" + resolver + '}';
         }
     }
 }
