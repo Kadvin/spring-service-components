@@ -1,8 +1,8 @@
 package net.happyonroad.util;
 
+import net.happyonroad.component.container.AppLauncher;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
@@ -25,12 +25,7 @@ public final class MiscUtils {
      * @return 异常信息
      */
     public static String describeException(Throwable ex) {
-        String message = ExceptionUtils.getRootCauseMessage(ex);
-        String[] traces = ExceptionUtils.getRootCauseStackTrace(ex);
-        if (traces.length > 2)
-            //TODO: 检查这个trace的包名，如果不是应用包名，则向上一直追溯到应用的包名开头
-            return message + traces[1];
-        else return message;
+        return AppLauncher.describeException(ex);
     }
 
     /**
