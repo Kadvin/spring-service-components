@@ -32,6 +32,8 @@ public class SecurityController extends ApplicationController {
         String attr = CsrfToken.class.getName();
         CsrfToken token = (CsrfToken) request.getAttribute(attr);
         Map<String, String> csrfMap = new HashMap<String, String>();
+        if( token == null )
+            return csrfMap;
         csrfMap.put("headerName", token.getHeaderName());
         csrfMap.put("parameterName", token.getParameterName());
         csrfMap.put("token", token.getToken());

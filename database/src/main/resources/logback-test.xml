@@ -1,0 +1,7 @@
+<configuration >
+    <include resource="logback-basic.xml"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="net.happyonroad.platform.resolver.MybatisRepositoryScanner" level="DEBUG"/>
+    <logger name="dnt.monitor.server.repository" level="DEBUG"/>
+    <logger name="dnt.monitor.server.dynamic" level="DEBUG"/>
+</configuration>

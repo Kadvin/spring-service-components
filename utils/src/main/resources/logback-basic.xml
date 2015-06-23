@@ -37,4 +37,7 @@
     <logger name="net.happyonroad.platform.services.SpringMvcFeatureResolver" level="WARN" />
     <logger name="net.happyonroad.spring.support.DefaultServiceRegistry" level="WARN" />
 
+    <logger name="dnt.monitor.server.repository" level="DEBUG"/>
+    <logger name="dnt.monitor.server.dynamic" level="DEBUG"/>
+
 </included>

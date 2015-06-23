@@ -191,10 +191,10 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
      * Registers the springSecurityFilterChain
      * @param servletContext the {@link ServletContext}
      */
-    private void insertSpringSecurityFilterChain(ServletContext servletContext) {
+    protected void insertSpringSecurityFilterChain(ServletContext servletContext) {
         String filterName = "springSecurityFilterChain";
         DelegatingFilterProxy springSecurityFilterChain = new DelegatingFilterProxy(filterName);
-        registerFilter(servletContext, true, filterName, springSecurityFilterChain);
+        registerFilter(servletContext, true, filterName, springSecurityFilterChain, springSecurityMappings());
     }
 
     /**
@@ -205,7 +205,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
      * @param filterName the filter name
      * @param filter the filter
      */
-    protected void registerFilter(ServletContext servletContext, boolean prepend, String filterName, Filter filter) {
+    protected void registerFilter(ServletContext servletContext, boolean prepend, String filterName, Filter filter, String... mappings) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, filter);
         if(registration == null) {
             throw new IllegalStateException("Duplicate Filter registration for '" + filterName
@@ -213,7 +213,11 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         }
         registration.setAsyncSupported(isAsyncSecuritySupported());
         EnumSet<DispatcherType> dispatcherTypes = getSecurityDispatcherTypes();
-        registration.addMappingForUrlPatterns(dispatcherTypes, !prepend, "/*");
+        registration.addMappingForUrlPatterns(dispatcherTypes, !prepend, mappings);
+    }
+
+    protected String[] springSecurityMappings() {
+        return new String[]{"/*"};
     }
 
     /**

@@ -99,26 +99,26 @@ public class DiffUtils {
     /**
      * <h2>判断第二个数组与第一个数组相比的差异</h2>
      *
-     * @param one       第一个数组
-     * @param two       第二个数组
-     * @param property 判断两个对象是否是同一个业务对象的属性
+     * @param olds       第一个数组
+     * @param news       第二个数组
+     * @param property  判断两个对象是否是同一个业务对象的属性
      * @param <T>       数组中的对象类型
      * @return 包括差异信息的数组，0->数组中的内容为更新的对象，1->为新增的对象，-1->第三个为删除的对象
      */
-    public static <T> Map<Integer,List<T>> diff(T[] one, T[] two, String property) {
+    public static <T> Map<Integer,List<T>> diff(T[] olds, T[] news, String property) {
         Map<Integer,List<T>> result = new HashMap<Integer, List<T>>();
-        if( one == null ){
+        if( olds == null ){
             result.put(0, Collections.EMPTY_LIST); // no updating
-            result.put(1, Arrays.asList(two));     // all is creating
+            result.put(1, Arrays.asList(news));     // all is creating
             result.put(-1, Collections.EMPTY_LIST);// no deleting
-        }else if (two == null ){
+        }else if (news == null ){
             result.put(0, Collections.EMPTY_LIST); // no updating
             result.put(1, Collections.EMPTY_LIST); // no creating
-            result.put(-1, Arrays.asList(one));    // all is deleting
+            result.put(-1, Arrays.asList(olds));    // all is deleting
         }else{
             List<T> updating = new ArrayList<T>();
-            List<T> creating = new ArrayList<T>(Arrays.asList(two));
-            List<T> deleting = new ArrayList<T>(Arrays.asList(one));
+            List<T> creating = new ArrayList<T>(Arrays.asList(news));
+            List<T> deleting = new ArrayList<T>(Arrays.asList(olds));
             Iterator<T> it = creating.iterator();
             try{
                 while (it.hasNext()) {
