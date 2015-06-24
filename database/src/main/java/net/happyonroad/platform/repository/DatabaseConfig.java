@@ -4,9 +4,11 @@
 package net.happyonroad.platform.repository;
 
 import net.happyonroad.spring.service.ServiceExporter;
+import net.happyonroad.util.StringAwareTypeHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +122,7 @@ public class DatabaseConfig implements InitializingBean {
         exporter.exports(PlatformTransactionManager.class, transactionManager(dataSource()));
         // 被 mybatis的config模块使用
         exporter.exports(org.apache.ibatis.session.Configuration.class, configuration(sqlSessionFactory));
-
+        TypeHandlerRegistry registry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();
+        registry.register(Object.class, new StringAwareTypeHandler(registry));
     }
 }
