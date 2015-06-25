@@ -17,6 +17,9 @@ import java.util.*;
  */
 @SuppressWarnings("unchecked")
 public class DiffUtils {
+    static String[] DEFAULT_IGNORES = new String[]{"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
+                 "cascadeCreating", "hierarchyDeleting"};
+
     /**
      * <h2>描述两个对象之间的差异</h2>
      *
@@ -40,6 +43,9 @@ public class DiffUtils {
      * @return 差异信息
      */
     public static <T> MapDifference<String, Object> difference(T one, T another, String... ignores) {
+        if( ignores.length == 0 ){
+            ignores = DEFAULT_IGNORES;
+        }
         Arrays.sort(ignores);
         try {
             Map<String, PropertyDescriptor> descriptors = BeanUtils.describe(one);

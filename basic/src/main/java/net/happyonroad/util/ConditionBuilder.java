@@ -11,6 +11,8 @@ public final class ConditionBuilder {
     /**
      * <h2>将输入的参数序列，转换为一个map</h2>
      *
+     * 如果pairs的value为null，则忽略
+     *
      * @param pairs 参数序列
      * @return 转换之后的map
      */
