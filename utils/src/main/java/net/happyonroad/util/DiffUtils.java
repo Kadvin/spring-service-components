@@ -59,7 +59,12 @@ public class DiffUtils {
                 } else {
                     oneProperties.put(entry.getKey(), oneProperty);
                 }
-                Object anotherProperty = PropertyUtils.getProperty(another, entry.getKey());
+                Object anotherProperty;
+                try {
+                    anotherProperty = PropertyUtils.getProperty(another, entry.getKey());
+                } catch (NoSuchMethodException e) {
+                    anotherProperty = null;
+                }
                 if (anotherProperty != null && anotherProperty.getClass().isArray()) {
                     anotherProperties.put(entry.getKey(), Arrays.asList((Object[]) anotherProperty));
                 } else {
