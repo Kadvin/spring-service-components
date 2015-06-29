@@ -4,9 +4,10 @@
 package net.happyonroad.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +16,7 @@ import java.io.InputStream;
  * <h1>简单的工具</h1>
  */
 public final class ParseUtils {
-    public static ObjectMapper mapper = new ObjectMapper();
+    public static ExtendedMapper mapper = new ExtendedMapper();
 
     static {
         JacksonJmxModule module = new JacksonJmxModule();
@@ -52,8 +53,15 @@ public final class ParseUtils {
         T t;
         try {
             if (viewClass != null) {
-                ObjectReader reader = mapper.readerWithView(viewClass).withType(theClass);
-                return reader.readValue(content);
+                DeserializationConfig oldConfig = mapper.getDeserializationConfig();
+                DeserializationConfig newConfig = oldConfig.withView(viewClass);
+                try {
+                    mapper.setDeserializationConfig(newConfig);
+                    ObjectReader reader = mapper.readerWithView(viewClass).withType(theClass);
+                    return reader.readValue(content);
+                } finally {
+                    mapper.setDeserializationConfig(oldConfig);
+                }
             } else {
                 t = mapper.readValue(content, theClass);
             }
@@ -86,8 +94,15 @@ public final class ParseUtils {
     public static String toJSONString(Object any, Class viewClass) {
         try {
             if (viewClass != null) {
-                ObjectWriter writer = mapper.writerWithView(viewClass);
-                return writer.writeValueAsString(any);
+                SerializationConfig oldConfig = mapper.getSerializationConfig();
+                SerializationConfig newConfig = oldConfig.withView(viewClass);
+                try {
+                    mapper.setSerializationConfig(newConfig);
+                    ObjectWriter writer = mapper.writerWithView(viewClass);
+                    return writer.writeValueAsString(any);
+                } finally {
+                    mapper.setSerializationConfig(oldConfig);
+                }
             } else {
                 return mapper.writeValueAsString(any);
             }
@@ -95,4 +110,5 @@ public final class ParseUtils {
             throw new RuntimeException("Error while convert: " + any + " as json", e);
         }
     }
+
 }

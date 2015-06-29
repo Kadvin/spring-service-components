@@ -313,6 +313,6 @@ public class StrategyExecutorService implements ExecutorService, SelfNaming {
 
     @Override
     public ObjectName getObjectName() throws MalformedObjectNameException {
-        return new ObjectName("net.happyonroad:name=" + getId() + "ExecutorService");
+        return new ObjectName("net.happyonroad:type=executor,name=" + getId() + "ExecutorService");
     }
 }
