@@ -8,6 +8,7 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 import java.beans.PropertyDescriptor;
 import java.util.*;
@@ -17,8 +18,9 @@ import java.util.*;
  */
 @SuppressWarnings("unchecked")
 public class DiffUtils {
-    static String[] DEFAULT_IGNORES = new String[]{"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
-                 "cascadeCreating", "hierarchyDeleting"};
+    static String[] DEFAULT_IGNORES =
+            new String[]{"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
+                         "cascadeCreating", "hierarchyDeleting"};
 
     /**
      * <h2>描述两个对象之间的差异</h2>
@@ -43,7 +45,7 @@ public class DiffUtils {
      * @return 差异信息
      */
     public static <T> MapDifference<String, Object> difference(T one, T another, String... ignores) {
-        if( ignores.length == 0 ){
+        if (ignores.length == 0) {
             ignores = DEFAULT_IGNORES;
         }
         Arrays.sort(ignores);
@@ -112,53 +114,69 @@ public class DiffUtils {
      *
      * @param olds       第一个数组
      * @param news       第二个数组
-     * @param property  判断两个对象是否是同一个业务对象的属性
-     * @param <T>       数组中的对象类型
+     * @param properties 判断两个对象是否是同一个业务对象的属性
+     * @param <T>        数组中的对象类型
      * @return 包括差异信息的数组，0->数组中的内容为更新的对象，1->为新增的对象，-1->第三个为删除的对象
      */
-    public static <T> Map<Integer,List<T>> diff(T[] olds, T[] news, String property) {
-        Map<Integer,List<T>> result = new HashMap<Integer, List<T>>();
-        if( olds == null ){
+    public static <T> Map<Integer, List<T>> diff(T[] olds, T[] news, String... properties) {
+        Map<Integer, List<T>> result = new HashMap<Integer, List<T>>();
+        if (olds == null) {
             result.put(0, Collections.EMPTY_LIST); // no updating
             result.put(1, Arrays.asList(news));     // all is creating
             result.put(-1, Collections.EMPTY_LIST);// no deleting
-        }else if (news == null ){
+        } else if (news == null) {
             result.put(0, Collections.EMPTY_LIST); // no updating
             result.put(1, Collections.EMPTY_LIST); // no creating
             result.put(-1, Arrays.asList(olds));    // all is deleting
-        }else{
+        } else {
             List<T> updating = new ArrayList<T>();
             List<T> creating = new ArrayList<T>(Arrays.asList(news));
             List<T> deleting = new ArrayList<T>(Arrays.asList(olds));
             Iterator<T> it = creating.iterator();
-            try{
+            try {
                 while (it.hasNext()) {
                     T actual = it.next();
-                    Object id = PropertyUtils.getProperty(actual, property);
-                    if( id == null )  {
+
+                    boolean allNull = true;
+                    for (String property : properties) {
+                        Object propertyObj = PropertyUtils.getProperty(actual, property);
+                        if (propertyObj != null) {
+                            allNull = false;
+                            break;
+                        }
+                    }
+                    if (allNull) {
                         //认为id = null的对象一定是要新增的
                         //也不存在legacy的对象id为null
                         continue;
                     }
+
                     Object found = null;
                     Iterator<T> it2 = deleting.iterator();
                     while (it2.hasNext()) {
                         T legacy = it2.next();
-                        Object legacyId = PropertyUtils.getProperty(legacy, property);
-                        if( legacyId == null )
-                            throw new IllegalArgumentException(property + " of " + legacy + " is null");
-                        if(legacyId.equals(id)){
+
+                        boolean match = true;
+                        for(String property:properties){
+                            Object actualProperty = PropertyUtils.getProperty(actual, property);
+                            Object legacyProperty = PropertyUtils.getProperty(legacy, property);
+                            if(!ObjectUtils.equals(actualProperty,legacyProperty)){
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match) {
                             found = legacy;
                             it2.remove();     // remove from deleting
                             break;
                         }
                     }
-                    if( found != null ){
+                    if (found != null) {
                         it.remove();          // remove from creating
                         updating.add(actual); //add into updating
                     }
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 throw new RuntimeException("Error while diff two collection ", ex);
             }
             result.put(0, updating);
