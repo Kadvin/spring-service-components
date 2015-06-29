@@ -8,7 +8,6 @@ import java.util.Set;
 
 /**
  * 数值的容器
- * TODO extends MapContainer
  */
 public interface IntegerContainer {
 
