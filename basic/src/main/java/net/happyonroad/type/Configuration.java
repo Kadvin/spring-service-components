@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * <h1>配置状态</h1>
  */
-public enum ConfigStatus {
+public enum Configuration {
     // 配置变化与否未知
     Unknown("U"), //ordinal = 0
     // 配置发生变更
@@ -18,13 +18,13 @@ public enum ConfigStatus {
     Changed("C"); //ordinal = 2
 
 
-    public static ConfigStatus highest(Set<ConfigStatus> configStatuses) {
-        return Collections.max(configStatuses);
+    public static Configuration highest(Set<Configuration> configurations) {
+        return Collections.max(configurations);
     }
 
     private String flag;
 
-    ConfigStatus(String flag) {
+    Configuration(String flag) {
         this.flag = flag;
     }
 
