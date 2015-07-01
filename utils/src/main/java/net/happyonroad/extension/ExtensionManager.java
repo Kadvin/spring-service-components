@@ -19,7 +19,7 @@ import net.happyonroad.event.*;
 import net.happyonroad.exception.ExtensionException;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
-import net.happyonroad.util.MiscUtils;
+import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationListener;
 import java.io.File;
 import java.util.*;
 
+import static net.happyonroad.util.MiscUtils.describeException;
 import static org.apache.commons.lang.time.DurationFormatUtils.formatDurationHMS;
 
 /**
@@ -47,6 +48,9 @@ public class ExtensionManager extends ApplicationSupportBean
     //这里面的顺序是按照加载顺序
     //  最被依赖的最先被加载，排在最前面
     List<Component> loadedExtensions = new LinkedList<Component>();
+
+    Observable observable = new Observable();
+    boolean yieldNotify;
 
     public ExtensionManager() {
         setOrder(100);
@@ -80,24 +84,24 @@ public class ExtensionManager extends ApplicationSupportBean
 
     }
 
+    @Override
+    public void addObserver(Observer observer) {
+        observable.addObserver(observer);
+    }
+
     void loadExtensions() throws Exception {
         File repository = new File(System.getProperty("app.home"), "repository");
-        if( !repository.isDirectory() ) return;
+        if (!repository.isDirectory()) return;
         Collection<File> jars = FileUtils.listFiles(repository, new String[]{"jar"}, true);
         Iterator<File> it = jars.iterator();
         while (it.hasNext()) {
             File jar = it.next();
-            if( !DefaultComponent.isApplication(jar.getParentFile().getName()))
+            if (!DefaultComponent.isApplication(jar.getParentFile().getName()))
                 it.remove();
         }
-        logger.debug("Loading {} extensions from: {}", jars.size(), repository.getAbsolutePath());
-        File[] packageJars = jars.toArray(new File[jars.size()]);
-        // sort the model packages by them inner dependency
-        componentRepository.sortCandidates(packageJars);
-        outputPackageJars(packageJars);
-        for (File jar : packageJars) {
-            loadExtension(jar);
-        }
+        File[] array = jars.toArray(new File[jars.size()]);
+        loadExtensions(array);
+        outputPackageJars(array);
     }
 
     private void outputPackageJars(File[] packageJars)
@@ -110,31 +114,53 @@ public class ExtensionManager extends ApplicationSupportBean
         logger.debug("Sorted extensions is list as: \n{}", sb);
     }
 
-    public Component loadExtension(File file) throws ExtensionException {
-        Component component;
+    @Override
+    public Component[] loadExtensions(File[] files) throws ExtensionException {
+        logger.debug("Loading {} extensions ", files.length);
+        // sort the model packages by them inner dependency
+        Component[] components = new Component[files.length];
         try {
-            Dependency dependency = Dependency.parse(file);
-            component = componentRepository.resolveComponent(dependency);
-        } catch (InvalidComponentNameException e) {
-            throw new ExtensionException("The extension file path is illegal", e);
-        } catch (DependencyNotMeetException e) {
-            throw new ExtensionException("There is some other depends is not meet", e);
+            componentRepository.sortCandidates(files);
+        } catch (Exception e) {
+            throw new ExtensionException("Can't load " + StringUtils.join(files, ","), e);
         }
+        this.yieldNotify = true;
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            components[i] = loadExtension(file);
+        }
+        try {
+            observable.notifyObservers();
+        } finally {
+            this.yieldNotify = false;
+        }
+        return components;
+    }
+
+    public Component loadExtension(File file) throws ExtensionException {
+        ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+        ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
+        Thread.currentThread().setContextClassLoader(ecl);
+        Component component;
+        String componentId = file.getParentFile().getName() + "/" + file.getName();
         try {
             //由于现在将扩展统一放在 repository 目录，其实有些系统依赖的组件已经加载过了
             // 现在这样只是提示下，让外部用户以为我们将其当做扩展加载
-            logger.info("Loading extension: {}", component);
+            logger.info("Loading extension: {}", componentId);
             long start = System.currentTimeMillis();
-            if( !componentLoader.isLoaded(component) ){
+            Dependency dependency = Dependency.parse(componentId);
+            if( !componentRepository.cached(file) ){
+                 componentRepository.cache(file);
+            }
+            component = componentRepository.resolveComponent(dependency);
+            if( !componentLoader.isLoaded(componentId) ){
                 //仅发给容器
                 publishEvent(new ExtensionLoadingEvent(component));
-                ClassLoader legacy = Thread.currentThread().getContextClassLoader();
-                ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
-                Thread.currentThread().setContextClassLoader(ecl);
-
                 componentLoader.load(component);
                 Thread.currentThread().setContextClassLoader(legacy);
                 loadedExtensions.add(component);
+                if( !yieldNotify )
+                    observable.notifyObservers();
                 DefaultComponent comp = (DefaultComponent) component;
                 registerMbean(comp, comp.getObjectName());
                 publishEvent(new ExtensionLoadedEvent(component));
@@ -145,8 +171,10 @@ public class ExtensionManager extends ApplicationSupportBean
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
         } catch (Exception e) {
-            logger.error("Can't load extension: " + component + ", ignore it: {}", MiscUtils.describeException(e));
+            logger.error("Can't load extension: {}, ignore it: {}", componentId, describeException(e));
             return null;
+        } finally {
+            Thread.currentThread().setContextClassLoader(legacy);
         }
     }
 
@@ -155,8 +183,14 @@ public class ExtensionManager extends ApplicationSupportBean
         List<Component> extensions = new LinkedList<Component>(loadedExtensions);
         componentRepository.sortComponents(extensions);
         Collections.reverse(extensions);
+        this.yieldNotify = true;
         for (Component component : extensions) {
             unloadExtension(component);
+        }
+        try {
+            observable.notifyObservers();
+        } finally {
+            this.yieldNotify = false;
         }
     }
 
@@ -179,6 +213,8 @@ public class ExtensionManager extends ApplicationSupportBean
             publishEvent(new ExtensionUnloadingEvent(component));
             componentLoader.quickUnload(component);
             loadedExtensions.remove(component);
+            if( !yieldNotify )
+                observable.notifyObservers();
             //这个事件就仅发给容器
             publishEvent(new ExtensionUnloadedEvent(component));
         }else{

@@ -23,7 +23,7 @@ import java.util.*;
  * 默认的类加载器(platform class loader)无法加载到这些类
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
-public class GlobalClassLoader extends ClassLoader {
+public class GlobalClassLoader extends ClassLoader implements Observer {
     private final ExtensionContainer         container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
@@ -32,6 +32,7 @@ public class GlobalClassLoader extends ClassLoader {
     public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
+        this.container.addObserver(this);
     }
 
     @Override
@@ -72,6 +73,11 @@ public class GlobalClassLoader extends ClassLoader {
         return ecls;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        this.ecls = null;// last update
+    }
+
     public String getClassPath() {
         Set<URL> urls = new LinkedHashSet<URL>();
         ClassLoader parent = getParent();
@@ -101,5 +107,4 @@ public class GlobalClassLoader extends ClassLoader {
         }
         return StringUtils.join(paths, File.pathSeparator);
     }
-
 }
