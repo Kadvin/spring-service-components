@@ -6,12 +6,12 @@ package net.happyonroad.event;
 import net.happyonroad.component.core.Component;
 
 /**
- * the service package is loaded and ready for further works
+ * Extension loaded, include system depended loaded library(organized as extension)
  */
-public class ExtensionLoadedEvent extends ExtensionLoadedMockEvent {
+public class ExtensionLoadedMockEvent extends ExtensionEvent {
     private static final long serialVersionUID = -238778051719486525L;
 
-    public ExtensionLoadedEvent(Component source) {
+    public ExtensionLoadedMockEvent(Component source) {
         super(source);
     }
 }

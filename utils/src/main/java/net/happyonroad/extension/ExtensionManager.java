@@ -140,6 +140,7 @@ public class ExtensionManager extends ApplicationSupportBean
                 publishEvent(new ExtensionLoadedEvent(component));
             }else{
                 loadedExtensions.add(component);
+                publishEvent(new ExtensionLoadedEvent(component));
             }
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
