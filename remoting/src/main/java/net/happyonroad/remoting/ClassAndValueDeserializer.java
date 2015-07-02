@@ -20,6 +20,9 @@ public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
     @Override
     public ClassAndValue deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
+        ClassLoader cl = GlobalClassLoader.getInstance();
+        if( cl == null )
+            cl = MainClassLoader.getInstance();
         if( jp.getCurrentToken() == JsonToken.START_OBJECT){
             ClassAndValue pair = new ClassAndValue();
             while(jp.getCurrentToken() != JsonToken.END_OBJECT){
@@ -29,8 +32,6 @@ public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
                     jp.nextToken();
                     if( "klass".equals(fieldName) ){
                         try {
-                            ClassLoader cl = GlobalClassLoader.getInstance();
-                            if( cl == null ) cl = MainClassLoader.getInstance();
                             pair.klass = Class.forName(jp.getText(), true, cl);
                         } catch (ClassNotFoundException e) {
                             throw new JsonMappingException("Can't convert class " + jp.getText(), e);
