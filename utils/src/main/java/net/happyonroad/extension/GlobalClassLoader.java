@@ -24,15 +24,22 @@ import java.util.*;
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
 public class GlobalClassLoader extends ClassLoader implements Observer {
-    private final ExtensionContainer         container;
+    private static GlobalClassLoader          instance;
+
+    private final  ExtensionContainer         container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
-    private       List<ExtensionClassLoader> ecls;
+    private        List<ExtensionClassLoader> ecls;
 
     public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
         this.container.addObserver(this);
+        instance = this;
+    }
+
+    public static GlobalClassLoader getInstance() {
+        return instance;
     }
 
     @Override
@@ -45,7 +52,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
 
             for (ExtensionClassLoader ecl : ecls()) {
                 try {
-                    if (ecl == null ) continue;
+                    if (ecl == null) continue;
                     return ecl.loadClass(name);
                 } catch (ClassNotFoundException ex) {
                     //try next
