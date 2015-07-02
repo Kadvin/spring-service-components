@@ -63,7 +63,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     }
 
     protected List<ExtensionClassLoader> ecls() {
-        if (ecls == null ) {
+        if (ecls == null || ecls.isEmpty() ) {
             List<Component> components = container.getExtensions();
             if (!components.isEmpty()) {
                 ecls = new ArrayList<ExtensionClassLoader>(components.size());
