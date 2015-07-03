@@ -42,6 +42,13 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         return instance;
     }
 
+    public static ClassLoader getDefaultClassLoader(){
+        GlobalClassLoader gcl = getInstance();
+        if( gcl == null )
+            return MainClassLoader.getInstance();
+        return gcl;
+    }
+
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         // find in parent class loader first

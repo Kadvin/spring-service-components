@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.extension.GlobalClassLoader;
 
 import java.io.IOException;
@@ -20,9 +19,7 @@ public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
     @Override
     public ClassAndValue deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
-        ClassLoader cl = GlobalClassLoader.getInstance();
-        if( cl == null )
-            cl = MainClassLoader.getInstance();
+        ClassLoader cl = GlobalClassLoader.getDefaultClassLoader();
         if( jp.getCurrentToken() == JsonToken.START_OBJECT){
             ClassAndValue pair = new ClassAndValue();
             while(jp.getCurrentToken() != JsonToken.END_OBJECT){
