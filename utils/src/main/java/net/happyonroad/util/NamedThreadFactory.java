@@ -60,4 +60,8 @@ public class NamedThreadFactory implements ThreadFactory, Thread.UncaughtExcepti
     public void uncaughtException(Thread t, Throwable e) {
         logger.error("Thread " + t.getName() + " exit on: " + e.getMessage(), e);
     }
+
+    public void setName(String name) {
+        this.groupName = name;
+    }
 }
