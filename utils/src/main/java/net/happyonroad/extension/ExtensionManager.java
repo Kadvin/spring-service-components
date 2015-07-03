@@ -4,6 +4,7 @@
 package net.happyonroad.extension;
 
 import net.happyonroad.component.classworld.MainClassLoader;
+import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.container.ComponentLoader;
 import net.happyonroad.component.container.ComponentRepository;
 import net.happyonroad.component.container.event.ContainerEvent;
@@ -49,8 +50,7 @@ public class ExtensionManager extends ApplicationSupportBean
     //  最被依赖的最先被加载，排在最前面
     List<Component> loadedExtensions = new LinkedList<Component>();
 
-    Observable observable = new Observable();
-    boolean yieldNotify;
+    ExtensionObservable observable = new ExtensionObservable();
 
     public ExtensionManager() {
         setOrder(100);
@@ -124,17 +124,20 @@ public class ExtensionManager extends ApplicationSupportBean
         } catch (Exception e) {
             throw new ExtensionException("Can't load " + StringUtils.join(files, ","), e);
         }
-        this.yieldNotify = true;
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             components[i] = loadExtension(file);
         }
+        return components;
+    }
+
+    protected void notifyObservers() {
+        observable.makeChanged();
         try {
             observable.notifyObservers();
         } finally {
-            this.yieldNotify = false;
+            observable.clearChanges();
         }
-        return components;
     }
 
     public Component loadExtension(File file) throws ExtensionException {
@@ -154,13 +157,16 @@ public class ExtensionManager extends ApplicationSupportBean
             }
             component = componentRepository.resolveComponent(dependency);
             if( !componentLoader.isLoaded(componentId) ){
+                ManipulateClassLoader parent = GlobalClassLoader.parentClassLoad(component);
+                ecl = ecl.derive(parent, component);
+                Thread.currentThread().setContextClassLoader(ecl);
+                ((DefaultComponent)component).setClassLoader(ecl);
                 //仅发给容器
                 publishEvent(new ExtensionLoadingEvent(component));
                 componentLoader.load(component);
                 Thread.currentThread().setContextClassLoader(legacy);
                 loadedExtensions.add(component);
-                if( !yieldNotify )
-                    observable.notifyObservers();
+                notifyObservers();
                 DefaultComponent comp = (DefaultComponent) component;
                 registerMbean(comp, comp.getObjectName());
                 publishEvent(new ExtensionLoadedEvent(component));
@@ -183,14 +189,8 @@ public class ExtensionManager extends ApplicationSupportBean
         List<Component> extensions = new LinkedList<Component>(loadedExtensions);
         componentRepository.sortComponents(extensions);
         Collections.reverse(extensions);
-        this.yieldNotify = true;
         for (Component component : extensions) {
             unloadExtension(component);
-        }
-        try {
-            observable.notifyObservers();
-        } finally {
-            this.yieldNotify = false;
         }
     }
 
@@ -213,8 +213,7 @@ public class ExtensionManager extends ApplicationSupportBean
             publishEvent(new ExtensionUnloadingEvent(component));
             componentLoader.quickUnload(component);
             loadedExtensions.remove(component);
-            if( !yieldNotify )
-                observable.notifyObservers();
+            notifyObservers();
             //这个事件就仅发给容器
             publishEvent(new ExtensionUnloadedEvent(component));
         }else{

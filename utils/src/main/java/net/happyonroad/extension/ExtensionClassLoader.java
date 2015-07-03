@@ -4,6 +4,9 @@
 package net.happyonroad.extension;
 
 import net.happyonroad.component.classworld.ManipulateClassLoader;
+import net.happyonroad.component.core.Component;
+import org.apache.commons.lang.reflect.FieldUtils;
+import sun.misc.URLClassPath;
 
 import java.net.URL;
 import java.util.Set;
@@ -13,18 +16,22 @@ import java.util.Set;
  * 本加载器是服务于特定扩展包的，其主要可以从该扩展包中加载所有的类
  * 其父ClassLoader为Spring Component Framework的Main Class Loader
  * 其自身继承于URLClassLoader，url仅包括自身组件
- *
+ * <p/>
  * 另外，为了避免在多个扩展包之间重复加载同一个第三方类，所有扩展包依赖的第三方包均会委托给Main Class Loader加载
  */
-public class ExtensionClassLoader extends ManipulateClassLoader{
-    final ManipulateClassLoader mcl;
+public class ExtensionClassLoader extends ManipulateClassLoader {
+    Component component;
 
     public ExtensionClassLoader(ManipulateClassLoader parent) {
-        super(parent);
-        mcl = parent;
+        this(parent, null);
     }
 
-    public void addURL(URL url){
+    ExtensionClassLoader(ManipulateClassLoader parent, Component component) {
+        super(parent);
+        this.component = component;
+    }
+
+    public void addURL(URL url) {
         //本组件url自己留下
         super.innerAddURL(url);
     }
@@ -32,6 +39,24 @@ public class ExtensionClassLoader extends ManipulateClassLoader{
     @Override
     public void addURLs(Set<URL> urls) {
         //所有第三方url都提交给parent
-        mcl.addURLs(urls);
+        ((ManipulateClassLoader) getParent()).addURLs(urls);
+    }
+
+    public Component getComponent() {
+        return component;
+    }
+
+    public ExtensionClassLoader derive(ManipulateClassLoader parent, Component component) {
+        ExtensionClassLoader derived = new ExtensionClassLoader(parent, component);
+        URLClassPath ucp;
+        try {
+            ucp = (URLClassPath) FieldUtils.readField(this, "ucp", true);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Can't hacking URLClassLoader#ucp field", ex);
+        }
+        for (URL url : ucp.getURLs()) {
+            derived.addURL(url);
+        }
+        return derived;
     }
 }

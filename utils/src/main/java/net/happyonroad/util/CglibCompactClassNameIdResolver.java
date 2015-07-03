@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.databind.util.ClassUtil;
+import net.happyonroad.extension.GlobalClassLoader;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -73,7 +74,12 @@ public class CglibCompactClassNameIdResolver extends TypeIdResolverBase {
             return typeFactory.constructFromCanonical(id);
         }
         try {
-            Class<?> cls =  ClassUtil.findClass(id);
+            Class<?> cls;
+            try {
+                cls = ClassUtil.findClass(id);
+            } catch (ClassNotFoundException e) {
+                cls = GlobalClassLoader.getDefaultClassLoader().loadClass(id);
+            }
             return typeFactory.constructSpecializedType(_baseType, cls);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Invalid type id '"+id+"' (for id type 'Id.class'): no such class found");

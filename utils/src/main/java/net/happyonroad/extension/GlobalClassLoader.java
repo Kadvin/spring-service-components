@@ -4,6 +4,7 @@
 package net.happyonroad.extension;
 
 import net.happyonroad.component.classworld.MainClassLoader;
+import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.core.Component;
 import net.happyonroad.component.core.support.ComponentURLStreamHandlerFactory;
 import net.happyonroad.service.ExtensionContainer;
@@ -42,7 +43,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         return instance;
     }
 
-    public static ClassLoader getDefaultClassLoader(){
+    public static synchronized ClassLoader getDefaultClassLoader(){
         GlobalClassLoader gcl = getInstance();
         if( gcl == null )
             return MainClassLoader.getInstance();
@@ -69,7 +70,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         }
     }
 
-    protected List<ExtensionClassLoader> ecls() {
+    protected synchronized List<ExtensionClassLoader> ecls() {
         if (ecls == null || ecls.isEmpty() ) {
             List<Component> components = container.getExtensions();
             if (!components.isEmpty()) {
@@ -88,7 +89,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public synchronized void update(Observable o, Object arg) {
         this.ecls = null;// last update
     }
 
@@ -120,5 +121,51 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
             }
         }
         return StringUtils.join(paths, File.pathSeparator);
+    }
+
+    private ManipulateClassLoader parentFor(Component component) {
+        List<ExtensionClassLoader> depends = findDepends(component);
+        if( depends.isEmpty() )
+            return MainClassLoader.getInstance();
+        if(depends.size() == 1 ){
+            return depends.get(0);
+        }else {
+            return new CombinedManipulateClassLoader(MainClassLoader.getInstance(), depends);
+        }
+    }
+
+    private List<ExtensionClassLoader> findDepends(Component component) {
+        List<ExtensionClassLoader> found = new ArrayList<ExtensionClassLoader>();
+        for (ExtensionClassLoader cl: ecls()) {
+            Component checking = cl.getComponent();
+            if( checking == null ) continue;
+            if(component.dependsOn(checking)) {
+                boolean depended = false;
+                //将这个被依赖的组件和已经找到的依赖进行比较
+                Iterator<ExtensionClassLoader> it = found.iterator();
+                while (it.hasNext()) {
+                    ExtensionClassLoader exist = it.next();
+                    Component existComponent = exist.getComponent();
+                    if( existComponent.dependsOn(checking)){
+                        //在依赖链里面了，就不用添加进去
+                        depended = true;
+                        break;
+                    } else if (checking.dependsOn(existComponent)){
+                        //已有组件被它依赖，把已有组件移除掉，待会儿添加它
+                        depended = false;
+                        it.remove();
+                    }
+                }
+                if( !depended )
+                    found.add(cl);
+            }
+        }
+        return found;
+    }
+
+    public static ManipulateClassLoader parentClassLoad(Component component) {
+        if( instance == null )
+            return MainClassLoader.getInstance();
+        return instance.parentFor(component);
     }
 }
