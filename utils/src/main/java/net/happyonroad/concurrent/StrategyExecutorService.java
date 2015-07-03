@@ -315,9 +315,4 @@ public class StrategyExecutorService implements ExecutorService, SelfNaming {
     public ObjectName getObjectName() throws MalformedObjectNameException {
         return new ObjectName("net.happyonroad:type=executor,name=" + getId() + "ExecutorService");
     }
-
-    public void setThreadFactoryName(String name) {
-        this.factory.setName(name);
-
-    }
 }
