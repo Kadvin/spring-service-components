@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.web.controller;
 
+import net.happyonroad.platform.web.annotation.Description;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +29,7 @@ public class SecurityController extends ApplicationController {
      * @return CSRF的header/parameter name, token
      */
     @RequestMapping("csrf")
+    @Description("返回当前会话的当前CSRF(跨站保护)信息")
     public Map<String,String> csrf(HttpServletRequest request){
         String attr = CsrfToken.class.getName();
         CsrfToken token = (CsrfToken) request.getAttribute(attr);

@@ -76,7 +76,7 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
         resolver.setDefaultEncoding("utf-8");
-        resolver.setMaxUploadSize(1048576L);
+        resolver.setMaxUploadSize(1048576L); //TODO tobe configurable
         resolver.setMaxInMemorySize(10240);
         return resolver;
     }

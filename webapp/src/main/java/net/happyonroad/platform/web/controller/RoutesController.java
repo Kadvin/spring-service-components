@@ -3,12 +3,14 @@
  */
 package net.happyonroad.platform.web.controller;
 
+import net.happyonroad.platform.web.annotation.Description;
 import net.happyonroad.platform.web.model.RouteItem;
 import net.happyonroad.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -40,12 +42,14 @@ public class RoutesController extends ApplicationController{
      * @return 请求路由表 格式化好的字符串
      */
     @RequestMapping
+    @Description("列出当前服务器所提供的所有API")
     public String list(@RequestParam(value = "method", required = false, defaultValue = "") String method,
                        @RequestParam(value = "pattern", required = false, defaultValue = "") String pattern,
                        @RequestParam(value = "detail", required = false, defaultValue = "false") boolean detail,
                        HttpServletResponse response
                        ) {
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        response.setCharacterEncoding("UTF-8");
         Map<RequestMappingInfo, HandlerMethod> methods = mappings.getHandlerMethods();
         List<RouteItem> routeItems = new ArrayList<RouteItem>(methods.size());
         for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : methods.entrySet()) {
@@ -58,7 +62,7 @@ public class RoutesController extends ApplicationController{
             routeItems.add(item);
         }
         Collections.sort(routeItems);
-        return StringUtils.join(routeItems, "\r\n");
+        return StringUtils.join(routeItems, "\r\n\r\n");
     }
 
 

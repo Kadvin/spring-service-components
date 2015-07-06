@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.web.controller;
 
+import net.happyonroad.platform.web.annotation.Description;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ public class SessionController extends ApplicationController {
      * POST /api/session
      */
     @RequestMapping(method = RequestMethod.POST)
+    @Description("登录")
     public void login(){
         // Spring Security 已经做了所有的事情，这里暂时不需要做任何事情
     }
@@ -29,6 +31,7 @@ public class SessionController extends ApplicationController {
      * DELETE /api/session
      */
     @RequestMapping(method = RequestMethod.DELETE)
+    @Description("登出")
     public void logout(){
         // 不需要做任何事情
     }
@@ -38,6 +41,7 @@ public class SessionController extends ApplicationController {
      * GET /api/logout
      */
     @RequestMapping("logout")
+    @Description("登出")
     public void logout2(){
         // 不需要做任何事情
     }
