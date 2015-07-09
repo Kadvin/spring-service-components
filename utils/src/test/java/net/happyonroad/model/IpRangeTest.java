@@ -38,7 +38,7 @@ public class IpRangeTest {
 
     @Test
     public void testParseCombinedRange(){
-        IpRange[] ranges = IpRange.parse("192.168.12.0/24,192.168.12.21,192.168.12.21-192.168.12.42");
+        IpRange[] ranges = IpRange.parse("192.168.12.0/24 192.168.12.21 192.168.12.21-192.168.12.42");
         Assert.assertTrue(ranges[0] instanceof SubnetRange);
         Assert.assertTrue(ranges[1] instanceof SingleIp);
         Assert.assertTrue(ranges[2] instanceof StartAndEndRange);
