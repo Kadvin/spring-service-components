@@ -52,7 +52,7 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
 
     //TODO 对于多个range的组合，应该合并为一个CompositeRange
     public static IpRange[] parse(String ips) {
-        String[] rawRanges = ips.split(",\\s*");
+        String[] rawRanges = ips.split("\\s+");
         IpRange[] ranges = new IpRange[rawRanges.length];
         for (int i = 0; i < rawRanges.length; i++) {
             String rawRange = rawRanges[i];

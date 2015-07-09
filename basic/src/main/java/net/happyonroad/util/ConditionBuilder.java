@@ -22,15 +22,19 @@ public final class ConditionBuilder {
                                                + StringUtils.arrayToDelimitedString(pairs, ","));
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < pairs.length; i += 2) {
-            if( pairs[1] == null ) continue;
             String key = pairs[i].toString().replaceAll("'","''");
             key = "`" + key + "`";
             if( !StringUtils.isEmpty(abbr)){
                 key = abbr + "." + key;
             }
-            //Escape SQL
-            String value = pairs[i+1].toString().replaceAll("'", "''");
-            builder.append("(").append(key).append(" = '").append(value).append("'").append(")") ;
+            Object value = pairs[i+1];
+            if( value == null ){
+                builder.append("(").append(key).append("IS NULL)") ;
+            }else{
+                //Escape SQL by replaceAll
+                String strValue = value.toString().replaceAll("'", "''");
+                builder.append("(").append(key).append(" = '").append(strValue).append("'").append(")") ;
+            }
             if(i+1 < pairs.length - 1){
                 builder.append(" AND ");
             }
