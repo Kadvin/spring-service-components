@@ -4,10 +4,6 @@
 package net.happyonroad.model;
 
 import junit.framework.Assert;
-import net.happyonroad.model.IpRange;
-import net.happyonroad.model.SingleIp;
-import net.happyonroad.model.StartAndEndRange;
-import net.happyonroad.model.SubnetRange;
 import org.junit.Test;
 
 /**
