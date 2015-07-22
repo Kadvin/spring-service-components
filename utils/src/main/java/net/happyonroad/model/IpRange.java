@@ -7,6 +7,7 @@ package net.happyonroad.model;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import net.happyonroad.support.JsonSupport;
 import net.happyonroad.util.ParseUtils;
+import net.happyonroad.util.StringUtils;
 
 import java.util.*;
 
@@ -57,9 +58,24 @@ public abstract class IpRange extends JsonSupport implements PathParameter {
         for (int i = 0; i < rawRanges.length; i++) {
             String rawRange = rawRanges[i];
             if (rawRange.indexOf('-') > 0) {
-                //ip range: 192.168.0.10-192.168.0.20
-                String[] split = rawRange.split("-");
-                ranges[i] = new StartAndEndRange(split[0], split[1]);
+                //ip range: 192.168.0-1.10-20
+                String[] segments = rawRange.split("\\.");
+                String[] starts = new String[4];
+                String[] ends = new String[4];
+                for (int j = 0; j < segments.length; j++) {
+                    String segment = segments[j];
+                    if( segment.contains("-")) {
+                        String[] startAndEnd = segment.split("-");
+                        starts[j] = startAndEnd[0];
+                        ends[j] = startAndEnd[1];
+                    }else{
+                        starts[j] = segment;
+                        ends[j] = segment;
+                    }
+                }
+                String start = StringUtils.join(starts, ".");
+                String end = StringUtils.join(ends, ".");
+                ranges[i] = new StartAndEndRange(start, end);
             } else if (rawRange.indexOf('/') > 0) {
                 //subnetwork: 192.168.0.0/255.255.0.0
                 String[] split = rawRange.split("/");

@@ -3,7 +3,7 @@
  */
 package net.happyonroad.model;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -11,30 +11,42 @@ import org.junit.Test;
  */
 public class IpRangeTest {
     @Test
-    public void testParseSubnetRange(){
+    public void testParseSubnetRange() {
         IpRange[] ranges = IpRange.parse("192.168.12.0/24");
         Assert.assertTrue(ranges[0] instanceof SubnetRange);
         SubnetRange range = (SubnetRange) ranges[0];
         Assert.assertEquals("192.168.12.0", range.getAddress());
         Assert.assertEquals("255.255.255.0", range.getMask());
     }
+
     @Test
-    public void testParseSingleIpRange(){
+    public void testParseSingleIpRange() {
         IpRange[] ranges = IpRange.parse("192.168.12.21");
         Assert.assertTrue(ranges[0] instanceof SingleIp);
-        Assert.assertEquals("192.168.12.21", ((SingleIp)ranges[0]).getAddress());
-    }
-    @Test
-    public void testParseStartAndEndRange(){
-        IpRange[] ranges = IpRange.parse("192.168.12.21-192.168.12.42");
-        Assert.assertTrue(ranges[0] instanceof StartAndEndRange);
-        Assert.assertEquals("192.168.12.21", ((StartAndEndRange)ranges[0]).getStart());
-        Assert.assertEquals("192.168.12.42", ((StartAndEndRange)ranges[0]).getEnd());
+        Assert.assertEquals("192.168.12.21", ((SingleIp) ranges[0]).getAddress());
     }
 
     @Test
-    public void testParseCombinedRange(){
-        IpRange[] ranges = IpRange.parse("192.168.12.0/24 192.168.12.21 192.168.12.21-192.168.12.42");
+    public void testParseStartAndEndRange() {
+        IpRange[] ranges = IpRange.parse("192.168.12.21-42");
+        Assert.assertTrue(ranges[0] instanceof StartAndEndRange);
+        StartAndEndRange range = (StartAndEndRange) ranges[0];
+        Assert.assertEquals("192.168.12.21", range.getStart());
+        Assert.assertEquals("192.168.12.42", range.getEnd());
+    }
+
+    @Test
+    public void testParseStartAndEndRange2() {
+        IpRange[] ranges = IpRange.parse("192.168.10-12.21-42");
+        Assert.assertTrue(ranges[0] instanceof StartAndEndRange);
+        StartAndEndRange range = (StartAndEndRange) ranges[0];
+        Assert.assertEquals("192.168.10.21", range.getStart());
+        Assert.assertEquals("192.168.12.42", range.getEnd());
+    }
+
+    @Test
+    public void testParseCombinedRange() {
+        IpRange[] ranges = IpRange.parse("192.168.12.0/24 192.168.12.21 192.168.12.21-42");
         Assert.assertTrue(ranges[0] instanceof SubnetRange);
         Assert.assertTrue(ranges[1] instanceof SingleIp);
         Assert.assertTrue(ranges[2] instanceof StartAndEndRange);
@@ -63,7 +75,7 @@ public class IpRangeTest {
 
     @Test
     public void testStartAndEndRangeToAndFromJson() throws Exception {
-        IpRange[] ranges = IpRange.parse("192.168.12.21-192.168.12.42");
+        IpRange[] ranges = IpRange.parse("192.168.12.21-42");
         StartAndEndRange range = (StartAndEndRange) ranges[0];
         String json = range.toJson();
         System.out.println(json);

@@ -3,6 +3,7 @@ package net.happyonroad.support;
 import net.happyonroad.model.GeneralMap;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h1>The default general map</h1>
@@ -12,7 +13,7 @@ import java.util.HashMap;
 public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K,V>{
     private static final long serialVersionUID = -8898499680831724783L;
 
-    private boolean sensitive;
+    private final boolean sensitive;
 
     public DefaultGeneralMap() {
         this(true);
@@ -96,4 +97,14 @@ public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K
         if( v instanceof Number) return ((Number) v).doubleValue();
         return v == null ? 0 : Double.valueOf(v.toString().trim());
     }
+
+    public static <X, Y> DefaultGeneralMap<X, Y> parse(Map<X, Y> map) {
+        DefaultGeneralMap<X, Y> result = new DefaultGeneralMap<X, Y>(false);
+        for (X key : map.keySet()) {
+            result.put(key, map.get(key));
+        }
+        return result;
+    }
+
+
 }
