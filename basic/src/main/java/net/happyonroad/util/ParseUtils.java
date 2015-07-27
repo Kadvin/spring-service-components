@@ -4,10 +4,8 @@
 package net.happyonroad.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,26 +48,69 @@ public final class ParseUtils {
     }
 
     public static <T> T parseJson(String content, Class<T> theClass, Class viewClass) {
+        return parse(content, theClass, viewClass);
+    }
+
+    public static <T> T parseJson(String content, JavaType javaType) {
+        return parseJson(content, javaType, null);
+    }
+
+    public static <T> T parseJson(String content, JavaType javaType, Class viewClass) {
+        return parse(content, javaType, viewClass);
+    }
+
+    public static <T> T parseJson(String content, TypeReference typeReference) {
+        return parseJson(content, typeReference, null);
+    }
+
+    public static <T> T parseJson(String content, TypeReference typeReference, Class viewClass) {
+        return parse(content, typeReference, viewClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> T parse(String content, Object type, Class viewClass) {
         T t;
+        String name;
+        if (type instanceof TypeReference) {
+            name = type.toString();
+        } else if (type instanceof JavaType) {
+            name = type.toString();
+        } else {
+            //class
+            name = ((Class) type).getSimpleName();
+        }
         try {
             if (viewClass != null) {
                 DeserializationConfig oldConfig = mapper.getDeserializationConfig();
                 DeserializationConfig newConfig = oldConfig.withView(viewClass);
                 try {
                     mapper.setDeserializationConfig(newConfig);
-                    ObjectReader reader = mapper.readerWithView(viewClass).withType(theClass);
+                    ObjectReader reader;
+                    if (type instanceof TypeReference) {
+                        reader = mapper.readerWithView(viewClass).withType((TypeReference<T>) type);
+                    } else if (type instanceof JavaType) {
+                        reader = mapper.readerWithView(viewClass).withType((JavaType) type);
+                    } else {
+                        reader = mapper.readerWithView(viewClass).withType((Class<T>) type);
+                    }
                     return reader.readValue(content);
                 } finally {
                     mapper.setDeserializationConfig(oldConfig);
                 }
             } else {
-                t = mapper.readValue(content, theClass);
+                if (type instanceof TypeReference) {
+                    t = mapper.readValue(content, (TypeReference<T>) type);
+                } else if (type instanceof JavaType) {
+                    t = mapper.readValue(content, (JavaType) type);
+                } else {
+                    t = mapper.readValue(content, (Class<T>) type);
+                }
             }
         } catch (IOException e) {
-            throw new IllegalArgumentException("Can't parse " + content + " to " + theClass.getSimpleName(), e);
+            throw new IllegalArgumentException("Can't parse " + content + " to " + name, e);
         }
         if (t == null) {
-            throw new IllegalArgumentException("Can't parse " + content + " to " + theClass.getSimpleName());
+            throw new IllegalArgumentException("Can't parse " + content + " to " + name);
         }
         return t;
     }

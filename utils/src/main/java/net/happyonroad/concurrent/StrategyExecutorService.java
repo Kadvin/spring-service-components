@@ -229,6 +229,10 @@ public class StrategyExecutorService implements ExecutorService, SelfNaming {
         return underlying.getCompletedTaskCount();
     }
 
+    public NamedThreadFactory getFactory() {
+        return factory;
+    }
+
     protected Integer getIntegerSetting(String name, Integer systemDefaultValue) {
         return Integer.valueOf(getStringSetting(name, systemDefaultValue.toString()));
     }

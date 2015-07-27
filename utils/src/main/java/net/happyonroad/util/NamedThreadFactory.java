@@ -19,6 +19,7 @@ public class NamedThreadFactory implements ThreadFactory, Thread.UncaughtExcepti
     private Thread.UncaughtExceptionHandler handler;
     // Unit: Bytes
     private long                            stackSize;
+    private ClassLoader                     defaultClassLoader;
 
     public NamedThreadFactory(String groupName) {
         this(groupName, null, "0k");//zero will be ignored
@@ -53,7 +54,17 @@ public class NamedThreadFactory implements ThreadFactory, Thread.UncaughtExcepti
     public Thread newThread(Runnable job) {
         Thread thread = new Thread(group, job, groupName + String.format("-%03d", ++sequence), stackSize);
         thread.setUncaughtExceptionHandler(handler);
+        if( defaultClassLoader != null )
+            thread.setContextClassLoader(defaultClassLoader);
         return thread;
+    }
+
+    public ClassLoader getDefaultClassLoader() {
+        return defaultClassLoader;
+    }
+
+    public void setDefaultClassLoader(ClassLoader defaultClassLoader) {
+        this.defaultClassLoader = defaultClassLoader;
     }
 
     @Override

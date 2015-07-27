@@ -7,13 +7,22 @@ import java.util.Map;
  *
  * @author Jay Xiong
  */
-public interface GeneralMap<K,V> extends Map<K, V> {
+public interface GeneralMap<K, V> extends Map<K, V> {
+    boolean isSensitive();
+
     String getString(K key);
+
     Boolean getBoolean(K key);
+
     Integer getInteger(K key);
+
     Short getShort(K key);
+
     Byte getByte(K key);
+
     Long getLong(K key);
+
     Float getFloat(K key);
+
     Double getDouble(K key);
 }

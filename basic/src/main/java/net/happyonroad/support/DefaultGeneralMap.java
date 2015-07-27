@@ -24,6 +24,11 @@ public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K
     }
 
     @Override
+    public boolean isSensitive() {
+        return sensitive;
+    }
+
+    @Override
     public V get(Object key) {
         //noinspection unchecked
         key = convertKey((K) key);
