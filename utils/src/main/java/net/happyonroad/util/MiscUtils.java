@@ -6,6 +6,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -44,7 +45,13 @@ public final class MiscUtils {
                 if (path.startsWith("./")) {//relative path
                     path = klass.getPackage().getName().replaceAll("\\.", "/") + path.substring(1);
                 }
-                stream = new ClassPathResource(path, klass.getClassLoader()).getInputStream();
+                try {
+                    // 可能class为系统已经加载的类，而resource是扩展的类
+                    stream = new ClassPathResource(path, klass.getClassLoader()).getInputStream();
+                } catch (FileNotFoundException e) {
+                    // 在这种情况下，需要尝试用Thread的当前class loader加载资源
+                    stream = new ClassPathResource(path, Thread.currentThread().getContextClassLoader()).getInputStream();
+                }
                 List<String> strings = IOUtils.readLines(stream);
                 value = StringUtils.join(strings, SystemUtils.LINE_SEPARATOR);
             } catch (IOException e) {

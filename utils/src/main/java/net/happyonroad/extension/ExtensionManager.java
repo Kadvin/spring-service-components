@@ -126,7 +126,11 @@ public class ExtensionManager extends ApplicationSupportBean
         }
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            components[i] = loadExtension(file);
+            try {
+                components[i] = loadExtension(file);
+            } catch (ExtensionException e) {
+                logger.error("Failed to load {}, because of {}, ignore it", file.getName(), describeException(e));
+            }
         }
         return components;
     }
@@ -144,7 +148,7 @@ public class ExtensionManager extends ApplicationSupportBean
         ClassLoader legacy = Thread.currentThread().getContextClassLoader();
         ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
         Thread.currentThread().setContextClassLoader(ecl);
-        Component component;
+        Component component = null;
         String componentId = file.getParentFile().getName() + "/" + file.getName();
         try {
             //由于现在将扩展统一放在 repository 目录，其实有些系统依赖的组件已经加载过了
@@ -177,8 +181,10 @@ public class ExtensionManager extends ApplicationSupportBean
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
         } catch (Exception e) {
-            logger.error("Can't load extension: {}, ignore it: {}", componentId, describeException(e));
-            return null;
+            if( component != null ) {
+                componentLoader.unload(component);
+            }
+            throw new ExtensionException("Can't load extension: " + componentId, e);
         } finally {
             Thread.currentThread().setContextClassLoader(legacy);
         }
