@@ -1,6 +1,7 @@
 package net.happyonroad.util;
 
 import net.happyonroad.component.container.AppLauncher;
+import net.happyonroad.extension.GlobalClassLoader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -50,13 +51,21 @@ public final class MiscUtils {
                     stream = new ClassPathResource(path, klass.getClassLoader()).getInputStream();
                 } catch (FileNotFoundException e) {
                     // 在这种情况下，需要尝试用Thread的当前class loader加载资源
-                    stream = new ClassPathResource(path, Thread.currentThread().getContextClassLoader()).getInputStream();
+                    try {
+                        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                        stream = new ClassPathResource(path, classLoader).getInputStream();
+                    } catch (FileNotFoundException e1) {
+                        //再次使用全局的class loader
+                        ClassLoader classLoader = GlobalClassLoader.getDefaultClassLoader();
+                        stream = new ClassPathResource(path, classLoader).getInputStream();
+                    }
                 }
                 List<String> strings = IOUtils.readLines(stream);
                 value = StringUtils.join(strings, SystemUtils.LINE_SEPARATOR);
             } catch (IOException e) {
                 throw new IllegalStateException("Can't convert " + rawValue, e);
             }
+            //TODO support other form content, such as file:// in monitor system storage
         } else {
             value = rawValue;
         }

@@ -70,6 +70,19 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         }
     }
 
+    @Override
+    public URL getResource(String name) {
+        URL url = super.getResource(name);
+        if( url == null ){
+            for (ExtensionClassLoader ecl : ecls()) {
+                if (ecl == null) continue;
+                url = ecl.getResource(name);
+                if(url != null ) return url;
+            }
+        }
+        return url;
+    }
+
     protected synchronized List<ExtensionClassLoader> ecls() {
         if (ecls == null || ecls.isEmpty() ) {
             List<Component> components = container.getExtensions();
