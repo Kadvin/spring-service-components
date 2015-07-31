@@ -64,7 +64,7 @@ public class StrategyExecutorService implements ExecutorService, SelfNaming {
         } else {
             this.name = name;
         }
-        String defaultPolicy = System.getProperty("default.threadingPolicy", POLICY_FIXED);
+        String defaultPolicy = System.getProperty("default.policy", POLICY_FIXED);
         this.policy = System.getProperty(id + ".policy", defaultPolicy);
         String stackSize = getStringSetting("stackSize", "128k");
         this.factory = new NamedThreadFactory(this.name, stackSize);
