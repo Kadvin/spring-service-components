@@ -13,9 +13,27 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * <h1>表达式工具</h1>
+ * <pre>
+ * 现在支持对:
+ *  xxx[aaa][bbb][ccc]
+ * 这种语法进行编译；
+ * </pre>
+ * 其中xxx为任意字符串，代表被计算的对象
+ * <p>
+ * 而 aaa/bbb/ccc 为某段表达式的具体计算逻辑，支持如下语法:
+ * </p>
+ * <p/>
+ * <ul>
+ * <li> 数字: 如，result[0] 代表取数组第一项
+ * <li> 字符串: 如, result['name'] 用单引号将属性引用起来，代表 去map特定的key
+ * <li> 比较: 如 result['name' == 'linux'] 代表取第一个name = 'linux'的记录,
+ * 其中的比较符号支持 大于，小于，大于等于，小于等于，等于；被比较的对象为 Comparable，
+ * 如果是字符串形式的对象，将会试图按照数字进行比较
+ * </ul>
  *
  * @author Jay Xiong
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ExpressionUtils {
     static Pattern pattern         = Pattern.compile("\\[([^\\]])+\\]");
     static Pattern comparePattern  = Pattern.compile("\\s*([^><=]+)\\s*([><=]+)\\s*([^><=]+)\\s*");
