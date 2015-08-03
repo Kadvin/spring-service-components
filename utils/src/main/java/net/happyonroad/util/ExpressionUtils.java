@@ -35,9 +35,9 @@ import java.util.regex.PatternSyntaxException;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class ExpressionUtils {
-    static Pattern pattern         = Pattern.compile("\\[([^\\]])+\\]");
+    static Pattern pattern         = Pattern.compile("\\[([^\\]]+)\\]");
     static Pattern comparePattern  = Pattern.compile("\\s*([^><=]+)\\s*([><=]+)\\s*([^><=]+)\\s*");
-    static Pattern propertyPattern = Pattern.compile("'([\\w|.|-]+)'");
+    static Pattern propertyPattern = Pattern.compile("\\s*'([\\w|.|-]+)'\\s*");
 
     /**
      * <h2>将已有的表达式解析成为特定计算器的工具</h2>
@@ -101,9 +101,9 @@ public class ExpressionUtils {
         } else {
             Matcher matcher = comparePattern.matcher(exp);
             if (matcher.matches()) {
-                String left = matcher.group(1);
+                String left = matcher.group(1).trim();
                 String operator = matcher.group(2);
-                String right = matcher.group(3);
+                String right = matcher.group(3).trim();
                 String property, value;
                 matcher = propertyPattern.matcher(left);
                 if (matcher.matches()) {

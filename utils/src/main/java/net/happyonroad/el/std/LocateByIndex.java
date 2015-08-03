@@ -20,4 +20,9 @@ public class LocateByIndex<Out> implements Calculator<Out[],Out> {
         if( input == null ) return null;
         return input[index];
     }
+
+    @Override
+    public String toString() {
+        return "[" + index + "]";
+    }
 }

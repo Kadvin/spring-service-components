@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * <h1>根据属性定位对象的计算器</h1>
- *
+ * <p/>
  * 返回符合条件的第一个记录，不返回所有记录
  *
  * @author Jay Xiong
@@ -41,8 +41,8 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
 
     protected boolean compare(Comparable value) {
         Comparable base = this.value;
-        if( value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
-            base =  NumberUtils.parseNumber(base.toString(), Double.class);
+        if (value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
+            base = NumberUtils.parseNumber(base.toString(), Double.class);
             value = NumberUtils.parseNumber(value.toString(), Double.class);
         }
         //noinspection unchecked
@@ -50,15 +50,20 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
         if (operator.equals("=") || operator.equals("==")) {
             return result == 0;
         } else if (operator.equals(">")) {
-            return result > 0 ;
+            return result > 0;
         } else if (operator.equals(">=")) {
-            return result >= 0 ;
+            return result >= 0;
         } else if (operator.equals("<")) {
-            return result < 0 ;
+            return result < 0;
         } else if (operator.equals("<=")) {
-            return result <= 0 ;
+            return result <= 0;
         } else {
             throw new IllegalStateException("The operator " + this.operator + " is not recognized");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getter.property + " " + operator + " " + value + "]";
     }
 }

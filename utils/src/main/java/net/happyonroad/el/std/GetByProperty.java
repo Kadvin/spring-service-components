@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Jay Xiong
  */
 public class GetByProperty<Out> implements Calculator<Map, Out> {
-    private String property;
+    String property;
 
     public GetByProperty(String property) {
         this.property = property;
@@ -22,5 +22,10 @@ public class GetByProperty<Out> implements Calculator<Map, Out> {
         if (input == null) return null;
         //noinspection unchecked
         return (Out) input.get(property);
+    }
+
+    @Override
+    public String toString() {
+        return "['" + property + "']";
     }
 }

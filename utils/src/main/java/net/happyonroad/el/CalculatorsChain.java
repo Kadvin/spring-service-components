@@ -1,5 +1,7 @@
 package net.happyonroad.el;
 
+import net.happyonroad.util.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,5 +41,10 @@ public class CalculatorsChain implements Calculator {
 
     public Calculator get(int index) {
         return calculators.get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "result" + StringUtils.join(calculators, "");
     }
 }
