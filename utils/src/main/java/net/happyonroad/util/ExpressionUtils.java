@@ -78,8 +78,10 @@ public class ExpressionUtils {
      * @return 计算器
      */
     public static Calculator compile(String expression) {
+        String name = StringUtils.substringBefore(expression,"[");
         Matcher matcher = pattern.matcher(expression);
         CalculatorsChain chain = new CalculatorsChain();
+        chain.setName(name);
         while (matcher.find()) {
             String exp = matcher.group(1);
             Calculator calculator = compileSegment(exp);
@@ -88,8 +90,6 @@ public class ExpressionUtils {
         if (chain.getSize() == 0) {
             throw new PatternSyntaxException("Your expression `" + expression + "` is illegal",
                                              pattern.pattern(), 0);
-        } else if (chain.getSize() == 1) {
-            return chain.get(0);
         } else {
             return chain;
         }

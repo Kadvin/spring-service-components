@@ -11,10 +11,19 @@ import java.util.List;
  * @author Jay Xiong
  */
 public class CalculatorsChain implements Calculator {
+    private String name;
     private List<Calculator> calculators;
 
     public CalculatorsChain() {
         calculators = new LinkedList<Calculator>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void addCalculator(Calculator calculator) {
@@ -45,6 +54,6 @@ public class CalculatorsChain implements Calculator {
 
     @Override
     public String toString() {
-        return "result" + StringUtils.join(calculators, "");
+        return name + StringUtils.join(calculators, "");
     }
 }

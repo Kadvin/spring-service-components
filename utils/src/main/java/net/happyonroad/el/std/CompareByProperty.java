@@ -2,6 +2,7 @@ package net.happyonroad.el.std;
 
 import net.happyonroad.el.CalculateException;
 import net.happyonroad.el.Calculator;
+import net.happyonroad.util.StringUtils;
 import org.springframework.util.NumberUtils;
 
 import java.util.Map;
@@ -41,7 +42,10 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
 
     protected boolean compare(Comparable value) {
         Comparable base = this.value;
-        if (value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
+        if (this.value.startsWith("\"") && this.value.endsWith("\"")) {
+            //字符串形式，需要剔除双引号
+            base = StringUtils.substringBetween(this.value, "\"");
+        } else if (value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
             base = NumberUtils.parseNumber(base.toString(), Double.class);
             value = NumberUtils.parseNumber(value.toString(), Double.class);
         }
