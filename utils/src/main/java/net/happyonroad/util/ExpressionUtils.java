@@ -119,7 +119,7 @@ public class ExpressionUtils {
                                                          propertyPattern.pattern(), 0);
                     }
                 }
-                return new CompareByProperty(property, value, operator);
+                return new CompareByProperty(property, operator, value);
             }
             matcher = propertyPattern.matcher(exp);
             if (matcher.matches()) {

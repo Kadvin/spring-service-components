@@ -15,15 +15,14 @@ import java.util.Map;
  * @author Jay Xiong
  */
 public class CompareByProperty<Out> implements Calculator<Out[], Out> {
-    private final String operator;
-    private final String value;
-
     private final GetByProperty<Comparable> getter;
+    private final String                    operator;
+    private final String                    value;
 
-    public CompareByProperty(String property, String value, String operator) {
-        this.value = value;
-        this.operator = operator;
+    public CompareByProperty(String property, String operator, String value) {
         this.getter = new GetByProperty<Comparable>(property);
+        this.operator = operator;
+        this.value = value;
     }
 
     @Override
@@ -41,6 +40,14 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
     }
 
     protected boolean compare(Comparable value) {
+        if (this.value == null || value == null) {
+            //noinspection SimplifiableIfStatement
+            if (this.value == null)
+                return value == null;
+            else {
+                return false;
+            }
+        }
         Comparable base = this.value;
         if (this.value.startsWith("\"") && this.value.endsWith("\"")) {
             //字符串形式，需要剔除双引号

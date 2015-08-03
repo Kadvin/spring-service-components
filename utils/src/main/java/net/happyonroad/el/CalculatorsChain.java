@@ -32,15 +32,23 @@ public class CalculatorsChain implements Calculator {
 
     @Override
     public Object calc(Object input) throws CalculateException {
-        Object target = input;
+        Object target = preprocess(input);
         for (Calculator calculator : calculators) {
             try {
                 //noinspection unchecked
                 target = calculator.calc(target);
+                target = preprocess(target);
             } catch (Exception e) {
                 throw new CalculateException("Failed to calculate " + target + " by " + calculator, e);
             }
         }
+        return target;
+    }
+
+    // 遇到list，用数组代替
+    private Object preprocess(Object target) {
+        if( target instanceof List)
+            return ((List) target).toArray();
         return target;
     }
 
