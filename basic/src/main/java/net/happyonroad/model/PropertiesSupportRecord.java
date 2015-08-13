@@ -19,7 +19,12 @@ public class PropertiesSupportRecord extends Record{
     }
 
     public void setProperties(Properties properties) {
-        this.properties = properties;
+        if( properties != null ){
+            this.properties = new Properties();
+            this.properties.putAll(properties);
+        }else{
+            this.properties = null;
+        }
     }
 
     public String getProperty(String name, String defaultValue){

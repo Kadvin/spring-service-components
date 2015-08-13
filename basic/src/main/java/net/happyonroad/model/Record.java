@@ -170,4 +170,9 @@ public class Record implements Cloneable, Serializable{
         int pos = className.indexOf("$$EnhancerByCGLIB");
         return pos > 0 ? className.substring(0, pos) : className;
     }
+
+    @JsonIgnore
+    public String getClassName() {
+        return reduceCglibName(getClass().getName());
+    }
 }
