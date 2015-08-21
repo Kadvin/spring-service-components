@@ -5,7 +5,9 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <h1>抽象的对象缓存</h1>
@@ -19,7 +21,7 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
     private final Class<V>  objectClass;
 
     public AbstractCache(Class<V> objectClass) {
-        this.objectCache = new HashMap<K, V>();
+        this.objectCache = new ConcurrentHashMap<K, V>();
         this.objectClass = objectClass;
     }
 

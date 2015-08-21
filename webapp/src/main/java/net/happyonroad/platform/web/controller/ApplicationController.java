@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ import java.util.Map;
 
 /** The Rest Controller */
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-@Transactional
+@Transactional(noRollbackFor = HttpMediaTypeNotAcceptableException.class)
 public class ApplicationController<T extends Record> {
     // 父类内部使用的headers
     private static   HttpHeaders      headers          = new HttpHeaders();
