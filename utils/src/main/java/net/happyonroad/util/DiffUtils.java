@@ -19,7 +19,7 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class DiffUtils {
     static String[] DEFAULT_IGNORES =
-            new String[]{"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
+            new String[]{"id", "class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
                          "cascadeCreating", "hierarchyDeleting"};
 
     /**

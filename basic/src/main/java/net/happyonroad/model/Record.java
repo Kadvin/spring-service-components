@@ -23,9 +23,6 @@ import java.util.Map;
 public class Record implements Cloneable, Serializable{
 
     private static final long serialVersionUID = 3209170950751539327L;
-    public static String[] HELP_ATTRS =
-            {"class", "callbacks", "createdAt", "updatedAt", "new", "cascadeUpdating", "cascadeDeleting",
-             "cascadeCreating", "hierarchyDeleting"};
 
     protected static ObjectMapper mapper = new ObjectMapper();
 

@@ -71,4 +71,53 @@ public final class MiscUtils {
         }
         return value;
     }
+
+    /**
+     * <h2>判断某个数值的特定bit位是否为1</h2>
+     *
+     * @param value 被判断的数值
+     * @param pos   比特位
+     * @return 是否为1
+     */
+    public static boolean isBitOn(int value, int pos) {
+        int pv = 0x01 << (pos - 1);
+        return (value & pv) == pv;
+    }
+
+    /**
+     * <h2>将某个数值的特定bit位设置为1</h2>
+     *
+     * @param origin 原始数值
+     * @param pos    比特位
+     * @return 返回的值
+     */
+    public static int setBitOn(int origin, int pos) {
+        return origin | (0x01 << (pos - 1));
+    }
+
+    /**
+     * <h2>将某些数值的特定bit位设置为1</h2>
+     *
+     * @param origin    原始数值
+     * @param positions 比特位
+     * @return 返回的值
+     */
+    public static int setBitOn(int origin, int... positions) {
+        int value = origin;
+        for (int pos : positions) {
+            value = setBitOn(value, pos);
+        }
+        return value;
+    }
+
+    /**
+     * <h2>将某个数值的特定bit位设置为0</h2>
+     *
+     * @param origin 原始数值
+     * @param pos    比特位
+     * @return 返回的值
+     */
+    public static int setBitOff(int origin, int pos) {
+        return origin & ~(0x01 << (pos - 1));
+    }
 }
