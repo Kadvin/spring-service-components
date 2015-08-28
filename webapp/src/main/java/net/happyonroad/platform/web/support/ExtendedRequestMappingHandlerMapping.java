@@ -20,6 +20,7 @@ import org.springframework.web.method.HandlerMethodSelector;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -79,11 +80,17 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
         return theApplicationContext == null ? getApplicationContext() : theApplicationContext;
     }
 
+    // 与下面 detectHandlerMethods ，基于当前实例同步化
+    @Override
+    protected synchronized HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
+        return super.getHandlerInternal(request);
+    }
+
     /**
      * Look for handler methods in a handler.
      * @param handler the bean name of a handler or a handler instance
      */
-    protected void detectHandlerMethods(final Object handler) {
+    protected synchronized void detectHandlerMethods(final Object handler) {
         Class<?> handlerType = (handler instanceof String ? theApplicationContext().getType((String) handler) :
                                 handler.getClass());
 

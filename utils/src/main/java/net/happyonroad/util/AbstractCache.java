@@ -4,8 +4,8 @@ import net.happyonroad.spring.ApplicationSupportBean;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,16 +43,33 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
 
     /**
      * <h2>根据特定条件查找对象</h2>
+     *
      * @param filter 过滤条件
      * @return 找到的对象
      */
     protected V findInCache(Predicate<V> filter) {
-        for(V value : cachedValues() ){
-            if( filter.evaluate(value) ){
+        for (V value : cachedValues()) {
+            if (filter.evaluate(value)) {
                 return value;
             }
         }
         return null;
+    }
+
+    /**
+     * <h2>根据特定条件查找所有符合条件的对象</h2>
+     *
+     * @param filter 过滤条件
+     * @return 找到的对象集合
+     */
+    protected List<V> findAllInCache(Predicate<V> filter) {
+        List<V> result = new LinkedList<V>();
+        for (V value : cachedValues()) {
+            if (filter.evaluate(value)) {
+                result.add(value);
+            }
+        }
+        return result;
     }
 
     /**
@@ -81,6 +98,10 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
 
     protected void innerRemove(V value) {
         K key = parseKey(value);
+        objectCache.remove(key);
+    }
+
+    protected void uncache(K key){
         objectCache.remove(key);
     }
 

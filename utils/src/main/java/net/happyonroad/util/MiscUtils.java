@@ -120,4 +120,23 @@ public final class MiscUtils {
     public static int setBitOff(int origin, int pos) {
         return origin & ~(0x01 << (pos - 1));
     }
+
+
+    public static String which(String exe) {
+        List<String> lines;
+        String errors;
+        try {
+            Process exec = Runtime.getRuntime().exec("which " + exe);
+            exec.waitFor();
+            lines = IOUtils.readLines(exec.getInputStream());
+            errors = org.apache.commons.lang.StringUtils.join(IOUtils.readLines(exec.getErrorStream()), "\n");
+        } catch (Exception ex) {
+            throw new UnsupportedOperationException("Can't execute `which " + exe + "`", ex);
+        }
+        if (lines.isEmpty()) {
+            throw new UnsupportedOperationException("Can't execute `which " + exe + "`: " + errors);
+        }
+        return lines.get(0);
+    }
+
 }

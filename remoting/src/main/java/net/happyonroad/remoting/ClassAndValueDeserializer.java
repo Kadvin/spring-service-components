@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import net.happyonroad.extension.GlobalClassLoader;
+import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class ClassAndValueDeserializer extends JsonDeserializer<ClassAndValue> {
                     jp.nextToken();
                     if( "klass".equals(fieldName) ){
                         try {
-                            pair.klass = Class.forName(jp.getText(), true, cl);
+                            pair.klass = ClassUtils.forName(jp.getText(), cl);
                         } catch (ClassNotFoundException e) {
                             throw new JsonMappingException("Can't convert class " + jp.getText(), e);
                         }

@@ -14,15 +14,17 @@ import java.io.InputStream;
  * <h1>简单的工具</h1>
  */
 public final class ParseUtils {
-    public static ExtendedMapper mapper = new ExtendedMapper();
+    public static ExtendedMapper mapper;
 
-    static {
+    static { refreshMapper(); }
+
+
+    private ParseUtils() { }
+
+    public static void refreshMapper() {
+        mapper = new ExtendedMapper();
         JacksonJmxModule module = new JacksonJmxModule();
         mapper.registerModule(module);
-    }
-
-    private ParseUtils() {
-
     }
 
     public static int parseInt(Object string, int defaultValue) {

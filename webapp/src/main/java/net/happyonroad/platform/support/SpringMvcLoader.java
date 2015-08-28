@@ -37,9 +37,11 @@ import java.util.Set;
 //@WebServlet(name = "ItsNow.Dispatcher")
 public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer
     implements ServletContextListener{
+    public static final String READY_FILTER_NAME  = "ItsNow.readyFilter";
+    public static final String SHUTDOWN_FILTER_NAME  = "ItsNow.shutdownFilter";
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
 
-    ApplicationContext applicationContext;
+    ApplicationContext    applicationContext;
     WebApplicationContext webAppContext, securityAppContext;
 
     @Override
@@ -49,6 +51,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         applicationContext = (ApplicationContext) servletContext.getAttribute("application");
 
         super.onStartup(servletContext);
+        registerBlockFilter(servletContext);
         registerSecurityFilter(servletContext);
         registerHttpMethodFilter(servletContext);
     }
@@ -62,15 +65,16 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     @Override
     protected WebApplicationContext createRootApplicationContext() {
         File securityXml = new File(System.getProperty("app.home"), "webapp/security.xml");
-        if( securityXml.exists() ){
+        if (securityXml.exists()) {
             XmlWebApplicationContext context = new XmlWebApplicationContext();
             // Load by Servlet Resource
             context.setConfigLocation("security.xml");
             context.setClassLoader(Thread.currentThread().getContextClassLoader());
             securityAppContext = context;
             return context;
-        }else{
-            AnnotationConfigWebApplicationContext acc = (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
+        } else {
+            AnnotationConfigWebApplicationContext acc =
+                    (AnnotationConfigWebApplicationContext) super.createRootApplicationContext();
             //设置了class loader之后，就支持了定制化  spring_mvc.configuration
             acc.setClassLoader(Thread.currentThread().getContextClassLoader());
             return securityAppContext = acc;
@@ -152,6 +156,15 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
+    }
+
+    private void registerBlockFilter(ServletContext servletContext){
+        FilterRegistration.Dynamic registration = servletContext.addFilter(READY_FILTER_NAME, BlockRequestBeforeSystemStarted.class);
+        registration.setAsyncSupported(true);
+        registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
+        registration = servletContext.addFilter(SHUTDOWN_FILTER_NAME, BlockRequestWhenSystemStopping.class);
+        registration.setAsyncSupported(true);
+        registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
     }
 
     private void registerHttpMethodFilter(ServletContext servletContext) {
