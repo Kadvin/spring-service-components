@@ -2,7 +2,7 @@ package net.happyonroad.el.std;
 
 import net.happyonroad.el.CalculateException;
 import net.happyonroad.el.Calculator;
-import net.happyonroad.util.StringUtils;
+import net.happyonroad.util.ExpressionUtils;
 import org.springframework.util.NumberUtils;
 
 import java.util.Map;
@@ -15,12 +15,12 @@ import java.util.Map;
  * @author Jay Xiong
  */
 public class CompareByProperty<Out> implements Calculator<Out[], Out> {
-    private final GetByProperty<Comparable> getter;
-    private final String                    operator;
-    private final String                    value;
+    private final GetMapProperty<Comparable> getter;
+    private final String                     operator;
+    private final String                     value;
 
     public CompareByProperty(String property, String operator, String value) {
-        this.getter = new GetByProperty<Comparable>(property);
+        this.getter = new GetMapProperty<Comparable>(property);
         this.operator = operator;
         this.value = value;
     }
@@ -48,29 +48,12 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
                 return false;
             }
         }
-        Comparable base = this.value;
-        if (this.value.startsWith("\"") && this.value.endsWith("\"")) {
-            //字符串形式，需要剔除双引号
-            base = StringUtils.substringBetween(this.value, "\"");
-        } else if (value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
+        Comparable base = ExpressionUtils.unQuote(this.value);
+        if (value instanceof Number || org.apache.commons.lang.math.NumberUtils.isNumber(value.toString())) {
             base = NumberUtils.parseNumber(base.toString(), Double.class);
             value = NumberUtils.parseNumber(value.toString(), Double.class);
         }
-        //noinspection unchecked
-        int result = base.compareTo(value);
-        if (operator.equals("=") || operator.equals("==")) {
-            return result == 0;
-        } else if (operator.equals(">")) {
-            return result > 0;
-        } else if (operator.equals(">=")) {
-            return result >= 0;
-        } else if (operator.equals("<")) {
-            return result < 0;
-        } else if (operator.equals("<=")) {
-            return result <= 0;
-        } else {
-            throw new IllegalStateException("The operator " + this.operator + " is not recognized");
-        }
+        return ExpressionUtils.compare(base, value, operator);
     }
 
     @Override
