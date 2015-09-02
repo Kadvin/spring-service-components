@@ -96,6 +96,11 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
         cache(key, value);
     }
 
+    protected void innerUpdate(V value) {
+        K key = parseKey(value);
+        cache(key, value);
+    }
+
     protected void innerRemove(V value) {
         K key = parseKey(value);
         uncache(key);

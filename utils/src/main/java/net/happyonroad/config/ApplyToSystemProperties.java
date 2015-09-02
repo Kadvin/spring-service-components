@@ -22,26 +22,30 @@ import java.util.regex.Pattern;
  * Apply configured properties to system property
  */
 @ManagedResource(objectName = "net.happyonroad:type=service,name=configProperties")
-public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
+public class ApplyToSystemProperties implements Lifecycle, FilenameFilter {
     private static final Pattern INTERPOLATE_PTN = Pattern.compile("[#|$]\\{([^}]+)\\}");
     Logger logger = LoggerFactory.getLogger(ApplyToSystemProperties.class);
-    private boolean running;
+    private boolean    running;
     private Properties properties;
 
     @Override
     public void start() {
         running = true;
-        properties = listProperties(System.getProperty("app.home"));
         Map<String, Object> map = new HashMap<String, Object>();
-        Set<String> propertyNames = System.getProperties().stringPropertyNames();
-        for (String propertyName : propertyNames) {
-            map.put(propertyName, System.getProperty(propertyName));
-        }
-        propertyNames = properties.stringPropertyNames();
+        properties = listProperties(System.getProperty("app.home"));
+        //add properties to map
+        Set<String> propertyNames = properties.stringPropertyNames();
         for (String propertyName : propertyNames) {
             map.put(propertyName, properties.getProperty(propertyName));
         }
+        //add system properties to map
+        propertyNames = System.getProperties().stringPropertyNames();
+        for (String propertyName : propertyNames) {
+            map.put(propertyName, System.getProperty(propertyName));
+        }
+        //Evaluate properties by context map
         VariableResolver resolver = new VariableResolver.MapResolver(map);
+        resolver = new VariableResolver.DefaultAwareResolver(resolver);
         // support value with ${variable} or #{variable}
         Enumeration<?> en = properties.propertyNames();
         while (en.hasMoreElements()) {
@@ -50,15 +54,16 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
             String newValue = interpolate(value, resolver);
             properties.setProperty(key, newValue);
         }
+        // Set properties to system, or update itself by system
         applyProperties(properties);
     }
 
     @Override
     public boolean accept(File dir, String name) {
         String configFile = System.getProperty("app.config");
-        if(StringUtils.isBlank(configFile))
+        if (StringUtils.isBlank(configFile))
             return name.endsWith(".properties");
-        else{
+        else {
             return name.equalsIgnoreCase(configFile);
         }
     }
@@ -80,14 +85,14 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
                     fis.close();
                 }
             } catch (IOException e) {
-                logger.error("Can't load properties from: "+ propertyFile.getPath(), e);
+                logger.error("Can't load properties from: " + propertyFile.getPath(), e);
             }
         }
         return properties;
     }
 
     @ManagedAttribute
-    public Properties getProperties(){
+    public Properties getProperties() {
         return properties;
     }
 
@@ -96,12 +101,13 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter{
         for (String name : names) {
             String property = properties.getProperty(name);
             String exist = System.getProperty(name);
-            if(exist != null && !exist.equals(property)){
-                logger.warn("Override System Property {}: {} => {}", name, exist, property);
-            }else{
-                logger.trace("Set System Property {} = {}", name, property);
+            if (StringUtils.isBlank(exist)) {
+                //配置文件不能覆盖用户通过命令行 -D 定义过的系统属性
+                System.setProperty(name, property);
+            } else {
+                logger.debug("{}={} is shield by system, value = {}", name, property, exist);
+                properties.setProperty(name, exist);
             }
-            System.setProperty(name, property);
         }
     }
 

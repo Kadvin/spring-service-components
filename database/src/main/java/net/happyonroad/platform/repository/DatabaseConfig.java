@@ -5,7 +5,6 @@ package net.happyonroad.platform.repository;
 
 import net.happyonroad.spring.service.ServiceExporter;
 import net.happyonroad.util.StringAwareTypeHandler;
-import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -13,7 +12,6 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -57,13 +55,7 @@ public class DatabaseConfig implements InitializingBean {
         String dbPort = System.getProperty("db.port", "3306");
         String dbUser = System.getProperty("db.user", "itsnow");
         String dbPass = System.getProperty("db.password", "secret");
-        String appId = System.getProperty("app.id", System.getProperty("app.name"));
-        if(StringUtils.isBlank(appId) || "<undefined>".equalsIgnoreCase(appId)){
-            throw new ApplicationContextException("the app id is not defined");
-        }
-
-        String dbName = System.getProperty("db.name", "itsnow_" + appId);
-        System.setProperty("db.name", dbName);
+        String dbName = System.getProperty("db.name");
         //注意: 必须设置 allowMultiQueries=true，这样 mybatis 才能使用底层的MySQL Driver一次提交多个语句（如insert2张表)
         String dbUrl = format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true",
                               dbHost, dbPort, dbName);

@@ -4,6 +4,7 @@
 package net.happyonroad.redis;
 
 import net.happyonroad.messaging.MessageListener;
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.NamedThreadFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ class RedisPubSubClient extends JedisPubSub implements Runnable, PubSubClient {
         this.listener = listener;
 
         Thread thread = factory.newThread(this);
-        thread.setName("RedisQueue-" + StringUtils.join(channels, ","));
+        thread.setName("Redis-" + StringUtils.join(channels, ",") + "-" + listener.toString());
         thread.setDaemon(true);
         thread.start();
     }
@@ -120,7 +121,7 @@ class RedisPubSubClient extends JedisPubSub implements Runnable, PubSubClient {
                 listener.onMessage(channel, message);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error(MiscUtils.describeException(e));
         }
     }
 

@@ -1,8 +1,10 @@
 package net.happyonroad.event;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.happyonroad.util.StringUtils;
+import net.happyonroad.model.Record;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * <h1>进程之间的事件</h1>
@@ -11,38 +13,46 @@ import net.happyonroad.util.StringUtils;
  */
 public class BroadcastEvent<Model> extends AbstractEvent<Model> {
     private static final long serialVersionUID = 1607061315920556154L;
-    private String appIndex;
 
     public BroadcastEvent(@JsonProperty("source") Model source) {
         super(source);
-        this.appIndex = System.getProperty("app.index");
-    }
-
-    public String getAppIndex() {
-        return appIndex;
-    }
-
-    public void setAppIndex(String appIndex) {
-        this.appIndex = appIndex;
-    }
-
-    @JsonIgnore
-    public boolean isNative(){
-        return StringUtils.equals(getAppIndex(), System.getProperty("app.index"));
     }
 
     public static <M> BroadcastEvent<M> broadcast(ObjectEvent<M> origin) {
         BroadcastEvent<M> event;
+        M source = process(origin.getSource());
         if (origin instanceof ObjectCreatedEvent) {
-            event = new ObjectCreatedBroadcastEvent<M>(origin.getSource());
+            event = new ObjectCreatedBroadcastEvent<M>(source);
         } else if (origin instanceof ObjectDestroyedEvent) {
-            event = new ObjectDestroyedBroadcastEvent<M>(origin.getSource());
+            event = new ObjectDestroyedBroadcastEvent<M>(source);
         } else if (origin instanceof ObjectUpdatedEvent) {
             ObjectUpdatedEvent<M> updatedEvent = (ObjectUpdatedEvent<M>) origin;
-            event = new ObjectUpdatedBroadcastEvent<M>(updatedEvent.getSource(), updatedEvent.getLegacy());
+            Object legacy = process(updatedEvent.getLegacy());
+            event = new ObjectUpdatedBroadcastEvent<M>(source, legacy);
         } else {
             throw new UnsupportedOperationException("Can't convert " + origin + " as broadcast event now");
         }
         return event;
+    }
+
+    //为了防止直接将Mybatis Enhancer传入
+    static <M> M process(M instance){
+        Class<?> klass = instance.getClass();
+        if(!isProxied(klass))
+            return instance;
+        try {
+            Constructor<?> constructor = klass.getSuperclass().getConstructor();
+            Method apply = klass.getSuperclass().getMethod("apply", Record.class, String[].class);
+            //noinspection unchecked
+            M unwrap = (M) constructor.newInstance();
+            apply.invoke(unwrap, instance, new String[0]);
+            return unwrap;
+        }catch (Exception ex){
+            return instance;
+        }
+    }
+
+    static boolean isProxied(Class klass){
+        return klass.getName().contains("$$EnhancerByCGLIB$$");
     }
 }

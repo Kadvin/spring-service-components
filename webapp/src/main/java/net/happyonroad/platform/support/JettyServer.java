@@ -3,6 +3,7 @@
  */
 package net.happyonroad.platform.support;
 
+import net.happyonroad.component.container.AppLauncher;
 import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.spring.Bean;
 import org.apache.commons.lang.SystemUtils;
@@ -26,7 +27,6 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Component;
@@ -43,22 +43,20 @@ import java.util.List;
 /** The Jetty Server Instance */
 @Component
 class JettyServer extends Bean {
-    private static final String LOG_PATH = "logs/jetty_access.log";
+    private static final String LOG_PATH = "logs/jetty_access";
 
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private GlobalClassLoader  classLoader;
 
-    @Value("${app.host}")
-    private String  host;
-    @Value("${http.port}")
-    private Integer port;
     // the jetty server
     private Server  server;
 
     public void performStart() {
         try {
+            String host = System.getProperty("app.host");
+            int port = Integer.valueOf(System.getProperty("http.port"));
             server = new Server(new InetSocketAddress(host, port));
 
             WebAppContext jspContext = createJspContext();
@@ -181,8 +179,13 @@ class JettyServer extends Bean {
 
     private RequestLog createRequestLog() {
         NCSARequestLog log = new NCSARequestLog();
-
-        File logPath = new File(LOG_PATH);
+        int appIndex = AppLauncher.readSystemAppIndex();
+        File logPath;
+        if( appIndex == 0 ){
+            logPath = new File(LOG_PATH + ".log");
+        }else{
+            logPath = new File(LOG_PATH + "_" + appIndex + ".log");
+        }
         //noinspection ResultOfMethodCallIgnored
         logPath.getParentFile().mkdirs();
 
