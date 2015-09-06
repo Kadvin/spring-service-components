@@ -47,7 +47,7 @@ SpringMvcLoader读取以下系统属性决定WEB服务的根Context Path
 
 * 开发者应该为自己的组件配置Manifest属性Web-Repository(如果能从上级pom继承该配置亦可)
 
-```
+```xml
     <build>
         <plugins>
             <plugin>
@@ -87,7 +87,7 @@ SpringMvcLoader读取以下系统属性决定WEB服务的根Context Path
 
   WebApp会扫描所有控制器的RequestMapping，形成Routes的结果，另外，以上的注释，开发者只需要为控制器方法增加`@Description`标记即可，如：
 
-```
+```java
 @RestController
 @RequestMapping("/api/categories")
 class CategoriesController extends GreedyPathController<Category> {
@@ -112,7 +112,7 @@ class CategoriesController extends GreedyPathController<Category> {
 典型的控制器，show/update/delete等方法的RESTFul URL为 [GET|PUT|DELETE] /users/:id
 其实现逻辑中，均要进行对象User的查询，如下：
 
-```
+```java
 @RestController
 public class UsersController extends ApplicationController{
   @Autowired 
@@ -143,7 +143,7 @@ public class UsersController extends ApplicationController{
 
 以上几个函数中，查询user是重复的，基于BeforeFilter，可以改写为:
 
-```
+```java
 @RestController
 public class UsersController extends ApplicationController{
   @Autowired
@@ -183,7 +183,7 @@ public class UsersController extends ApplicationController{
   * count: 每页条目
   * sort: 排序方式
    
-```
+```java
     protected PageRequest pageRequest;
     protected Page<T> indexPage;
 
@@ -198,7 +198,7 @@ public class UsersController extends ApplicationController{
    
 所以典型的 index 可以实现为:
    
-```
+```java
 @RestController
 public class UsersController extends ApplicationController<User> {
     @Autowired
@@ -266,7 +266,7 @@ C、 用户授权
 
 1、 开发者应该为自己的组件配置Manifest属性DB-Repository(从上级pom继承该配置亦可)
 
-```
+```xml
     <build>
         <plugins>
             <plugin>
