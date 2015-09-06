@@ -232,6 +232,7 @@ public class UsersController extends ApplicationController<User> {
 
 A、 CRSF保护
 通过`GET /security/csrf` 可以获取当前的CSRF信息，如下：
+
 ```json
 {
   "headerName":"X-CSRF-TOKEN",
@@ -289,10 +290,10 @@ C、 用户授权
 
 4、 如果对mybatis有配置，应该放在各个组件包的 /META-INF/mybatis.xml 文件中
  
-3 Redis组件 
-===
+3. Redis组件 
+===========
 
-Redis组件被用作如下两个作用：
+  Redis组件被用作如下两个作用：
 
 1. Cache组件(参见 `CacheService` )
    * 用MapContainer存储Key/Value(如缓存的元模型实例)
