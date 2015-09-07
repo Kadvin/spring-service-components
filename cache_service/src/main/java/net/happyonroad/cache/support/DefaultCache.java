@@ -72,6 +72,11 @@ public class DefaultCache extends Bean implements MutableCacheService {
     }
 
     @Override
+    public void pexpire(String key, int milliseconds) {
+        logger.warn("Default Cache not support expire, ignore it");
+    }
+
+    @Override
     public String getMapString(String mapName, String field) {
         return getMapContainer(mapName).get(field);
     }

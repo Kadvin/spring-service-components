@@ -152,6 +152,16 @@ class RedisCache extends Bean implements MutableCacheService {
         });
     }
 
+    @Override
+    public void pexpire(final String key, final int milliseconds) {
+        this.withRunnable(new RedisRunnable() {
+            @Override
+            public void run(Jedis jedis) {
+                jedis.pexpire(key, milliseconds);
+            }
+        });
+    }
+
     ////////////////////////////////////////////////
     // Mutable Cache Service
     ////////////////////////////////////////////////
