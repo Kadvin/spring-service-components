@@ -91,6 +91,15 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
         return objectCache.values();
     }
 
+    /**
+     * <h2>获取当前缓存的所有对象Key</h2>
+     *
+     * @return 对象Key集合
+     */
+    protected Collection<K> cachedKeys() {
+        return objectCache.keySet();
+    }
+
     protected void innerAdd(V value) {
         K key = parseKey(value);
         cache(key, value);
