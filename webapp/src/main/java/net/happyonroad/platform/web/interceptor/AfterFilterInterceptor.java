@@ -41,7 +41,7 @@ public class AfterFilterInterceptor extends AbstractFilterInterceptor{
         while (iterator.hasNext()) {
             AnnotatedMethod<AfterFilter> annotatedMethod = iterator.next();
             AfterFilter annotation = annotatedMethod.annotation;
-            if( !matchesTo(request, handleMethod, annotation.method(), annotation.value())) {
+            if( !matchesTo(request, handleMethod, annotation.method(), annotation.value(), annotation.render())) {
                 iterator.remove();
             }
         }

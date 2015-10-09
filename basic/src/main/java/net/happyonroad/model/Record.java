@@ -172,4 +172,9 @@ public class Record implements Cloneable, Serializable{
     public String getClassName() {
         return reduceCglibName(getClass().getName());
     }
+
+    @JsonIgnore
+    public String getSimpleName() {
+        return reduceCglibName(getClass().getSimpleName());
+    }
 }

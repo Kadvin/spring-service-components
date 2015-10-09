@@ -85,7 +85,11 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    protected boolean matchesTo(HttpServletRequest request, Method handleMethod, RequestMethod[] method, String[] value) {
+    protected boolean matchesTo(HttpServletRequest request,
+                                Method handleMethod,
+                                RequestMethod[] method,
+                                String[] value,
+                                Class renderClass) {
         if (method.length > 0) {
             String httpMethod = request.getMethod();
             boolean accept = false;
@@ -108,7 +112,8 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
             }
             if (!accept) return false;
         }
-        return true;
+        //noinspection unchecked
+        return renderClass == Object.class || renderClass.isAssignableFrom(handleMethod.getReturnType());
     }
 
     protected Class findControllerClass(Object handler) {

@@ -33,4 +33,11 @@ public @interface AfterFilter {
      * @return 过滤器适用的method名称, 不需要签名和返回值信息
      */
     String[] value() default {};
+
+    /**
+     * <h2>过滤器使用的返回值类型，默认为Object.class，说明<strong>不</strong>适用于任何类型</h2>
+     *
+     * @return 返回值类型
+     */
+    Class render() default Object.class;
 }
