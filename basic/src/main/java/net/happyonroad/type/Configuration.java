@@ -12,9 +12,9 @@ import java.util.Set;
 public enum Configuration {
     // 配置变化与否未知
     Unknown("U"), //ordinal = 0
-    // 配置发生变更
-    Unchanged("N"),//ordinal = 1
     // 配置未变更
+    Unchanged("N"),//ordinal = 1
+    // 配置发生变更
     Changed("C"); //ordinal = 2
 
 

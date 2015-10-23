@@ -5,14 +5,16 @@ package net.happyonroad.platform.web.support;
 
 import net.happyonroad.component.container.LaunchEnvironment;
 import net.happyonroad.component.container.event.ContainerStartedEvent;
+import net.happyonroad.component.core.Component;
 import net.happyonroad.event.ExtensionLoadedEvent;
 import net.happyonroad.platform.web.SpringMvcConfig;
 import net.happyonroad.platform.web.controller.ApplicationController;
 import net.happyonroad.platform.web.model.RouteItem;
-import net.happyonroad.component.core.Component;
+import net.happyonroad.util.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -69,9 +72,14 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
         theApplicationContext = application;
         if (application == null) return;// it's not a component with application
         // controllers 是注册在parent中的
+        // 发现一个bug，当controller实习了额外的接口，由于控制器又会被proxy，所以以下代码的判断将会错误
         String[] controllerNames = application.getBeanNamesForType(ApplicationController.class);
-        for (String controllerName : controllerNames) {
-            detectHandlerMethods(controllerName);
+        Set<String> names = new HashSet<String>();
+        Collections.addAll(names, controllerNames);
+        controllerNames = application.getBeanNamesForAnnotation(Controller.class);
+        Collections.addAll(names, controllerNames);
+        for (String name : names) {
+            detectHandlerMethods(name);
         }
         theApplicationContext = null;
     }
@@ -91,9 +99,24 @@ public class ExtendedRequestMappingHandlerMapping extends RequestMappingHandlerM
      * @param handler the bean name of a handler or a handler instance
      */
     protected synchronized void detectHandlerMethods(final Object handler) {
-        Class<?> handlerType = (handler instanceof String ? theApplicationContext().getType((String) handler) :
-                                handler.getClass());
-
+        Object real;
+        if(handler instanceof String){
+            real = theApplicationContext().getBean((String) handler);
+        }else{
+            real = handler;
+        }
+        Class<?> handlerType;
+        if(Proxy.isProxyClass(real.getClass())){
+            String className = StringUtils.substringBefore(real.toString(), "@");
+            try {
+                handlerType = ClassUtils.forName(className, theApplicationContext().getClassLoader());
+            }catch (Exception ex ){
+                logger.warn("Can't reflect " + className + " by " + theApplicationContext().getClassLoader());
+                return;
+            }
+        }else{
+            handlerType = real.getClass();
+        }
         //在许多情况下，会重复对某个控制器进行方法解析
         if (handled(handlerType)) return;
         else handle(handlerType);

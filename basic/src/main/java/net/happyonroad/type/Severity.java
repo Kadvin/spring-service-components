@@ -9,7 +9,7 @@ package net.happyonroad.type;
 public enum Severity {
     /* 清除 */
     CLEAR(0),
-    /* 一般 */
+    /* 提示 */
     INDETERMINATE(1),
     /* 警告 */
     WARNING(2),

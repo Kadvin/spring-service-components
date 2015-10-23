@@ -6,6 +6,7 @@ package net.happyonroad.menu.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Record;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Collections;
  * <p/>
  * 不同的系统看到不同的菜单体系，不同的用户，根据其权限看到不同的菜单
  */
-public class MenuItem extends Record implements Comparable<MenuItem>{
+public class MenuItem extends Record implements Comparable<MenuItem>, GrantedAuthority{
 
     private static final long serialVersionUID = -505459385582952169L;
     // 父菜单ID
@@ -41,8 +42,6 @@ public class MenuItem extends Record implements Comparable<MenuItem>{
     private String         shortcut;
     // 子菜单
     private List<MenuItem> children;
-
-    private String path;
 
     public String getPath() {
         if (parent == null) {
@@ -149,5 +148,10 @@ public class MenuItem extends Record implements Comparable<MenuItem>{
                 ", shortcut='" + shortcut + '\'' +
                 ", children=" + children +
                 '}';
+    }
+
+    @Override
+    public String getAuthority() {
+        return getName();
     }
 }
