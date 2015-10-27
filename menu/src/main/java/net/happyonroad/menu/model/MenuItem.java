@@ -29,6 +29,8 @@ public class MenuItem extends Record implements Comparable<MenuItem>, GrantedAut
     // 菜单名称
     @NotBlank
     private String         name;
+    // 显示名称
+    private String         label;
     // 菜单对应的angular state
     @NotBlank
     private String         state;
@@ -91,6 +93,14 @@ public class MenuItem extends Record implements Comparable<MenuItem>, GrantedAut
         this.name = name;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     public String getCss() {
         return css;
     }
@@ -141,6 +151,7 @@ public class MenuItem extends Record implements Comparable<MenuItem>, GrantedAut
         return "MenuItem{" +
                 "parentId=" + parentId +
                 ", name='" + name + '\'' +
+                ", label='" + label + '\'' +
                 ", state='" + state + '\'' +
                 ", css='" + css + '\'' +
                 ", description='" + description + '\'' +

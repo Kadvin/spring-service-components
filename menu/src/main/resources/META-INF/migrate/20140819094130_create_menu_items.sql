@@ -2,10 +2,11 @@
 -- Migration SQL that makes the change goes here.
 
 CREATE TABLE IF NOT EXISTS menu_items (
-  id          BIGINT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  parent_id   BIGINT(10) UNSIGNED,
+  id           BIGINT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  parent_id    BIGINT(10) UNSIGNED,
   name         VARCHAR(100)     NOT NULL,
-  state        VARCHAR(100)     NOT NULL UNIQUE,
+  label        VARCHAR(100)     NOT NULL,
+  state        VARCHAR(100)     NOT NULL,
   css          VARCHAR(100),
   position     INT(10) UNSIGNED,
   shortcut     VARCHAR(100),

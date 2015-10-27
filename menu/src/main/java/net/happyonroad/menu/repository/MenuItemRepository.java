@@ -10,9 +10,9 @@ import java.util.List;
  */
 public interface MenuItemRepository {
 
-    @Options(useGeneratedKeys = true,keyColumn = "id")
-    @Insert("INSERT INTO menu_items (parent_id, name, type, state, css, position, shortcut, description) VALUES " +
-            "(#{parentId}, #{name}, #{type}, #{state}, #{css}, #{position} ,#{shortcut}, #{description})")
+    @Options(useGeneratedKeys = true, keyColumn = "id")
+    @Insert("INSERT INTO menu_items (parent_id, name, label, state, css, position, shortcut, description) VALUES " +
+            "(#{parentId}, #{name}, #{label}, #{state}, #{css}, #{position} ,#{shortcut}, #{description})")
     public long create(MenuItem menuItem);
 
     @Delete("DELETE FROM menu_items WHERE id = #{id}")
@@ -21,7 +21,7 @@ public interface MenuItemRepository {
     @Update("UPDATE menu_items SET " +
             " parent_id    = #{parentId}, " +
             " name         = #{name}, " +
-            " type         = #{type}," +
+            " label        = #{label}," +
             " state        = #{state}," +
             " css          = #{css} " +
             " position     = #{position} " +
