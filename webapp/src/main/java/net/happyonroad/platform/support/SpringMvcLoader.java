@@ -6,6 +6,9 @@ package net.happyonroad.platform.support;
 import net.happyonroad.component.container.event.ContainerEvent;
 import net.happyonroad.event.ObjectEvent;
 import net.happyonroad.event.SystemEvent;
+import net.happyonroad.platform.web.filter.BlockRequestBeforeSystemStarted;
+import net.happyonroad.platform.web.filter.BlockRequestWhenSystemStopping;
+import net.happyonroad.platform.web.filter.RespondCsrfFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,6 +43,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
     public static final String READY_FILTER_NAME  = "ItsNow.readyFilter";
     public static final String SHUTDOWN_FILTER_NAME  = "ItsNow.shutdownFilter";
     public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
+    public static final String CSRF_FILTER_NAME = "ItsNow.csrfFilter";
 
     ApplicationContext    applicationContext;
     WebApplicationContext webAppContext, securityAppContext;
@@ -52,6 +56,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
         super.onStartup(servletContext);
         registerBlockFilter(servletContext);
+//        registerCsrfFilter(servletContext);
         registerSecurityFilter(servletContext);
         registerHttpMethodFilter(servletContext);
     }
@@ -163,6 +168,13 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
         registration.setAsyncSupported(true);
         registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
         registration = servletContext.addFilter(SHUTDOWN_FILTER_NAME, BlockRequestWhenSystemStopping.class);
+        registration.setAsyncSupported(true);
+        registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
+    }
+
+    @SuppressWarnings("UnusedDeclaration maybe use later")
+    private void registerCsrfFilter(ServletContext servletContext) {
+        FilterRegistration.Dynamic registration = servletContext.addFilter(CSRF_FILTER_NAME, RespondCsrfFilter.class);
         registration.setAsyncSupported(true);
         registration.addMappingForServletNames(getDispatcherTypes(), false, getServletName());
     }

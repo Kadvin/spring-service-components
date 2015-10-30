@@ -22,14 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -102,15 +100,21 @@ public class ApplicationController<T extends Record> {
     }
 
     @BeforeFilter(order = 0)
-    protected void initCurrentUser(HttpServletRequest request) {
-        //TODO 该功能与自身实现的用户管理之间还需要整合
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("user"))
-            {
-                currentUser = new BasicUserPrincipal(cookie.getValue());
+    protected Principal initCurrentUser(HttpServletRequest request) {
+        Principal principal = null;
+        if( request.getUserPrincipal() != null ){
+            principal = request.getUserPrincipal();
+        }else{
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("user"))
+                {
+                    principal = new BasicUserPrincipal(cookie.getValue());
+                }
             }
         }
+        currentUser = principal;
+        return principal;
     }
 
     protected String currentUserName() {

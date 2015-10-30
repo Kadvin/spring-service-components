@@ -13,12 +13,20 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.lang.reflect.Method;
 
 /**
  * Work as parent of SpringMvcConfig
@@ -71,17 +79,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     /* 配置自动登录服务 */
     protected void configureRememberMe(HttpSecurity http) throws Exception {
         http.rememberMe()
-                .authenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler())
-                .tokenRepository(defaultTokenRepository())
+            .authenticationSuccessHandler(new SavedRequestAwareAuthenticationSuccessHandler())
+            .tokenRepository(defaultTokenRepository())
                 .tokenValiditySeconds(60 * 60 * 24 * 30)//一个月
                 .useSecureCookie(true);
     }
 
     /* 配置登出服务 */
     protected void configureLogout(HttpSecurity http) throws Exception {
-        http.logout().invalidateHttpSession(true).logoutSuccessUrl("/login.html")
-                .logoutRequestMatcher(logoutRequestMatcher())
-                .logoutSuccessHandler(logoutSuccessHandler());
+        http.logout().invalidateHttpSession(true).logoutSuccessUrl(loginUrl())
+            .logoutRequestMatcher(logoutRequestMatcher())
+            .logoutSuccessHandler(logoutSuccessHandler());
     }
 
     /* 配置会话服务 */
@@ -90,26 +98,40 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /* 配置请求限制 */
-    protected void configureAuthorizeRequests(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeRequests) throws Exception {
+    protected void configureAuthorizeRequests(
+            ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authorizeRequests)
+            throws Exception {
         // 若以后支持手机客户端访问，那个时候可能就需要基于Digest-Authentication
         //谁在前，谁优先级高
-        authorizeRequests.antMatchers(HttpMethod.POST, "api/session").anonymous()
-                .antMatchers("/login.html").anonymous() // use spring interceptor
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/index.html").not().anonymous()
+        authorizeRequests.antMatchers(HttpMethod.POST, urlPath("/api/session")).anonymous()
+                         .antMatchers(loginUrl()).anonymous() // use spring interceptor
+                .antMatchers(urlPath("/api/**")).not().anonymous()
+                .antMatchers(homeUrl()).not().anonymous()
                 .antMatchers("/**").permitAll();
     }
 
+    protected String loginUrl() {
+        return "/login.html";
+    }
+
+    protected String homeUrl() {
+        return "/index.html";
+    }
+
     protected void configureLoginForm(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .loginPage("/login.html")
-                .loginProcessingUrl("/api/session")
-                .successHandler(successHandler())
-                .failureHandler(authenticationFailureHandler());
+        FormLoginConfigurer<HttpSecurity> form = http.formLogin();
+        form.loginPage(loginUrl())
+            .loginProcessingUrl(urlPath("/api/session"))
+            .successHandler(successHandler())
+            .failureHandler(authenticationFailureHandler());
+        Method method = AbstractAuthenticationFilterConfigurer.class.getDeclaredMethod("getAuthenticationFilter");
+        method.setAccessible(true);
+        AbstractAuthenticationProcessingFilter filter = (AbstractAuthenticationProcessingFilter) method.invoke(form);
+        filter.setContinueChainBeforeSuccessfulAuthentication(true);
     }
 
     protected String[] csrfExcludeUrls() {
-        return new String[]{"/south", "/north"};
+        return new String[]{urlPath("/south"), urlPath("/north")};
     }
 
     @Bean
@@ -128,20 +150,25 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return new InMemoryTokenRepositoryImpl();
     }
 
-    protected DefaultAuthenticationFailureHandler authenticationFailureHandler() {
+    protected AuthenticationFailureHandler authenticationFailureHandler() {
         return new DefaultAuthenticationFailureHandler();
     }
 
-    protected DefaultAuthenticationSuccessHandler successHandler() {
+    protected AuthenticationSuccessHandler successHandler() {
         return new DefaultAuthenticationSuccessHandler();
     }
 
-    protected DefaultLogoutSuccessHandler logoutSuccessHandler() {
+    protected LogoutSuccessHandler logoutSuccessHandler() {
         return new DefaultLogoutSuccessHandler();
     }
 
     protected AntPathRequestMatcher logoutRequestMatcher() {
-        return new AntPathRequestMatcher("/api/session", "DELETE");
+        return new AntPathRequestMatcher(urlPath("/api/session"), "DELETE");
     }
+
+    protected String urlPath(String origin) {
+        return origin;
+    }
+
 
 }

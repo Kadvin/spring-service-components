@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+
 /**
  * <h1>将Spring Security的Session功能以控制器URL的方式显性化</h1>
  */
@@ -17,12 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class SessionController extends ApplicationController {
     /**
      * <h2>登录</h2>
-     * POST /api/session
+     * POST /api/session?username={string}&password={string}
      */
     @RequestMapping(method = RequestMethod.POST)
-    @Description("登录")
-    public void login(){
+    @Description("登录，需要传入username,password参数")
+    public Principal login(HttpServletRequest request){
         // Spring Security 已经做了所有的事情，这里暂时不需要做任何事情
+        return show(request);
+    }
+
+    /**
+     * <h2>查看当前会话</h2>
+     * POST /api/session
+     */
+    @RequestMapping
+    @Description("查看当前会话")
+    public Principal show(HttpServletRequest request){
+        return initCurrentUser(request);
     }
 
 
@@ -33,7 +47,7 @@ public class SessionController extends ApplicationController {
     @RequestMapping(method = RequestMethod.DELETE)
     @Description("登出")
     public void logout(){
-        // 不需要做任何事情
+        this.currentUser = null;
     }
 
     /**

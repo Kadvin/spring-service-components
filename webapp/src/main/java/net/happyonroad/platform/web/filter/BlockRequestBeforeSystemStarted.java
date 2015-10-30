@@ -1,4 +1,4 @@
-package net.happyonroad.platform.support;
+package net.happyonroad.platform.web.filter;
 
 import net.happyonroad.event.SystemStartedEvent;
 import org.springframework.context.ApplicationListener;
