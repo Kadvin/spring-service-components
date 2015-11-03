@@ -28,7 +28,7 @@ public class ConfigurableRequestMatcher implements RequestMatcher {
     @Override
     public boolean matches(HttpServletRequest request) {
         for (String url : excludedUrls) {
-            if ( request.getServletPath().startsWith(url) )
+            if ( request.getRequestURI().startsWith(url) )
                return false;
         }
         return !allowedMethodPattern.matcher(request.getMethod()).matches();
