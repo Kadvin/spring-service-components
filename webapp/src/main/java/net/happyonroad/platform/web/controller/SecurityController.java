@@ -16,14 +16,14 @@ import java.util.Map;
  * <h1>返回安全全局信息</h1>
  */
 @RestController
-@RequestMapping("/security")
+@RequestMapping("/api")
 public class SecurityController extends ApplicationController {
 
     /**
      *
      * <h2>返回CSRF信息</h2>
      *
-     * GET /security/csrf
+     * GET /api/csrf
      *
      * @param request  请求
      * @return CSRF的header/parameter name, token

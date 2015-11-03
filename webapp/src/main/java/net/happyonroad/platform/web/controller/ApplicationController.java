@@ -106,7 +106,7 @@ public class ApplicationController<T extends Record> {
             principal = request.getUserPrincipal();
         }else{
             Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies) {
+            if (cookies != null ) for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("user"))
                 {
                     principal = new BasicUserPrincipal(cookie.getValue());

@@ -26,7 +26,7 @@ import java.util.Map;
  * <h1>用于显示平台中所有已经映射的路由</h1>
  */
 @RestController
-@RequestMapping("/routes")
+@RequestMapping("/api/routes")
 public class RoutesController extends ApplicationController{
     @Autowired RequestMappingHandlerMapping mappings;
 
@@ -34,7 +34,7 @@ public class RoutesController extends ApplicationController{
      *
      * <h2>返回所有的路由信息</h2>
      *
-     * GET /routes
+     * GET /api/routes
      *
      * @param method  请求方法
      * @param pattern url特征

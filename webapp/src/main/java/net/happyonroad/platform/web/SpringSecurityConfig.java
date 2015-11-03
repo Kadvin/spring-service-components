@@ -105,6 +105,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         //谁在前，谁优先级高
         authorizeRequests.antMatchers(HttpMethod.POST, urlPath("/api/session")).anonymous()
                          .antMatchers(loginUrl()).anonymous() // use spring interceptor
+                .antMatchers(urlPath("/api/routes")).permitAll()
+                .antMatchers(urlPath("/api/csrf")).permitAll()
                 .antMatchers(urlPath("/api/**")).not().anonymous()
                 .antMatchers(homeUrl()).not().anonymous()
                 .antMatchers("/**").permitAll();
