@@ -88,6 +88,8 @@ class JettyServer extends Bean {
         context.getServletContext().setAttribute("application", applicationContext);
         context.setConfigurations(new Configuration[]{new JettyAnnotationConfiguration()});
         context.addAliasCheck(new AllowSymLinkAliasChecker());
+        // Unit Byte, we set 50Mb as max
+        context.setMaxFormContentSize(50 * 1024 * 1024);
         return context;
     }
 
