@@ -87,11 +87,13 @@ public class TimeInterval implements Serializable{
      */
     public static String parse(long milliseconds){
         if( milliseconds == 0 ) return "0ms";
-        long year, month, day, hour, minute, second, ms;
+        long year, month, week, day, hour, minute, second, ms;
         year = milliseconds / unitValue("y");
         long left = milliseconds % unitValue("y");
         month = left / unitValue("M");
         left = milliseconds % unitValue("M");
+        week = left / unitValue("w");
+        left = milliseconds % unitValue("w");
         day = left / unitValue("d");
         left = milliseconds % unitValue("d");
         hour = left / unitValue("h");
@@ -103,6 +105,7 @@ public class TimeInterval implements Serializable{
         StringBuilder sb = new StringBuilder();
         if(year > 0 )sb.append(year).append("y");
         if(month > 0 )sb.append(month).append("M");
+        if(week > 0 )sb.append(week).append("w");
         if(day > 0 )sb.append(day).append("d");
         if(hour > 0 )sb.append(hour).append("h");
         if(minute > 0 )sb.append(minute).append("m");

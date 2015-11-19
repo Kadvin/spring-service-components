@@ -7,19 +7,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  * @author Jay Xiong
  */
-public class LocalCredential implements CliCredential, WmiCredential {
+public class LocalCredential extends AbstractCredential implements CliCredential, WmiCredential {
 
     private static final long serialVersionUID = -7566065997165248098L;
+
+    public LocalCredential() {
+        setType(Local);
+        setName(Local);
+    }
 
     @JsonIgnore
     @Override
     public int getOrder() {
         return 0;
-    }
-
-    @Override
-    public String name() {
-        return Local;
     }
 
     public String toString(){

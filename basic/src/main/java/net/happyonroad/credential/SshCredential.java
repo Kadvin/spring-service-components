@@ -8,6 +8,7 @@ import net.happyonroad.util.ParseUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.security.PublicKey;
 import java.util.Collections;
 import java.util.Map;
 
@@ -16,11 +17,20 @@ import java.util.Map;
  * 虽然在现实中，几乎只有*nix主机采用SSH认证后采集方式
  * 但其实Windows主机也可以在开通SSH服务之后，采用SSH认证/PowerShell, Batch, VBS采集方式
  */
-public class SshCredential implements CliCredential {
+public class SshCredential extends AbstractCredential implements CliCredential {
     private static final long serialVersionUID = 6186435172976706185L;
-    public static final int DEFAULT_TIMEOUT = 1000 * 30;
+    public static final  int  DEFAULT_TIMEOUT  = 1000 * 30;
+
+    public static final String AUTH_PASSWORD    = "password";
+    public static final String AUTH_PUBLICKEY   = "publickey";
+    public static final String AUTH_INTERACTIVE = "interactive";
+    public static final String AUTH_NONE        = "none";
+
+    private String authenticateMethod;// password, publickey, interactive, none
+    // 当认证方式为 publickey时，用户名/密码仍然是需要的，只是此时的密码是对私钥的保护密码
     private String user, password;
-    private String permFile;
+    // 私钥有两种方式，一种是文件，一种直接是内容
+    private String permFile, privateKey;
     //SSH的端口
     private int port = 22;
     private int timeout;
@@ -30,36 +40,42 @@ public class SshCredential implements CliCredential {
     }
 
     public SshCredential(String user, String password) {
-        this.user = user;
-        this.password = password;
-        this.port = 22;
-        this.timeout = DEFAULT_TIMEOUT;
+        setType(Ssh);
+        setUser(user);
+        setAuthenticateMethod(AUTH_PASSWORD);
+        setPassword(password);
+        setPort(22);
+        setTimeout(DEFAULT_TIMEOUT);
     }
 
     public SshCredential(String user, File permFile) {
-        this.user = user;
-        this.permFile = permFile.getAbsolutePath();
-        this.port = 22;
-        this.timeout = DEFAULT_TIMEOUT;
+        setType(Ssh);
+        setUser(user);
+        setAuthenticateMethod(AUTH_PUBLICKEY);
+        setPermFile(permFile.getAbsolutePath());
+        setPort(22);
+        setTimeout(DEFAULT_TIMEOUT);
     }
 
     public SshCredential(Map map) {
-        this.user = (String) map.get("user");
-        this.password = (String) map.get("password");
-        this.permFile = (String) map.get("permFile");
-        this.port = ParseUtils.parseInt(map.get("port"), 22);
-        this.timeout = ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT);
+        setType(Ssh);
+        setName((String) map.get("name"));
+        if (getName() == null) setName(getType());
+        setUser((String) map.get("user"));
+        setPassword((String) map.get("password"));
+        setPermFile((String) map.get("permFile"));
+        setPrivateKey((String) map.get("privateKey"));
+        if (StringUtils.hasText(this.permFile) || StringUtils.hasText(this.privateKey)) {
+            setAuthenticateMethod(AUTH_PUBLICKEY);
+        }
+        setPort(ParseUtils.parseInt(map.get("port"), 22));
+        setTimeout(ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT));
     }
 
     @JsonIgnore
     @Override
     public int getOrder() {
         return 20;
-    }
-
-    @Override
-    public String name() {
-        return Ssh;
     }
 
     public String getUser() {
@@ -102,6 +118,22 @@ public class SshCredential implements CliCredential {
         this.timeout = timeout;
     }
 
+    public String getAuthenticateMethod() {
+        return authenticateMethod;
+    }
+
+    public void setAuthenticateMethod(String authenticateMethod) {
+        this.authenticateMethod = authenticateMethod;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -124,15 +156,15 @@ public class SshCredential implements CliCredential {
         return result;
     }
 
-    public String toString(){
+    public String toString() {
         return "SshCredential(" + user + ")";
     }
 
-    public boolean hasPassword() {
-        return !StringUtils.isEmpty(password);
+    public boolean isAuthByPassword() {
+        return AUTH_PASSWORD.equals(this.authenticateMethod);
     }
 
-    public boolean hasPermFile() {
-        return !StringUtils.isEmpty(permFile);
+    public boolean isAuthByPublickey() {
+        return AUTH_PUBLICKEY.equals(this.authenticateMethod);
     }
 }

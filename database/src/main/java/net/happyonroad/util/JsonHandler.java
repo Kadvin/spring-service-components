@@ -17,6 +17,7 @@ import java.sql.SQLException;
  * Json Mybatis Handler
  */
 @MappedJdbcTypes(JdbcType.VARCHAR)
+@Deprecated
 public class JsonHandler implements TypeHandler<Object> {
     public static final String SPLIT = "@@->";
 

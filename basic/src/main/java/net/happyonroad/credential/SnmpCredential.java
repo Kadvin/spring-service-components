@@ -23,8 +23,9 @@ import static net.happyonroad.util.ParseUtils.parseString;
  * </ul>
  *
  */
-public class SnmpCredential implements Credential {
+public class SnmpCredential extends AbstractCredential {
     private static final long serialVersionUID = 5338739467961515785L;
+    private String name = Ssh; //ssh
     private String version; //v1, v2c, v3
     private String community;//shared between read/write
     private int    port; //161
@@ -46,6 +47,8 @@ public class SnmpCredential implements Credential {
 
     @SuppressWarnings("unchecked")
     public SnmpCredential(Map map) {
+        setType(Snmp);
+        setName(parseString(map.get("name"), getType()));
         setVersion(parseString(map.get("version"), "v2c"));
         setCommunity(parseString(map.get("community"), "public"));
         setPort(parseInt(map.get("port"), 161));
@@ -58,8 +61,12 @@ public class SnmpCredential implements Credential {
     }
 
     @Override
-    public String name() {
-        return Snmp;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVersion() {

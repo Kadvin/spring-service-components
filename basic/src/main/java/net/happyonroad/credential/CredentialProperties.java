@@ -21,7 +21,20 @@ public class CredentialProperties extends Properties implements Credential {
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return getProperty("name");
+    }
+
+    public void setName(String name){
+        setProperty("name", name);
+    }
+
+    @Override
+    public String getType() {
+        return getProperty("type");
+    }
+
+    public void setType(String type){
+        setProperty("type", type);
     }
 }

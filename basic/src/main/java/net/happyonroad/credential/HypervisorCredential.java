@@ -13,7 +13,7 @@ import java.util.Map;
  * <h1>Hypervisor(Vmware, OpenStack, Xen) Credential</h1>
  * 通过 hypervisor 访问（具体使用方式尚不清楚）
  */
-public class HypervisorCredential implements Credential {
+public class HypervisorCredential extends AbstractCredential {
     private static final long serialVersionUID = 1241488875878014909L;
     private boolean https;
     private String user;
@@ -24,9 +24,11 @@ public class HypervisorCredential implements Credential {
     }
 
     public HypervisorCredential(Map map) {
+        setType(Hypervisor);
         if (map.containsKey("https")) {
             https = (Boolean) map.get("https");
         }
+        setName((String) map.get("name"));
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
     }
@@ -35,11 +37,6 @@ public class HypervisorCredential implements Credential {
     @Override
     public int getOrder() {
         return 30;
-    }
-
-    @Override
-    public String name() {
-        return Hypervisor;
     }
 
     public boolean isHttps() {

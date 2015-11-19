@@ -4,7 +4,6 @@
 package net.happyonroad.credential;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.happyonroad.model.Credential;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -18,7 +17,7 @@ import java.util.Map;
  * <li> WinRM
  * </ul>
  */
-public class WindowsCredential implements WmiCredential {
+public class WindowsCredential extends AbstractCredential implements WmiCredential {
     private static final long serialVersionUID = 1008151410229282958L;
     //认证域，可以为空
     private String domain;
@@ -33,6 +32,8 @@ public class WindowsCredential implements WmiCredential {
     }
 
     public WindowsCredential(Map map) {
+        setName ((String) map.get("name"));
+        if( getName() == null ) setName(Windows);
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
     }
@@ -41,11 +42,6 @@ public class WindowsCredential implements WmiCredential {
     @Override
     public int getOrder() {
         return 20;
-    }
-
-    @Override
-    public String name() {
-        return Windows;
     }
 
     public String getDomain() {

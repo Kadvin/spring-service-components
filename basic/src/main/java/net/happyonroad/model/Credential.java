@@ -33,5 +33,12 @@ public interface Credential extends Serializable, PriorityOrdered {
      *
      * @return 认证方式的名称
      */
-    String name();
+    String getName();
+
+    /**
+     * <h2>返回本认证方式的类型</h2>
+     *
+     * @return 认证方式的类型
+     */
+    String getType();
 }

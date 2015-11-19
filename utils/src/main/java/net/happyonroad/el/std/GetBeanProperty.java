@@ -2,7 +2,7 @@ package net.happyonroad.el.std;
 
 import net.happyonroad.el.CalculateException;
 import net.happyonroad.el.Calculator;
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 
 /**
  * <h1>根据名称读取相应对象属性的计算器</h1>
@@ -20,7 +20,7 @@ public class GetBeanProperty<In, Out> implements Calculator<In, Out> {
     @Override
     public Out calc(In input) throws CalculateException {
         try {
-            return (Out)BeanUtils.getProperty(input, property);
+            return (Out) PropertyUtils.getProperty(input, property);
         } catch (NoSuchMethodException e) {
             if( input instanceof Object[] && "length".equals(property))
                 return (Out)new Integer(((Object[])input).length);
