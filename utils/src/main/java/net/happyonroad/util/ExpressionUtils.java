@@ -313,6 +313,8 @@ public class ExpressionUtils {
         int result = one.compareTo(another);
         if (operator.equals("=") || operator.equals("==")) {
             return result == 0;
+        } else if (operator.equals("!=")) {
+            return result != 0;
         } else if (operator.equals(">")) {
             return result > 0;
         } else if (operator.equals(">=")) {

@@ -9,6 +9,8 @@ import net.happyonroad.model.Credential;
 import java.util.Collections;
 import java.util.Map;
 
+import static net.happyonroad.util.ParseUtils.parseBoolean;
+
 /**
  * <h1>Hypervisor(Vmware, OpenStack, Xen) Credential</h1>
  * 通过 hypervisor 访问（具体使用方式尚不清楚）
@@ -29,6 +31,7 @@ public class HypervisorCredential extends AbstractCredential {
             https = (Boolean) map.get("https");
         }
         setName((String) map.get("name"));
+        setEnabled(parseBoolean(map.get("enabled"), true));
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
     }

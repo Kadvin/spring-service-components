@@ -42,7 +42,7 @@ class MenuItemsController extends ApplicationController {
      *
      * @return 菜单项列表
      */
-    @RequestMapping
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public MenuItem[] index(@RequestParam(value = "tree", defaultValue = "true") boolean tree) {
         logger.debug("Listing menuItem");

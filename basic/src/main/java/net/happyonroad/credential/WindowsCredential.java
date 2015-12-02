@@ -9,6 +9,8 @@ import org.springframework.util.StringUtils;
 import java.util.Collections;
 import java.util.Map;
 
+import static net.happyonroad.util.ParseUtils.parseBoolean;
+
 /**
  * <h1>Windows 认证所需资料</h1>
  * Windows认证信息支持多种采集方式，包括：
@@ -34,6 +36,7 @@ public class WindowsCredential extends AbstractCredential implements WmiCredenti
     public WindowsCredential(Map map) {
         setName ((String) map.get("name"));
         if( getName() == null ) setName(Windows);
+        setEnabled(parseBoolean(map.get("enabled"), true));
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
     }

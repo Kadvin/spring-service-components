@@ -27,6 +27,11 @@ public class TimeInterval implements Serializable{
         this.milliseconds = parseLong(interval);
     }
 
+    public TimeInterval(long timeout) {
+        this.interval = TimeInterval.parse(timeout);
+        this.milliseconds = timeout;
+    }
+
     public long getMilliseconds() {
         return milliseconds;
     }

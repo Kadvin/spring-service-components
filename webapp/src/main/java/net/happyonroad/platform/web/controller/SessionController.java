@@ -31,12 +31,13 @@ public class SessionController extends ApplicationController {
 
     /**
      * <h2>查看当前会话</h2>
-     * POST /api/session
+     * GET /api/session
      */
-    @RequestMapping
+    @RequestMapping(method = RequestMethod.GET)
     @Description("查看当前会话")
     public Principal show(HttpServletRequest request){
-        return initCurrentUser(request);
+        initCurrentUser(request);
+        return currentUser;
     }
 
 

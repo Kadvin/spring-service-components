@@ -4,32 +4,32 @@
 package net.happyonroad.credential;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.happyonroad.model.Credential;
+import net.happyonroad.type.TimeInterval;
 
 import java.util.Collections;
 import java.util.Map;
 
+import static net.happyonroad.util.ParseUtils.parseBoolean;
 import static net.happyonroad.util.ParseUtils.parseInt;
 import static net.happyonroad.util.ParseUtils.parseString;
 
 /**
  * <h1>SNMP Credential Parameters</h1>
  * <ul>
- *  version: v1, v2c, v3
- *  community: read/write share this community
- *  port: 161 as default
- *  timeout: 1 minute as defaults
- *  retries: 3 times as default
+ * version: v1, v2c, v3
+ * community: read/write share this community
+ * port: 161 as default
+ * timeout: 1 minute as defaults
+ * retries: 3 times as default
  * </ul>
- *
  */
 public class SnmpCredential extends AbstractCredential {
-    private static final long serialVersionUID = 5338739467961515785L;
-    private String name = Ssh; //ssh
+    private static final long   serialVersionUID = 5338739467961515785L;
+    private              String name             = Ssh; //ssh
     private String version; //v1, v2c, v3
     private String community;//shared between read/write
     private int    port; //161
-    private int    timeout; // 60000 milliseconds = 1 minutes
+    private String timeout; // 60000 milliseconds = 1 minutes
     private int    retries; // 3 times
 
     //仅仅在version=v3的时候需要有该属性
@@ -49,10 +49,11 @@ public class SnmpCredential extends AbstractCredential {
     public SnmpCredential(Map map) {
         setType(Snmp);
         setName(parseString(map.get("name"), getType()));
+        setEnabled(parseBoolean(map.get("enabled"), true));
         setVersion(parseString(map.get("version"), "v2c"));
         setCommunity(parseString(map.get("community"), "public"));
         setPort(parseInt(map.get("port"), 161));
-        setTimeout(parseInt(map.get("timeout"), 15000));/*15s timeout for snmp, same as windows*/
+        setTimeout(parseString(map.get("timeout"), "15s"));/*15s timeout for snmp, same as windows*/
         setRetries(parseInt(map.get("retries"), 3));
 
         Map<String, Object> passport = (Map<String, Object>) map.get("passport");
@@ -85,12 +86,17 @@ public class SnmpCredential extends AbstractCredential {
         this.community = community;
     }
 
-    public int getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
+    }
+
+    @JsonIgnore
+    public TimeInterval getTimeoutInterval() {
+        return new TimeInterval(timeout);
     }
 
     public int getRetries() {
@@ -126,7 +132,7 @@ public class SnmpCredential extends AbstractCredential {
 
         if (port != that.port) return false;
         if (retries != that.retries) return false;
-        if (timeout != that.timeout) return false;
+        if (!timeout.equals(that.timeout)) return false;
         if (!community.equals(that.community)) return false;
         if (passport != null ? !passport.equals(that.passport) : that.passport != null) return false;
         //noinspection RedundantIfStatement
@@ -140,13 +146,13 @@ public class SnmpCredential extends AbstractCredential {
         int result = version.hashCode();
         result = 31 * result + community.hashCode();
         result = 31 * result + port;
-        result = 31 * result + timeout;
+        result = 31 * result + timeout.hashCode();
         result = 31 * result + retries;
         result = 31 * result + (passport != null ? passport.hashCode() : 0);
         return result;
     }
 
-    public String toString(){
+    public String toString() {
         return "SnmpCredential(" + community + "@" + version + ")";
     }
 }

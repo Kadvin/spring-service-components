@@ -12,7 +12,7 @@ public class DiffUtilsTest {
         one.setCommunity("public");
         one.setPort(123);
         one.setRetries(23);
-        one.setTimeout(2032);
+        one.setTimeout("10s");
         one.setVersion("v2c");
 
         SnmpPassport onePassport = new SnmpPassport();
@@ -27,7 +27,7 @@ public class DiffUtilsTest {
         two.setCommunity("private");
         two.setPort(1234);
         two.setRetries(234);
-        two.setTimeout(2034);
+        two.setTimeout("5s");
         two.setVersion("v2c");
 
         SnmpPassport twoPassport = new SnmpPassport();

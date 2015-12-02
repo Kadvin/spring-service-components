@@ -100,7 +100,7 @@ public class ApplicationController<T extends Record> {
     }
 
     @BeforeFilter(order = 0)
-    protected Principal initCurrentUser(HttpServletRequest request) {
+    protected void initCurrentUser(HttpServletRequest request) {
         Principal principal = null;
         if( request.getUserPrincipal() != null ){
             principal = request.getUserPrincipal();
@@ -114,7 +114,6 @@ public class ApplicationController<T extends Record> {
             }
         }
         currentUser = principal;
-        return principal;
     }
 
     protected String currentUserName() {

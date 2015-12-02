@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Judge a ip in the range or not
  */
-@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property = "class")
+@JsonTypeInfo(use= JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
 public abstract class IpRange extends JsonSupport implements PathParameter {
     private static final long serialVersionUID = 2981551139388564607L;
 

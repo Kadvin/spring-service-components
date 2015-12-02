@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -52,6 +54,7 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
                                 Object handler, Method method) throws Exception{
         // filter 执行之前/之后 执行的真实映射控制器方法
         HandlerMethod originHandlerMethod = (HandlerMethod) handler;
+        method.setAccessible(true);
         // 被标记的方法，封装得和实际方法一样，就是为了让 @RequestBody, @PathVariable, @RequestParam等生效
         HandlerMethod filterMethod = new HandlerMethod(originHandlerMethod.getBean(), method);
 
@@ -88,8 +91,10 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
     protected boolean matchesTo(HttpServletRequest request,
                                 Method handleMethod,
                                 RequestMethod[] method,
-                                String[] value,
+                                String[] includes,
+                                String[] excepts,
                                 Class renderClass) {
+        boolean result = true;
         if (method.length > 0) {
             String httpMethod = request.getMethod();
             boolean accept = false;
@@ -99,21 +104,33 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
                     break;
                 }
             }
-            if (!accept) return false;
+            result = accept;
         }
-        if (value.length > 0) {
+        if (result && includes.length > 0) {
             String handleMethodName = handleMethod.getName().toLowerCase();
             boolean accept = false;
-            for (String methodName : value) {
+            for (String methodName : includes) {
                 if (handleMethodName.equals(methodName.toLowerCase())) {
                     accept = true;
                     break;
                 }
             }
-            if (!accept) return false;
+            result = accept;
+        }
+        if( result && excepts.length > 0 ){
+            String handleMethodName = handleMethod.getName().toLowerCase();
+            boolean accept = true;
+            for (String methodName : excepts) {
+                if (handleMethodName.equals(methodName.toLowerCase())) {
+                    accept = false;
+                    break;
+                }
+            }
+            result = accept;
         }
         //noinspection unchecked
-        return renderClass == Object.class || renderClass.isAssignableFrom(handleMethod.getReturnType());
+        return result && (renderClass == Object.class ||
+                          renderClass.isAssignableFrom(handleMethod.getReturnType()));
     }
 
     protected Class findControllerClass(Object handler) {
@@ -126,13 +143,27 @@ public class AbstractFilterInterceptor extends HandlerInterceptorAdapter {
     }
 
     protected <T extends Annotation> List<AnnotatedMethod<T>> findMethods(Class controllerClass, Class<T> annotationClass) {
-        Method[] candidates = controllerClass.getMethods();
+        List<Method> result = new LinkedList<Method>();
+        digMethods(result, controllerClass);
+        Method[] candidates = result.toArray(new Method[result.size()]);
         List<AnnotatedMethod<T>> founds = new ArrayList<AnnotatedMethod<T>>();
         for (Method candidate : candidates) {
             T annotation = AnnotationUtils.findAnnotation(candidate, annotationClass);
-            if (annotation != null) founds.add(new AnnotatedMethod<T>(candidate, annotation));
+            if (annotation != null) {
+                if( candidate.getReturnType() != Void.class && candidate.getReturnType() != void.class){
+                    throw new UnsupportedOperationException("The before/after filter method " + candidate + " shouldn't return any value");
+                }
+                founds.add(new AnnotatedMethod<T>(candidate, annotation));
+            }
         }
         return founds;
+    }
+
+    void digMethods(List<Method> result, Class controllerClass){
+        if( controllerClass == null || controllerClass == Object.class)
+            return;
+        result.addAll(Arrays.asList(controllerClass.getDeclaredMethods()));
+        digMethods(result, controllerClass.getSuperclass());
     }
 
     protected static class AnnotatedMethod<T extends Annotation> implements Comparable<AnnotatedMethod<T>> {

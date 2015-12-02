@@ -34,6 +34,13 @@ public @interface BeforeFilter {
     String[] value() default {};
 
     /**
+     * 过滤器不适用的method名称，默认为空，说明适用于任何methods
+     *
+     * @return 过滤器不适用的method名称, 不需要签名和返回值信息
+     */
+    String[] except() default {};
+
+    /**
      * <h2>过滤器使用的返回值类型，默认为Object.class，说明<strong>不</strong>适用于任何类型</h2>
      * 经常使用该参数的是根据返回值，确定要不要执行before工作，参考 ApplicationController#initDefaultPageRequest
      *

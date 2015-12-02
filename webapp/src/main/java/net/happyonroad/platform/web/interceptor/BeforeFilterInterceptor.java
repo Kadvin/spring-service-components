@@ -39,7 +39,7 @@ public class BeforeFilterInterceptor extends AbstractFilterInterceptor{
         while (iterator.hasNext()) {
             AnnotatedMethod<BeforeFilter> annotatedMethod = iterator.next();
             BeforeFilter annotation = annotatedMethod.annotation;
-            if( !matchesTo(request, handleMethod, annotation.method(), annotation.value(), annotation.render())) {
+            if( !matchesTo(request, handleMethod, annotation.method(), annotation.value(), annotation.except(), annotation.render())) {
                 iterator.remove();
             }
         }

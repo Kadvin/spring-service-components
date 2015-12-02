@@ -14,7 +14,7 @@ import java.io.Serializable;
  * 认证方式也有先后优先级
  */
 @SuppressWarnings("UnusedDeclaration")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Credential extends Serializable, PriorityOrdered {
     String Snmp       = "snmp";
     String Ssh        = "ssh";
@@ -41,4 +41,10 @@ public interface Credential extends Serializable, PriorityOrdered {
      * @return 认证方式的类型
      */
     String getType();
+
+    /**
+     * 返回本认证是否生效
+     * @return 是否生效
+     */
+    boolean isEnabled();
 }

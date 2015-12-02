@@ -8,8 +8,9 @@ import net.happyonroad.model.Credential;
  * @author Jay Xiong
  */
 public abstract class AbstractCredential implements Credential {
-    private String name;
-    private String type;
+    private String  name;
+    private String  type;
+    private boolean enabled = true;
 
     @Override
     public String getName() {
@@ -27,5 +28,14 @@ public abstract class AbstractCredential implements Credential {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

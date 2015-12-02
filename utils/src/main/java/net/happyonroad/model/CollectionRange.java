@@ -38,8 +38,8 @@ public class CollectionRange extends IpRange{
 
     @Override
     public String toString() {
-        //为了能被nmap解析，必须用分号
-        return StringUtils.join(addresses, " ");
+        //为了能被nmap解析，必须用空格
+        return StringUtils.join(addresses, ",");
     }
 
     public Set<String> getAddresses() {

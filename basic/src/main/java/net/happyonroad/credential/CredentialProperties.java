@@ -37,4 +37,13 @@ public class CredentialProperties extends Properties implements Credential {
     public void setType(String type){
         setProperty("type", type);
     }
+
+    @Override
+    public boolean isEnabled() {
+        return Boolean.valueOf(getProperty("enabled", "true"));
+    }
+
+    public void setEnabled(boolean enabled){
+        setProperty("enabled", String.valueOf(enabled));
+    }
 }

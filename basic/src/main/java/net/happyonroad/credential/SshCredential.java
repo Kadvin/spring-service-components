@@ -4,13 +4,15 @@
 package net.happyonroad.credential;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.happyonroad.type.TimeInterval;
 import net.happyonroad.util.ParseUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.security.PublicKey;
 import java.util.Collections;
 import java.util.Map;
+
+import static net.happyonroad.util.ParseUtils.parseBoolean;
 
 /**
  * <h1>SSH访问参数</h1>
@@ -19,7 +21,7 @@ import java.util.Map;
  */
 public class SshCredential extends AbstractCredential implements CliCredential {
     private static final long serialVersionUID = 6186435172976706185L;
-    public static final  int  DEFAULT_TIMEOUT  = 1000 * 30;
+    public static final  String DEFAULT_TIMEOUT  = "30s";
 
     public static final String AUTH_PASSWORD    = "password";
     public static final String AUTH_PUBLICKEY   = "publickey";
@@ -33,7 +35,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
     private String permFile, privateKey;
     //SSH的端口
     private int port = 22;
-    private int timeout;
+    private String timeout;
 
     public SshCredential() {
         this(Collections.emptyMap());
@@ -61,6 +63,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         setType(Ssh);
         setName((String) map.get("name"));
         if (getName() == null) setName(getType());
+        setEnabled(parseBoolean(map.get("enabled"), true));
         setUser((String) map.get("user"));
         setPassword((String) map.get("password"));
         setPermFile((String) map.get("permFile"));
@@ -69,7 +72,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
             setAuthenticateMethod(AUTH_PUBLICKEY);
         }
         setPort(ParseUtils.parseInt(map.get("port"), 22));
-        setTimeout(ParseUtils.parseInt(map.get("timeout"), DEFAULT_TIMEOUT));
+        setTimeout(ParseUtils.parseString(map.get("timeout"), DEFAULT_TIMEOUT));
     }
 
     @JsonIgnore
@@ -110,12 +113,17 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         this.port = port;
     }
 
-    public int getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
+    }
+
+    @JsonIgnore
+    public TimeInterval getTimeoutInterval(){
+        return new TimeInterval(timeout);
     }
 
     public String getAuthenticateMethod() {
@@ -141,7 +149,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
 
         SshCredential sshAccess = (SshCredential) o;
 
-        if (timeout != sshAccess.timeout) return false;
+        if (!timeout.equals(sshAccess.timeout)) return false;
         if (password != null ? !password.equals(sshAccess.password) : sshAccess.password != null) return false;
         if (!user.equals(sshAccess.user)) return false;
 
@@ -152,7 +160,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
     public int hashCode() {
         int result = user.hashCode();
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + timeout;
+        result = 31 * result + timeout.hashCode();
         return result;
     }
 
@@ -160,10 +168,12 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         return "SshCredential(" + user + ")";
     }
 
+    @JsonIgnore
     public boolean isAuthByPassword() {
         return AUTH_PASSWORD.equals(this.authenticateMethod);
     }
 
+    @JsonIgnore
     public boolean isAuthByPublickey() {
         return AUTH_PUBLICKEY.equals(this.authenticateMethod);
     }

@@ -35,6 +35,13 @@ public @interface AfterFilter {
     String[] value() default {};
 
     /**
+     * 过滤器不适用的method名称，默认为空，说明适用于任何methods
+     *
+     * @return 过滤器不适用的method名称, 不需要签名和返回值信息
+     */
+    String[] except();
+
+    /**
      * <h2>过滤器使用的返回值类型，默认为Object.class，说明<strong>不</strong>适用于任何类型</h2>
      *
      * @return 返回值类型

@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class SnmpCredentialTest {
     public static final String JSON =
-            "{\"class\":\"net.happyonroad.credential.SnmpCredential\",\"version\":\"v3\",\"community\":\"public\",\"port\":161,\"timeout\":100,\"retries\":3,\"passport\":{\"authenticateMethod\":\"MD5\",\"encryptMethod\":\"DES\",\"privateKey\":null,\"userName\":\"admin\",\"password\":\"secret\",\"context\":null}}";
+            "{\"@class\":\"net.happyonroad.credential.SnmpCredential\",\"name\":\"snmp\",\"type\":\"snmp\",\"enabled\":true,\"version\":\"v3\",\"community\":\"public\",\"port\":161,\"timeout\":\"10s\",\"retries\":3,\"passport\":{\"authenticateMethod\":\"MD5\",\"encryptMethod\":\"DES\",\"privateKey\":null,\"userName\":\"admin\",\"password\":\"secret\",\"context\":null}}";
     private static SnmpCredential SNMP;
 
     static {
@@ -23,7 +23,7 @@ public class SnmpCredentialTest {
         passport.setPassword("secret");
         SNMP = new SnmpCredential();
         SNMP.setVersion("v3");
-        SNMP.setTimeout(100);
+        SNMP.setTimeout("10s");
         SNMP.setPort(161);
         SNMP.setRetries(3);
         SNMP.setPassport(passport);

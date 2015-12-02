@@ -37,6 +37,11 @@ public final class ParseUtils {
         return string.toString();
     }
 
+    public static boolean parseBoolean(Object enabled, boolean defaultValue) {
+        if ( enabled == null ) return defaultValue;
+        return Boolean.valueOf(enabled.toString());
+    }
+
     /**
      * Parse Json String to Target Object
      *
