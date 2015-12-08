@@ -104,7 +104,7 @@ public class ApplicationController<T extends Record> {
         Principal principal = null;
         if( request.getUserPrincipal() != null ){
             principal = request.getUserPrincipal();
-        }else{
+        }else if ( System.getProperty("security.control", "").equals("cas") ){
             Cookie[] cookies = request.getCookies();
             if (cookies != null ) for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("user"))

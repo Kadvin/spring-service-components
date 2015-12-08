@@ -4,6 +4,7 @@
 package net.happyonroad.platform.web.controller;
 
 import net.happyonroad.platform.web.annotation.Description;
+import org.apache.http.auth.BasicUserPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +38,11 @@ public class SessionController extends ApplicationController {
     @Description("查看当前会话")
     public Principal show(HttpServletRequest request){
         initCurrentUser(request);
-        return currentUser;
+        if( currentUser == null ){
+            return new BasicUserPrincipal("ANONYMOUS");
+        }else {
+            return currentUser;
+        }
     }
 
 

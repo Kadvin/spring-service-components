@@ -44,7 +44,7 @@ public class WebAppConfig extends AbstractAppConfig implements ApplicationListen
     @Override
     public void onApplicationEvent(ComponentLoadedEvent event) {
         // Only listen to platform loaded event
-        if (!"platform".equals(event.getSource().getArtifactId())) return;
+        if (!"webapp".equals(event.getSource().getArtifactId())) return;
         // componentContext.setRootContext(applicationContext);
         // 这些beans是被spring security动态注册过来的，只能在本组件加载之后，再向注册表注册
         try {
@@ -52,7 +52,6 @@ public class WebAppConfig extends AbstractAppConfig implements ApplicationListen
             AuthenticationProvider authenticationProvider = applicationContext.getBean(AuthenticationProvider.class);
             PersistentTokenRepository persistentTokenRepository =
                     applicationContext.getBean(PersistentTokenRepository.class);
-
             // Spring Security Registered
             exports(UserDetailsService.class, userDetailsService);
             exports(AuthenticationProvider.class, authenticationProvider);

@@ -13,11 +13,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -25,8 +23,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.lang.reflect.Method;
 
 /**
  * Work as parent of SpringMvcConfig
@@ -126,10 +122,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginProcessingUrl(urlPath("/api/session"))
             .successHandler(successHandler())
             .failureHandler(authenticationFailureHandler());
-        Method method = AbstractAuthenticationFilterConfigurer.class.getDeclaredMethod("getAuthenticationFilter");
-        method.setAccessible(true);
-        AbstractAuthenticationProcessingFilter filter = (AbstractAuthenticationProcessingFilter) method.invoke(form);
-        filter.setContinueChainBeforeSuccessfulAuthentication(true);
+//        Method method = AbstractAuthenticationFilterConfigurer.class.getDeclaredMethod("getAuthenticationFilter");
+//        method.setAccessible(true);
+//        AbstractAuthenticationProcessingFilter filter = (AbstractAuthenticationProcessingFilter) method.invoke(form);
+//        filter.setContinueChainBeforeSuccessfulAuthentication(true);
     }
 
     protected String[] csrfExcludeUrls() {

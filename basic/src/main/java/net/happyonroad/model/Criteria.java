@@ -13,8 +13,8 @@ import org.springframework.util.StringUtils;
  */
 public class Criteria {
     //这个查询条件的名称
-    private String name;
-    private StringBuilder builder = new StringBuilder();
+    private String label;
+    private StringBuilder expression = new StringBuilder();
 
     public static Criteria parse(String criteria) {
         Criteria result = new Criteria();
@@ -35,31 +35,31 @@ public class Criteria {
     private Criteria append(String criteria) {
         if (!StringUtils.isEmpty(criteria))
             // TODO 防止SQL注入
-            builder.append(criteria);
+            expression.append(criteria);
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getLabel() {
+        return label;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public String getValue() {
-        return toString();
+    public String getExpression() {
+        return expression.toString();
     }
 
-    public void setValue(String value) {
-        if (this.builder.length() > 0)
-            this.builder.delete(0, this.builder.length() - 1);
-        this.builder.append(value);
+    public void setExpression(String value) {
+        if (this.expression.length() > 0)
+            this.expression.delete(0, this.expression.length() - 1);
+        this.expression.append(value);
     }
 
     @Override
     public String toString() {
-        return builder.toString();
+        return getExpression();
     }
 
     @JsonIgnore

@@ -46,7 +46,9 @@ class MenuItemsController extends ApplicationController {
     @ResponseBody
     public MenuItem[] index(@RequestParam(value = "tree", defaultValue = "true") boolean tree) {
         logger.debug("Listing menuItem");
-
+        if( currentUser == null ){
+            return new MenuItem[0];
+        }
         List<MenuItem> list;
         if (target == null) {
             list = menuItemService.findAll(tree);
