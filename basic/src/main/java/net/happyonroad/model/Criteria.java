@@ -189,6 +189,8 @@ class CriteriaItem {
             this.sqlOperation = "not like";
             this.sqlValue = compileLike(this.value);
         } else if (Criteria.NIN.equals(this.operation)) {
+            // t.value is null or t.value not in ('a','b')
+            this.sqlField = sqlField + " IS NULL or " + sqlField;
             this.sqlOperation = "not in";
             this.sqlValue = compileIn(this.value);
         } else if (Criteria.IN.equals(this.operation)) {
