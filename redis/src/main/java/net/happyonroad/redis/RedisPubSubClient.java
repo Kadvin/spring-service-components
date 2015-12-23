@@ -78,9 +78,13 @@ class RedisPubSubClient extends JedisPubSub implements Runnable, PubSubClient {
                 try {
                     String name = jedis.clientGetname();
                     if (channels != null){
-                        jedis.clientSetname(name + "-Subscribe-" + StringUtils.join(channels, ","));
+                        String sep = "-Subscribe-";
+                        if( name.contains(sep)) name = StringUtils.substringBefore(name, sep);
+                        jedis.clientSetname(name + sep + StringUtils.join(channels, ","));
                     } else {
-                        jedis.clientSetname(name + "-PSubscribe-" + pattern);
+                        String sep = "-PSubscribe-";
+                        if( name.contains(sep)) name = StringUtils.substringBefore(name, sep);
+                        jedis.clientSetname(name + sep + pattern);
                     }
                 } catch (Exception e) {
                     logger.warn("The redis server do not support set client name");

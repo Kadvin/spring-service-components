@@ -79,6 +79,10 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
      * @param value 被缓存的对象实例
      */
     protected void cache(K key, V value) {
+        if( key == null){
+            logger.error("Can't cache null for value " + value);
+            return;
+        }
         objectCache.put(key, value);
     }
 

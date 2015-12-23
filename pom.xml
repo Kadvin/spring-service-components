@@ -35,6 +35,7 @@
         <module>database</module>
         <module>webapp</module>
         <module>menu</module>
+        <module>system-script</module>
     </modules>
 
     <dependencies>

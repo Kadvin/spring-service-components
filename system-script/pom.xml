@@ -10,42 +10,37 @@
         <version>2.0.0</version>
     </parent>
 
-    <artifactId>menu</artifactId>
-    <name>Menu Service</name>
+    <artifactId>system-script</artifactId>
+
+    <name>System Script</name>
+    <description>
+        Invoke the system script(local or remote)
+    </description>
 
     <dependencies>
         <dependency>
             <groupId>net.happyonroad</groupId>
-            <artifactId>webapp</artifactId>
+            <artifactId>message_bus</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.happyonroad</groupId>
-            <artifactId>database</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <App-Config>net.happyonroad.MenuAppConfig</App-Config>
-                            <DB-Repository>net.happyonroad.menu.repository</DB-Repository>
-                            <Web-Repository>net.happyonroad.menu.web.controller</Web-Repository>
+                            <App-Config>net.happyonroad.SystemScriptAppConfig</App-Config>
                         </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
