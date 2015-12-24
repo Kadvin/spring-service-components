@@ -113,27 +113,6 @@ public class SystemInvokeManagerTest extends AbstractProcessTest {
     }
 
     @Test
-    public void testRead() throws Exception {
-        String invocationId = systemInvokerManager.addJob(invocation);
-        List<String> result = new ArrayList<String>(4);
-        long offset = systemInvokerManager.read(invocationId, 0, result);
-        Assert.assertEquals(0, offset);
-        Assert.assertEquals(0, result.size());
-        semaphore.release();
-        monitor.waitMessage(invocationId, "stepExecuted");
-        offset = systemInvokerManager.read(invocationId, offset, result);
-        Assert.assertTrue(offset >  0);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("hello world", result.get(0));
-        semaphore.release();
-        monitor.waitMessage(invocationId, "finished");
-        long newOffset = systemInvokerManager.read(invocationId, offset, result);
-        Assert.assertTrue(newOffset >  offset);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("hi itsnow!", result.get(1));
-    }
-
-    @Test
     public void testWaitJobFinished() throws Exception {
         final StringBuilder sb = new StringBuilder();
         final String invocationId = systemInvokerManager.addJob(invocation);

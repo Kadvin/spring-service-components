@@ -3,6 +3,7 @@ package net.happyonroad.system;
 import net.happyonroad.listener.InvocationEventBroadcaster;
 import net.happyonroad.listener.ListenerNotifier;
 import net.happyonroad.listener.SystemInvocationListener;
+import net.happyonroad.model.SystemInvocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -21,12 +22,15 @@ class Redirector implements Runnable {
     private final File                       file;
     private final boolean                    append;
     private final InvocationEventBroadcaster broadcaster;
+    private final SystemInvocation           invocation;
     private       StringBuilder              piped;
 
-    public Redirector(InputStream src, File file, boolean append, InvocationEventBroadcaster broadcaster) {
+    public Redirector(InputStream src, File file, boolean append, SystemInvocation invocation,
+                      InvocationEventBroadcaster broadcaster) {
         this.src = src;
         this.file = file;
         this.append = append;
+        this.invocation = invocation;
         this.broadcaster = broadcaster;
         this.piped = new StringBuilder();
     }
@@ -44,7 +48,7 @@ class Redirector implements Runnable {
                 broadcaster.broadcast(new ListenerNotifier() {
                     @Override
                     public void notify(SystemInvocationListener listener) {
-                        listener.onMessage(message);
+                        if( listener.care(invocation)) listener.onMessage(invocation, message);
                     }
                 });
             }

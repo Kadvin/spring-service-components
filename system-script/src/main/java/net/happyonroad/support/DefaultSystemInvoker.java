@@ -15,6 +15,7 @@ import net.happyonroad.system.LocalProcess;
 import net.happyonroad.system.Process;
 import net.happyonroad.system.RemoteProcess;
 import net.happyonroad.spring.Bean;
+import net.happyonroad.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -61,8 +62,11 @@ public class DefaultSystemInvoker extends Bean implements SystemInvoker {
             }
             return result;
         } else {
-            String suffix = invocation.getOutput();
-            throw new SystemInvokeException("Exit code " + result + " while invoke: " + invocation + " " + suffix);
+            Process proc = invocation.getProcess();
+            String suffix = proc.getContent();
+            throw new SystemInvokeException("Exit code " + result +
+                                            " while invoke: " + StringUtils.join(proc.getCommand(), ",")
+                                            + ", output: " + suffix);
         }
     }
 

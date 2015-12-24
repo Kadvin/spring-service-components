@@ -12,6 +12,7 @@ import net.happyonroad.model.SystemInvocation;
 import net.happyonroad.service.SystemInvokeService;
 import net.happyonroad.service.SystemInvoker;
 import net.happyonroad.spring.Bean;
+import net.happyonroad.util.MiscUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,13 +52,6 @@ public class SystemInvokeManager extends Bean implements SystemInvokeService, In
     @Override
     public void removeListener(SystemInvocationListener listener) {
         listeners.remove(listener);
-    }
-
-    @Override
-    public long getFileLength(String invocationId) {
-        File logFile = getFile(invocationId);
-        if (logFile.exists()) return logFile.length();
-        return 0;
     }
 
     @Override
@@ -131,29 +125,6 @@ public class SystemInvokeManager extends Bean implements SystemInvokeService, In
         }
     }
 
-    @Override
-    public long read(String invocationId, long offset, final List<String> result) {
-        File logFile = getFile(invocationId);
-        if( !logFile.exists() ) return offset;
-        FileInputStream stream = null;
-        List<String> lines = null;
-        try {
-            stream = new FileInputStream(logFile);
-            IOUtils.skip(stream, offset);
-            lines = IOUtils.readLines(stream);
-        } catch (IOException e) {
-            return offset;
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-        result.addAll(lines);
-        long newOffset = offset;
-        for (String line : lines) {
-            newOffset += line.getBytes().length + 1;
-        }
-        return newOffset;
-    }
-
     private File getFile(String invocationId) {
         return new File(System.getProperty("app.home"), "tmp/" + invocationId + ".log");
     }
@@ -224,7 +195,7 @@ public class SystemInvokeManager extends Bean implements SystemInvokeService, In
                 });
                 return result;
             } catch (final SystemInvokeException e) {
-                logger.error("Failed to run:" + e.getMessage(), e);
+                logger.error("Failed to run: {}", MiscUtils.describeException(e));
                 clean();
                 broadcast(new ListenerNotifier() {
                     @Override

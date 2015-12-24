@@ -42,9 +42,10 @@ public interface SystemInvocationListener extends EventListener {
     /**
      * 接收到到消息
      *
+     * @param invocation 调用
      * @param message 消息
      */
-    void onMessage(String message);
+    void onMessage(SystemInvocation invocation, String message);
 
     /**
      * 当一个系统调用正常完成时，本监听者将会被通过该接口通知到

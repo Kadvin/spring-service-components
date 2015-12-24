@@ -114,7 +114,7 @@ public abstract class AbstractProcess<T extends SystemInvocation> implements Pro
     }
 
     private Future<?> pipe(final InputStream src, final File file) {
-        redirector = new Redirector(src, file, invocation.getSequence() > 0, broadcaster);
+        redirector = new Redirector(src, file, invocation.getSequence() > 0, invocation, broadcaster);
         return systemInvokeExecutor.submit(redirector);
     }
 

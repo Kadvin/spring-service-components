@@ -7,8 +7,6 @@ import net.happyonroad.exception.SystemInvokeException;
 import net.happyonroad.listener.SystemInvocationListener;
 import net.happyonroad.model.SystemInvocation;
 
-import java.util.List;
-
 /**
  * <h1>系统调用服务</h1>
  * TODO 本模块，包括模型，可能需要抽取到平台中
@@ -41,16 +39,6 @@ public interface SystemInvokeService {
     boolean isFinished(String invocationId);
 
     /**
-     * <h2>读取特定任务的输出信息   </h2>
-     *
-     * @param invocationId    任务描述符
-     * @param offset 开始位置
-     * @param storage 存储读取结果的list容器，如果没有读到，则集合不会被改动；独到的结果将会append到list的末端
-     * @return 下次读取时使用的offset
-     */
-    long read(String invocationId, long offset, final List<String> storage);
-
-    /**
      * <h2>等待任务结束</h2>
      *
      * @param invocationId 任务描述符
@@ -72,13 +60,5 @@ public interface SystemInvokeService {
      * @param listener 监听器
      */
     void removeListener(SystemInvocationListener listener);
-
-    /**
-     * <h2>获取特定任务的日志文件字节长度   </h2>
-     *
-     * @param invocationId    任务描述符
-     * @return 日志文件的字节长度
-     */
-    long getFileLength(String invocationId);
 
 }
