@@ -3,6 +3,8 @@
  */
 package net.happyonroad.system;
 
+import net.happyonroad.listener.InvocationEventBroadcaster;
+import net.happyonroad.listener.ListenerNotifier;
 import net.happyonroad.util.NamedThreadFactory;
 import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FileUtils;
@@ -22,8 +24,14 @@ import java.util.concurrent.Executors;
  */
 public abstract class AbstractProcessTest {
     protected ExecutorService executorService;
-    protected static String remoteHost = "app2.dev.itsnow.com";
-    protected static String remoteDir  = "/opt/system/test";
+    protected static String                     remoteHost  = "app2.dev.itsnow.com";
+    protected static String                     remoteDir   = "/opt/system/test";
+    protected        InvocationEventBroadcaster broadcaster = new InvocationEventBroadcaster() {
+        @Override
+        public void broadcast(ListenerNotifier notifier) {
+
+        }
+    };
 
     @Before
     public void setUp() throws Exception {

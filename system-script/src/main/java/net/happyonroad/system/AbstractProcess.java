@@ -4,6 +4,7 @@
 package net.happyonroad.system;
 
 import net.happyonroad.exception.SystemInvokeException;
+import net.happyonroad.listener.InvocationEventBroadcaster;
 import net.happyonroad.model.SystemInvocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -21,13 +22,16 @@ import java.util.concurrent.Future;
  */
 public abstract class AbstractProcess<T extends SystemInvocation> implements Process {
     protected final ProcessBuilder builder = new ProcessBuilder();
-    protected final ExecutorService   systemInvokeExecutor;
-    protected final T                 invocation;
-    protected       java.lang.Process underlying;
-    private         Redirector        redirector;
+    protected final T                          invocation;
+    protected final InvocationEventBroadcaster broadcaster;
+    protected final ExecutorService            systemInvokeExecutor;
 
-    public AbstractProcess(T invocation, ExecutorService systemInvokeExecutor) {
+    protected java.lang.Process underlying;
+    private   Redirector        redirector;
+
+    public AbstractProcess(T invocation, InvocationEventBroadcaster broadcaster, ExecutorService systemInvokeExecutor) {
         this.invocation = invocation;
+        this.broadcaster = broadcaster;
         this.systemInvokeExecutor = systemInvokeExecutor;
     }
 
@@ -110,44 +114,9 @@ public abstract class AbstractProcess<T extends SystemInvocation> implements Pro
     }
 
     private Future<?> pipe(final InputStream src, final File file) {
-        redirector = new Redirector(src, file, invocation.getSequence() > 0);
+        redirector = new Redirector(src, file, invocation.getSequence() > 0, broadcaster);
         return systemInvokeExecutor.submit(redirector);
     }
 
 }
 
-class Redirector implements Runnable {
-    private final InputStream   src;
-    private final File          file;
-    private final boolean       append;
-    private       StringBuilder piped;
-
-    public Redirector(InputStream src, File file, boolean append) {
-        this.src = src;
-        this.file = file;
-        this.append = append;
-        this.piped = new StringBuilder();
-    }
-
-    public void run() {
-        FileOutputStream dest = null;
-        try {
-            if (!file.exists()) FileUtils.touch(file);
-            dest = new FileOutputStream(file, append);// not use append mode
-            byte[] buffer = new byte[1024];
-            for (int n = 0; n != -1; n = src.read(buffer)) {
-                dest.write(buffer, 0, n);
-                dest.flush();
-                piped.append(new String(buffer, 0, n));
-            }
-        } catch (IOException e) {
-            // just exit
-        } finally {
-            IOUtils.closeQuietly(dest);
-        }
-    }
-
-    public String getPiped() {
-        return piped.toString();
-    }
-}

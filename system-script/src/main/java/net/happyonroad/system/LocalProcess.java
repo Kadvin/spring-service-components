@@ -3,6 +3,7 @@
  */
 package net.happyonroad.system;
 
+import net.happyonroad.listener.InvocationEventBroadcaster;
 import net.happyonroad.model.LocalInvocation;
 
 import java.io.File;
@@ -15,8 +16,8 @@ import java.util.concurrent.ExecutorService;
 public class LocalProcess extends AbstractProcess<LocalInvocation> {
 
 
-    public LocalProcess(LocalInvocation invocation, ExecutorService systemInvokeExecutor) {
-        super(invocation, systemInvokeExecutor);
+    public LocalProcess(LocalInvocation invocation, InvocationEventBroadcaster broadcaster, ExecutorService systemInvokeExecutor) {
+        super(invocation, broadcaster, systemInvokeExecutor);
     }
 
     @Override

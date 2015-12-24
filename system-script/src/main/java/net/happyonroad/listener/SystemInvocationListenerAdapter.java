@@ -31,6 +31,11 @@ public abstract class SystemInvocationListenerAdapter  implements SystemInvocati
     }
 
     @Override
+    public void onMessage(String message) {
+
+    }
+
+    @Override
     public void finished(SystemInvocation invocation) {
 
     }

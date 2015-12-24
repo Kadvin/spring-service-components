@@ -23,7 +23,7 @@ public class LocalProcessTest extends AbstractProcessTest {
             }
         };
         invocation.setId("local-invocation");
-        LocalProcess process = new LocalProcess(invocation, executorService);
+        LocalProcess process = new LocalProcess(invocation, broadcaster, executorService);
         int exitCode = invocation.perform(process);
         Assert.assertEquals(0, exitCode);
         Assert.assertEquals("hello world", invocation.getOutput());

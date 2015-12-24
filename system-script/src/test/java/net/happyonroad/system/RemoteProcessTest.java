@@ -22,8 +22,9 @@ public class RemoteProcessTest extends AbstractProcessTest {
                 return process.run("./test.sh", "hi", "itsnow");
             }
         };
+
         invocation.setId("remote-invocation");
-        RemoteProcess process = new RemoteProcess(invocation, executorService);
+        RemoteProcess process = new RemoteProcess(invocation, broadcaster, executorService);
         int exitCode = invocation.perform(process);
         Assert.assertEquals(0, exitCode);
         Assert.assertEquals("hi itsnow", invocation.getOutput());

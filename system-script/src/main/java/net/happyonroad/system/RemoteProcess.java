@@ -3,6 +3,7 @@
  */
 package net.happyonroad.system;
 
+import net.happyonroad.listener.InvocationEventBroadcaster;
 import net.happyonroad.model.RemoteInvocation;
 import net.happyonroad.util.StringUtils;
 
@@ -14,8 +15,8 @@ import java.util.concurrent.ExecutorService;
  */
 public class RemoteProcess extends AbstractProcess<RemoteInvocation> {
 
-    public RemoteProcess(RemoteInvocation invocation, ExecutorService systemInvokeExecutor) {
-        super(invocation, systemInvokeExecutor);
+    public RemoteProcess(RemoteInvocation invocation, InvocationEventBroadcaster broadcaster, ExecutorService systemInvokeExecutor) {
+        super(invocation, broadcaster, systemInvokeExecutor);
     }
 
     @Override
