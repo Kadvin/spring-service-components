@@ -5,6 +5,7 @@ package net.happyonroad.concurrent;
 
 import net.happyonroad.util.NamedThreadFactory;
 import net.happyonroad.type.TimeInterval;
+import net.happyonroad.util.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -83,7 +84,13 @@ public class StrategyExecutorService implements ExecutorService, SelfNaming {
             Integer maxSize = getIntegerSetting("maxSize", 20);
             String keepAlive = getStringSetting("keepAlive", "60s");
             int interval = TimeInterval.parseInt(keepAlive);
-            ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(queueSize);
+            String queueType = getStringSetting("queueType", "blocking");
+            BlockingQueue<Runnable> queue;
+            if(StringUtils.equals("priority", queueType)){
+                queue = new PriorityBlockingQueue(queueSize);
+            }else{
+                queue = new ArrayBlockingQueue<Runnable>(queueSize);
+            }
             return new ThreadPoolExecutor(coreSize, maxSize, interval, TimeUnit.MILLISECONDS, queue, factory);
         } else {
             throw new IllegalArgumentException("The executor policy value " + policy + " is illegal, " +

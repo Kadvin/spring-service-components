@@ -22,7 +22,7 @@ public abstract class RemoteInvocation extends SystemInvocation{
     }
 
     public RemoteInvocation(String address, String user, String password) {
-        this(address, user, password, DEFAULT_WD);
+        this(address, user, password, null);
     }
     public RemoteInvocation(String address, String user, String password, String wd) {
         super(wd);

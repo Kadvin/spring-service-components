@@ -29,7 +29,6 @@ public abstract class SystemInvocation {
 
     public SystemInvocation(String wd) {
         this.wd = wd;
-        if( this.wd == null ) this.wd = DEFAULT_WD;
         this.seq = 0;
         this.progress = 10;
         timeout(1000 * 60 * 5);
