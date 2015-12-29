@@ -20,7 +20,8 @@ public class PropertiesSupportRecord extends Record{
 
     public void setProperties(Properties properties) {
         if( properties != null ){
-            this.properties = new Properties();
+            if( this.properties == null )
+                this.properties = new Properties();
             this.properties.putAll(properties);
         }else{
             this.properties = null;
