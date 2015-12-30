@@ -126,7 +126,7 @@ public final class MiscUtils {
         List<String> lines;
         String errors;
         try {
-            Process exec = Runtime.getRuntime().exec("which " + exe);
+            Process exec = Runtime.getRuntime().exec(new String[]{"which",exe});
             exec.waitFor();
             lines = IOUtils.readLines(exec.getInputStream());
             errors = org.apache.commons.lang.StringUtils.join(IOUtils.readLines(exec.getErrorStream()), "\n");
