@@ -5,6 +5,7 @@ package net.happyonroad.type;
 
 /**
  * 监控计划
+ * TODO: enhance it to support intervals, matrix
  */
 public class Schedule extends TimeSpan {
     private static final long serialVersionUID = 4754218267494981545L;

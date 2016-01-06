@@ -3,6 +3,8 @@
  */
 package net.happyonroad.type;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,8 +16,9 @@ public class TimeSpan implements Serializable{
 
     private static final long serialVersionUID = 640946156242165862L;
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endAt;
 
     public Date getStartAt() {
