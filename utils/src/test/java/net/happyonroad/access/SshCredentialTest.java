@@ -12,9 +12,13 @@ import org.junit.Test;
  * 测试 Ssh Credential to/from Json
  */
 public class SshCredentialTest {
-    public static final String JSON =
-            "{\"class\":\"net.happyonroad.credential.SshCredential\",\"user\":\"root\",\"password\":\"secret\",\"permFile\":null,\"port\":22,\"timeout\":30000}";
-    SshCredential SSH = new SshCredential("root", "secret");
+    public static final String        JSON =
+            "{\"@class\":\"net.happyonroad.credential.SshCredential\",\"name\":\"ssh\",\"type\":\"ssh\",\"enabled\":true,\"authenticateMethod\":\"password\",\"user\":\"root\",\"password\":\"secret\",\"permFile\":null,\"privateKey\":null,\"port\":22,\"timeout\":\"30s\"}";
+    static              SshCredential SSH  = new SshCredential("root", "secret");
+
+    static {
+        SSH.setName("ssh");
+    }
 
     @Test
     public void testSerializeJson() throws Exception {

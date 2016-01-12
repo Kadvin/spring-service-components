@@ -304,11 +304,11 @@ public class ExpressionUtils {
      * </pre>
      *
      * @param one      左式对象
-     * @param another  右式对象
      * @param operator 比较操作符，支持逻辑操作符，以及字符串 =~， !~ 等
+     * @param another  右式对象
      * @return 比较结果
      */
-    public static boolean compare(Comparable one, Comparable another, String operator) {
+    public static boolean compare(Comparable one, String operator, Comparable another) {
         //noinspection unchecked
         int result = one.compareTo(another);
         if (operator.equals("=") || operator.equals("==")) {

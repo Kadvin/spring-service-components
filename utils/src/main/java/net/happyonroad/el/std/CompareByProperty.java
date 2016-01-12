@@ -53,7 +53,7 @@ public class CompareByProperty<Out> implements Calculator<Out[], Out> {
             base = NumberUtils.parseNumber(base.toString(), Double.class);
             value = NumberUtils.parseNumber(value.toString(), Double.class);
         }
-        return ExpressionUtils.compare(base, value, operator);
+        return ExpressionUtils.compare(value, operator, base);
     }
 
     @Override

@@ -48,7 +48,7 @@ public class Expression implements Calculator<Object, Boolean> {
                 rightValue = this.right.calc(input);
             }
         }
-        return ExpressionUtils.compare(leftValue, rightValue, operator);
+        return ExpressionUtils.compare(leftValue, operator, rightValue);
     }
 
     @Override
