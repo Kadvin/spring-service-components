@@ -33,7 +33,7 @@ import java.util.concurrent.Semaphore;
 @ContextConfiguration(classes = SystemInvokeConfig.class)
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-//@Ignore("Need linux/osx, trusted by app2.dev.itsnow.com")
+@Ignore("Need linux/osx, trusted by app2.dev.itsnow.com")
 public class SystemInvokeManagerTest extends AbstractProcessTest {
     private static  Logger logger = LoggerFactory.getLogger(SystemInvokeManagerTest.class);
 

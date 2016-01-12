@@ -27,7 +27,7 @@ import java.util.List;
 @ContextConfiguration(classes = SystemInvokeConfig.class)
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-//@Ignore("Need linux/osx, trusted by srv2.itsnow.com")
+@Ignore("Need linux/osx, trusted by srv2.itsnow.com")
 public class DefaultSystemInvokerTest extends AbstractProcessTest {
 
     @Autowired

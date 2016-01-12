@@ -11,7 +11,7 @@ import org.junit.Test;
 /**
  * <h1>测试对远程命令的调用</h1>
  */
-//@Ignore("the ci or other developer's host isn't trusted by srv2")
+@Ignore("the ci or other developer's host isn't trusted by srv2")
 public class RemoteProcessTest extends AbstractProcessTest {
 
     @Test
