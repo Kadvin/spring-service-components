@@ -11,6 +11,8 @@ package net.happyonroad.exception;
  * 并转换为Web层Exception: WebClientSideException, WebServerSideException
  */
 public class ServiceException extends Exception {
+    private static final long serialVersionUID = 537740837026495317L;
+
     public ServiceException(String message) {
         super(message);
     }
