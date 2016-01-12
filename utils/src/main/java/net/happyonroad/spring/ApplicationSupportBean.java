@@ -5,17 +5,13 @@ package net.happyonroad.spring;
 
 import net.happyonroad.component.core.ComponentContext;
 import net.happyonroad.spring.context.ContextUtils;
-import net.happyonroad.spring.support.SmartApplicationEventMulticaster;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.*;
-import org.springframework.context.event.ApplicationEventMulticaster;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.core.OrderComparator;
-import org.springframework.core.Ordered;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jmx.export.MBeanExportOperations;
 
 import javax.management.ObjectName;
@@ -23,7 +19,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The bean support application
