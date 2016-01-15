@@ -4,7 +4,7 @@ package net.happyonroad.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.happyonroad.type.Severity;
+
 import net.happyonroad.util.PatternUtils;
 import net.happyonroad.util.Predicate;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -200,6 +200,7 @@ class CriteriaItem implements Predicate {
 
     @Override
     public boolean evaluate(Object challenge) {
+        //left maybe null
         Object left = readField(challenge, this.field);
         Object value = convertValue(this.value, this.operation, left);
         if (Criteria.EQ.equals(this.operation)) {
@@ -208,6 +209,7 @@ class CriteriaItem implements Predicate {
             return !ObjectUtils.equals(left, value);
         } else if (Criteria.GT.equals(this.operation) || Criteria.GET.equals(this.operation) ||
                    Criteria.LT.equals(this.operation) || Criteria.LET.equals(this.operation)) {
+            if( left == null ) return false;
             if (!(left instanceof Comparable)) {
                 throw new IllegalStateException(challenge + "'s " + field + ": " + left + " is not a Comparable");
             }
@@ -228,6 +230,7 @@ class CriteriaItem implements Predicate {
                 return compared <= 0;
             }
         } else if (Criteria.RM.equals(this.operation) || Criteria.NRM.equals(this.operation)) {
+            if( left == null ) return false;
             //value has been un-quoted
             Pattern pattern = Pattern.compile(value.toString());
             boolean matches = pattern.matcher(left.toString()).matches();
@@ -237,6 +240,7 @@ class CriteriaItem implements Predicate {
                 return !matches;
             }
         } else if (Criteria.IN.equals(this.operation) || Criteria.NIN.equals(this.operation)) {
+            if( left == null ) return false;
             Object[] array = (Object[]) value;
             Arrays.sort(array);
             int index = Arrays.binarySearch(array, left);
@@ -246,6 +250,7 @@ class CriteriaItem implements Predicate {
                 return index < 0;
             }
         } else if (Criteria.Under.equals(this.operation) || Criteria.NotUnder.equals(this.operation)) {
+            if( left == null ) return false;
             boolean startsWith = left.toString().startsWith(value.toString());
             if (Criteria.Under.equals(this.operation)) {
                 return startsWith;
@@ -258,7 +263,7 @@ class CriteriaItem implements Predicate {
     }
 
     private Object convertValue(String value, String operation, Object challenge) {
-        Class<?> referType = challenge.getClass();
+        Class<?> referType = challenge == null ? Object.class : challenge.getClass();
         if (Criteria.Under.equals(operation) || Criteria.NotUnder.equals(operation)) {
             return unquote(value);
         } else if (Criteria.RM.equals(operation) || Criteria.NRM.equals(operation)) {

@@ -18,6 +18,10 @@ import java.util.List;
  * @author Jay Xiong
  */
 public final class MiscUtils {
+    public static final String KEY = "component.feature.resolvers";
+    public static final String SPRING = "net.happyonroad.platform.resolver.SpringMvcFeatureResolver";
+    public static final String MYBATIS = "net.happyonroad.platform.resolver.MybatisFeatureResolver";
+
 
     /**
      * <h2>以最简洁的方式描述一个异常</h2>
@@ -137,6 +141,14 @@ public final class MiscUtils {
             throw new UnsupportedOperationException("Can't execute `which " + exe + "`: " + errors);
         }
         return lines.get(0);
+    }
+
+    public static boolean isSpringMvcEnabled(){
+        return System.getProperty(KEY,"").contains(SPRING);
+    }
+
+    public static boolean isMybatisEnabled(){
+        return System.getProperty(KEY,"").contains(MYBATIS);
     }
 
 }

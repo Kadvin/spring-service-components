@@ -144,6 +144,9 @@
                     <archive>
                         <manifestEntries>
                             <App-Config>net.happyonroad.WebAppConfig</App-Config>
+                            <!--说明这个组件的加载，有赖于存在这个特性resolver，如果不存在，则不需要进行加载-->
+                            <!--多个用逗号分开-->
+                            <Depends-On>spring-mvc</Depends-On>
                         </manifestEntries>
                     </archive>
                 </configuration>
