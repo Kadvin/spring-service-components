@@ -37,7 +37,6 @@ public class Criteria {
     public static final String Under    = "under"; //UNDER
     public static final String NotUnder = "not-under"; //Not UNDER
 
-
     //这个查询条件的名称
     private String label;
     private StringBuilder expression = new StringBuilder();

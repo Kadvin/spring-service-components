@@ -13,4 +13,18 @@ public interface Predicate<T> {
      * @return 是否符合条件
      */
     boolean evaluate(T challenge);
+
+    Predicate TRUE = new Predicate() {
+        @Override
+        public boolean evaluate(Object challenge) {
+            return true;
+        }
+    };
+
+    Predicate FALSE = new Predicate() {
+        @Override
+        public boolean evaluate(Object challenge) {
+            return false;
+        }
+    };
 }
