@@ -4,10 +4,9 @@ package net.happyonroad.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.PatternUtils;
 import net.happyonroad.util.Predicate;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -314,7 +313,7 @@ class CriteriaItem implements Predicate {
             if (mappings.containsKey(name)) name = mappings.get(name);
             if ("this".equals(name)) continue;
             try {
-                value = PropertyUtils.getProperty(value, name);
+                value = MiscUtils.getProperty(value, name);
             } catch (Exception e) {
                 throw new IllegalStateException("Can't read " + name + " from " + value, e);
             }

@@ -15,7 +15,7 @@ import java.util.Set;
 public class CollectionRange extends IpRange{
     private static final long serialVersionUID = 5763420627201014441L;
 
-    private final Set<String> addresses;
+    private Set<String> addresses;
 
     @JsonCreator
     public CollectionRange(@JsonProperty("addresses") Set<String> addresses) {
@@ -61,5 +61,12 @@ public class CollectionRange extends IpRange{
     @Override
     public int hashCode() {
         return addresses.hashCode();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        CollectionRange cloned = (CollectionRange) super.clone();
+        cloned.addresses = new HashSet<String>(this.addresses);
+        return cloned;
     }
 }

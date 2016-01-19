@@ -15,7 +15,7 @@ public class JsonSupport extends BinarySupport implements Jsonable {
 
     public String toJson() {
         try {
-            return ParseUtils.mapper.writeValueAsString(this);
+            return ParseUtils.getMapper().writeValueAsString(this);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while convert " + getClass().getSimpleName() + " as json", e);
         }

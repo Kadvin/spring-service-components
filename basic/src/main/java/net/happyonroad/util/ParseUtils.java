@@ -14,17 +14,28 @@ import java.io.InputStream;
  * <h1>简单的工具</h1>
  */
 public final class ParseUtils {
-    public static ExtendedMapper mapper;
+    public static ThreadLocal<ExtendedMapper> mapper = new ThreadLocal<ExtendedMapper>();
+    static JacksonJmxModule module = new JacksonJmxModule();
 
-    static { refreshMapper(); }
+    static {
+        refreshMapper();
+    }
 
 
-    private ParseUtils() { }
+    private ParseUtils() {
+    }
 
     public static void refreshMapper() {
-        mapper = new ExtendedMapper();
-        JacksonJmxModule module = new JacksonJmxModule();
-        mapper.registerModule(module);
+        //Renew all threads mapper
+        mapper = new ThreadLocal<ExtendedMapper>();
+    }
+
+    public static ExtendedMapper getMapper(){
+        if( mapper.get() == null ){
+            mapper.set(new ExtendedMapper());
+            mapper.get().registerModule(module);
+        }
+        return mapper.get();
     }
 
     public static int parseInt(Object string, int defaultValue) {
@@ -38,7 +49,7 @@ public final class ParseUtils {
     }
 
     public static boolean parseBoolean(Object enabled, boolean defaultValue) {
-        if ( enabled == null ) return defaultValue;
+        if (enabled == null) return defaultValue;
         return Boolean.valueOf(enabled.toString());
     }
 
@@ -88,29 +99,29 @@ public final class ParseUtils {
         }
         try {
             if (viewClass != null) {
-                DeserializationConfig oldConfig = mapper.getDeserializationConfig();
+                DeserializationConfig oldConfig = getMapper().getDeserializationConfig();
                 DeserializationConfig newConfig = oldConfig.withView(viewClass);
                 try {
-                    mapper.setDeserializationConfig(newConfig);
+                    getMapper().setDeserializationConfig(newConfig);
                     ObjectReader reader;
                     if (type instanceof TypeReference) {
-                        reader = mapper.readerWithView(viewClass).withType((TypeReference<T>) type);
+                        reader = getMapper().readerWithView(viewClass).withType((TypeReference<T>) type);
                     } else if (type instanceof JavaType) {
-                        reader = mapper.readerWithView(viewClass).withType((JavaType) type);
+                        reader = getMapper().readerWithView(viewClass).withType((JavaType) type);
                     } else {
-                        reader = mapper.readerWithView(viewClass).withType((Class<T>) type);
+                        reader = getMapper().readerWithView(viewClass).withType((Class<T>) type);
                     }
                     return reader.readValue(content);
                 } finally {
-                    mapper.setDeserializationConfig(oldConfig);
+                    getMapper().setDeserializationConfig(oldConfig);
                 }
             } else {
                 if (type instanceof TypeReference) {
-                    t = mapper.readValue(content, (TypeReference<T>) type);
+                    t = getMapper().readValue(content, (TypeReference<T>) type);
                 } else if (type instanceof JavaType) {
-                    t = mapper.readValue(content, (JavaType) type);
+                    t = getMapper().readValue(content, (JavaType) type);
                 } else {
-                    t = mapper.readValue(content, (Class<T>) type);
+                    t = getMapper().readValue(content, (Class<T>) type);
                 }
             }
         } catch (IOException e) {
@@ -125,7 +136,7 @@ public final class ParseUtils {
     public static <T> T parseJson(InputStream stream, Class<T> clazz) {
         T t;
         try {
-            t = mapper.readValue(stream, clazz);
+            t = getMapper().readValue(stream, clazz);
         } catch (IOException e) {
             throw new IllegalArgumentException("Can't parse stream to " + clazz.getSimpleName(), e);
         }
@@ -142,17 +153,17 @@ public final class ParseUtils {
     public static String toJSONString(Object any, Class viewClass) {
         try {
             if (viewClass != null) {
-                SerializationConfig oldConfig = mapper.getSerializationConfig();
+                SerializationConfig oldConfig = getMapper().getSerializationConfig();
                 SerializationConfig newConfig = oldConfig.withView(viewClass);
                 try {
-                    mapper.setSerializationConfig(newConfig);
-                    ObjectWriter writer = mapper.writerWithView(viewClass);
+                    getMapper().setSerializationConfig(newConfig);
+                    ObjectWriter writer = getMapper().writerWithView(viewClass);
                     return writer.writeValueAsString(any);
                 } finally {
-                    mapper.setSerializationConfig(oldConfig);
+                    getMapper().setSerializationConfig(oldConfig);
                 }
             } else {
-                return mapper.writeValueAsString(any);
+                return getMapper().writeValueAsString(any);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error while convert: " + any + " as json", e);

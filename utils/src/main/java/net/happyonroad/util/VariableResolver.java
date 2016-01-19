@@ -1,7 +1,5 @@
 package net.happyonroad.util;
 
-import org.apache.commons.beanutils.PropertyUtils;
-
 import java.util.Arrays;
 import java.util.Map;
 
@@ -49,7 +47,7 @@ public interface VariableResolver {
         @Override
         public Object resolve(String key) {
             try {
-                return PropertyUtils.getProperty(bean, key);
+                return MiscUtils.getProperty(bean, key);
             } catch (Exception e) {
                 throw new IllegalArgumentException("Can't get property " + key + " from " + bean, e);
             }

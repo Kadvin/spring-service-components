@@ -1,8 +1,5 @@
 package net.happyonroad.util;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import net.happyonroad.util.StringUtils;
-
 /**
  * <h1>Map Builder</h1>
  *
@@ -57,7 +54,7 @@ public final class ConditionBuilder {
                     Object value = pairs[i+1];
                     Object actual ;
                     try {
-                        actual = PropertyUtils.getProperty(challenge, property);
+                        actual = MiscUtils.getProperty(challenge, property);
                     } catch (Exception e) {
                         return false;
                     }

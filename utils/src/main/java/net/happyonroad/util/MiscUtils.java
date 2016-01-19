@@ -5,12 +5,21 @@ import net.happyonroad.extension.GlobalClassLoader;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Locale.ENGLISH;
 
 /**
  * <h1>乱七八糟的工具方法</h1>
@@ -18,10 +27,20 @@ import java.util.List;
  * @author Jay Xiong
  */
 public final class MiscUtils {
-    public static final String KEY = "component.feature.resolvers";
-    public static final String SPRING = "net.happyonroad.platform.resolver.SpringMvcFeatureResolver";
+    public static final String KEY     = "component.feature.resolvers";
+    public static final String SPRING  = "net.happyonroad.platform.resolver.SpringMvcFeatureResolver";
     public static final String MYBATIS = "net.happyonroad.platform.resolver.MybatisFeatureResolver";
 
+    static Map<String, PropertyDescriptor> descriptorMap = new ConcurrentHashMap<String, PropertyDescriptor>();
+    static PropertyDescriptor UNKNOWN_PROPERTY;
+
+    static {
+        try {
+            UNKNOWN_PROPERTY = new PropertyDescriptor("unknown", Unknown.class);
+        } catch (IntrospectionException e) {
+            throw new RuntimeException("Can't init the unknown property descriptor");
+        }
+    }
 
     /**
      * <h2>以最简洁的方式描述一个异常</h2>
@@ -130,7 +149,7 @@ public final class MiscUtils {
         List<String> lines;
         String errors;
         try {
-            Process exec = Runtime.getRuntime().exec(new String[]{"which",exe});
+            Process exec = Runtime.getRuntime().exec(new String[]{"which", exe});
             exec.waitFor();
             lines = IOUtils.readLines(exec.getInputStream());
             errors = org.apache.commons.lang.StringUtils.join(IOUtils.readLines(exec.getErrorStream()), "\n");
@@ -143,12 +162,60 @@ public final class MiscUtils {
         return lines.get(0);
     }
 
-    public static boolean isSpringMvcEnabled(){
-        return System.getProperty(KEY,"").contains(SPRING);
+    public static boolean isSpringMvcEnabled() {
+        return System.getProperty(KEY, "").contains(SPRING);
     }
 
-    public static boolean isMybatisEnabled(){
-        return System.getProperty(KEY,"").contains(MYBATIS);
+    public static boolean isMybatisEnabled() {
+        return System.getProperty(KEY, "").contains(MYBATIS);
     }
 
+    // 性能优化结果：
+    //   快速的读取对象属性，相比 org.apache.commons.beanutils.PropertyUtils
+    public static <T> T getProperty(Object bean, String property)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        if (bean == null)
+            throw new NullPointerException();
+        String key = bean.getClass().getName() + "#" + property;
+        PropertyDescriptor descriptor = descriptorMap.get(key);
+        if (descriptor == null) {
+            try {
+                descriptor = new PropertyDescriptor(property, bean.getClass());
+            } catch (IntrospectionException e) {
+                String name = property.substring(0, 1).toUpperCase(ENGLISH) + property.substring(1);
+                String readMethodName = "get" + name;
+                try {
+                    descriptor = new PropertyDescriptor(property, bean.getClass(), readMethodName, null);
+                } catch (IntrospectionException e1) {
+                    readMethodName = "is" + name;
+                    try {
+                        descriptor = new PropertyDescriptor(property, bean.getClass(), readMethodName, null);
+                    } catch (IntrospectionException e2) {
+                        descriptor = UNKNOWN_PROPERTY;
+                    }
+                }
+            }
+            descriptorMap.put(key, descriptor);
+        }
+        if (descriptor == UNKNOWN_PROPERTY) {
+            throw new IllegalArgumentException("Unknown property " + property + " for " + bean);
+        }
+        if (descriptor.getReadMethod() == null) {
+            throw new IllegalArgumentException(key + " without read method");
+        }
+        //noinspection unchecked
+        return (T)descriptor.getReadMethod().invoke(bean);
+    }
+
+    static class Unknown{
+        private boolean unknown;
+
+        public boolean isUnknown() {
+            return unknown;
+        }
+
+        public void setUnknown(boolean unknown) {
+            this.unknown = unknown;
+        }
+    }
 }

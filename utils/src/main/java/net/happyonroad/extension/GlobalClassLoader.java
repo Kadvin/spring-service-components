@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <h1>能够从所有的组件中加载类的加载器</h1>
@@ -25,12 +26,14 @@ import java.util.*;
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
 public class GlobalClassLoader extends ClassLoader implements Observer {
-    private static GlobalClassLoader          instance;
+    private static GlobalClassLoader instance;
+    private static ThreadLocal<GlobalClassLoader> instances  = new ThreadLocal<GlobalClassLoader>();
+    private static Map<String, Class>             classCache = new ConcurrentHashMap<String, Class>(5000);
 
-    private final  ExtensionContainer         container;
+    private final ExtensionContainer         container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
-    private        List<ExtensionClassLoader> ecls;
+    private       List<ExtensionClassLoader> ecls;
 
     public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
@@ -39,29 +42,47 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         instance = this;
     }
 
+    public GlobalClassLoader(GlobalClassLoader prototype) {
+        super(prototype.getParent());
+        this.container = prototype.container;
+        this.ecls = new ArrayList<ExtensionClassLoader>(prototype.ecls());
+    }
+
     public static GlobalClassLoader getInstance() {
         return instance;
     }
 
-    public static synchronized ClassLoader getDefaultClassLoader(){
+    public static synchronized ClassLoader getDefaultClassLoader() {
         GlobalClassLoader gcl = getInstance();
-        if( gcl == null )
+        if (gcl == null)
             return MainClassLoader.getInstance();
-        return gcl;
+        if (instances.get() == null) {
+            instances.set(new GlobalClassLoader(gcl));
+        }
+        // in order to avoid the system wide lock on the same class loader instance
+        return instances.get();
     }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        Class found =  classCache.get(name);
+        if( found != null ){
+            return found;
+        }
         // find in parent class loader first
         try {
-            return super.loadClass(name, resolve);
+            found = super.loadClass(name, resolve);
+            classCache.put(name, found);
+            return found;
         } catch (ClassNotFoundException e) {
             //skip
 
             for (ExtensionClassLoader ecl : ecls()) {
                 try {
                     if (ecl == null) continue;
-                    return ecl.loadClass(name);
+                    found = ecl.loadClass(name);
+                    classCache.put(name, found);
+                    return found ;
                 } catch (ClassNotFoundException ex) {
                     //try next
                 }
@@ -83,27 +104,31 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         return url;
     }
 
-    protected synchronized List<ExtensionClassLoader> ecls() {
-        if (ecls == null || ecls.isEmpty() ) {
-            List<Component> components = container.getExtensions();
-            if (!components.isEmpty()) {
-                ecls = new ArrayList<ExtensionClassLoader>(components.size());
-                for (Component component : components) {
-                    if( component.getClassLoader() instanceof ExtensionClassLoader )
-                        ecls.add((ExtensionClassLoader) component.getClassLoader());
-                }
-                Collections.reverse(ecls);
-            }else{
-                //noinspection unchecked
-                return Collections.EMPTY_LIST;
-            }
+    protected List<ExtensionClassLoader> ecls() {
+        if (ecls == null ) {
+            return Collections.emptyList();
         }
         return ecls;
     }
 
     @Override
     public synchronized void update(Observable o, Object arg) {
-        this.ecls = null;// last update
+        List<ExtensionClassLoader> ecls;
+        List<Component> components = container.getExtensions();
+        if (!components.isEmpty()) {
+            ecls = new ArrayList<ExtensionClassLoader>(components.size());
+            for (Component component : components) {
+                if( component.getClassLoader() instanceof ExtensionClassLoader )
+                    ecls.add((ExtensionClassLoader) component.getClassLoader());
+            }
+            Collections.reverse(ecls);
+        }else{
+            //noinspection unchecked
+            ecls = Collections.EMPTY_LIST;
+        }
+        synchronized (this){
+            this.ecls = ecls;
+        }
     }
 
     public String getClassPath() {

@@ -56,6 +56,24 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter {
         }
         // Set properties to system, or update itself by system
         applyProperties(properties);
+        String locale = System.getProperty("app.locale", "");
+        if (!locale.equals("")) {
+            Locale theLocale;
+            String[] strings = locale.split("_");
+            String lang = strings[0];
+            if (strings.length == 1) {
+                theLocale = new Locale(lang);
+            } else if (strings.length == 2) {
+                String country = strings[1];
+                theLocale = new Locale(lang, country);
+            } else {//>= 3
+                String country = strings[1];
+                String variant = strings[2];
+                theLocale = new Locale(lang, country, variant);
+            }
+            Locale.setDefault(theLocale);
+            logger.info("Set Default Locate as {}", theLocale);
+        }
     }
 
     @Override

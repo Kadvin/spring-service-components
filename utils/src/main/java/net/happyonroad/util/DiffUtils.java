@@ -7,7 +7,6 @@ package net.happyonroad.util;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 
 import java.beans.PropertyDescriptor;
@@ -55,7 +54,7 @@ public class DiffUtils {
             Map<String, Object> anotherProperties = new HashMap<String, Object>();
             for (Map.Entry<String, PropertyDescriptor> entry : descriptors.entrySet()) {
                 if (Arrays.binarySearch(ignores, entry.getKey()) >= 0) continue;
-                Object oneProperty = PropertyUtils.getProperty(one, entry.getKey());
+                Object oneProperty = MiscUtils.getProperty(one, entry.getKey());
                 if (oneProperty != null && oneProperty.getClass().isArray()) {
                     oneProperties.put(entry.getKey(), Arrays.asList((Object[]) oneProperty));
                 } else {
@@ -63,7 +62,7 @@ public class DiffUtils {
                 }
                 Object anotherProperty;
                 try {
-                    anotherProperty = PropertyUtils.getProperty(another, entry.getKey());
+                    anotherProperty = MiscUtils.getProperty(another, entry.getKey());
                 } catch (NoSuchMethodException e) {
                     anotherProperty = null;
                 }
@@ -139,7 +138,7 @@ public class DiffUtils {
 
                     boolean allNull = true;
                     for (String property : properties) {
-                        Object propertyObj = PropertyUtils.getProperty(actual, property);
+                        Object propertyObj = MiscUtils.getProperty(actual, property);
                         if (propertyObj != null) {
                             allNull = false;
                             break;
@@ -158,8 +157,8 @@ public class DiffUtils {
 
                         boolean match = true;
                         for(String property:properties){
-                            Object actualProperty = PropertyUtils.getProperty(actual, property);
-                            Object legacyProperty = PropertyUtils.getProperty(legacy, property);
+                            Object actualProperty = MiscUtils.getProperty(actual, property);
+                            Object legacyProperty = MiscUtils.getProperty(legacy, property);
                             if(!ObjectUtils.equals(actualProperty,legacyProperty)){
                                 match = false;
                                 break;
