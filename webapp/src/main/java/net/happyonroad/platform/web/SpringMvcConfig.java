@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -67,10 +70,10 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         }
         if (configurer.getUrlPathHelper() != null) {
             handlerMapping.setUrlPathHelper(configurer.getUrlPathHelper());
-   		}
+        }
         logger.debug("Customize Spring MVC with ExtendedRequestMappingHandlerMapping");
-   		return handlerMapping;
-   	}
+        return handlerMapping;
+    }
 
     @Bean
     public CommonsMultipartResolver multipartResolver() {
@@ -87,21 +90,37 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         //hacking the adapter returnValueHandlers
         // replace RequestResponseBodyMethodProcessor with Delayed RequestResponseBodyMethodProcessor
         // property path: adapter#returnValueHandlers#returnValueHandlers
-        Object composite = FieldUtils.readField( adapter, "returnValueHandlers", true);
+        Object composite = FieldUtils.readField(adapter, "returnValueHandlers", true);
         //noinspection unchecked
-        List<HandlerMethodReturnValueHandler> actual = (List<HandlerMethodReturnValueHandler>)FieldUtils.readField( composite, "returnValueHandlers", true);
+        List<HandlerMethodReturnValueHandler> actual =
+                (List<HandlerMethodReturnValueHandler>) FieldUtils.readField(composite, "returnValueHandlers", true);
         int index = -1;
         for (int i = 0; i < actual.size(); i++) {
             Object o = actual.get(i);
-            if( o instanceof RequestResponseBodyMethodProcessor ){
-                index = i; break;
+            if (o instanceof RequestResponseBodyMethodProcessor) {
+                index = i;
+                break;
             }
         }
-        if( index == -1 )
-            throw new IllegalStateException("Can't find any RequestResponseBodyMethodProcessor in requestMappingHandlerAdapter#handlers");
-        PageRequestResponseBodyMethodProcessor pageRenderer = new PageRequestResponseBodyMethodProcessor(getMessageConverters(), mvcContentNegotiationManager());
+        if (index == -1)
+            throw new IllegalStateException(
+                    "Can't find any RequestResponseBodyMethodProcessor in requestMappingHandlerAdapter#handlers");
+        List<HttpMessageConverter<?>> converters = getMessageConverters();
+        PageRequestResponseBodyMethodProcessor pageRenderer =
+                new PageRequestResponseBodyMethodProcessor(converters, mvcContentNegotiationManager());
         actual.add(index, pageRenderer);
         logger.debug("Insert Page RequestResponseBodyMethodProcessor before origin");
+        AbstractJackson2HttpMessageConverter jacksonConverter = null;
+        for (HttpMessageConverter<?> converter : converters) {
+            if (converter instanceof AbstractJackson2HttpMessageConverter) {
+                jacksonConverter = (AbstractJackson2HttpMessageConverter) converter;//只支持对第一个这种converter进行renew
+                break;
+            }
+        }
+        if (jacksonConverter != null) {
+            // jackson convert will cause memory leak by its fixed ObjectMapper, we need renew it periodically
+            new Thread(new JacksonObjectMapperRenew(jacksonConverter), "Jackson-Renew").start();
+        }
     }
 
     @Override
@@ -116,10 +135,10 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //前端的静态资源映射
-        ResourceHandlerRegistration registration = registry.addResourceHandler("/**") ;
+        ResourceHandlerRegistration registration = registry.addResourceHandler("/**");
         List<String> locations = staticResourceLocations();
         registration.addResourceLocations(locations.toArray(new String[locations.size()]));
-        int oneYear = (int) (DateUtils.MILLIS_PER_DAY/1000 * 365);
+        int oneYear = (int) (DateUtils.MILLIS_PER_DAY / 1000 * 365);
         registration.setCachePeriod(oneYear);
         //favicon映射
         registration = registry.addResourceHandler("/favicon.ico");
@@ -129,7 +148,7 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         registration.setCachePeriod(oneYear);
     }
 
-    protected List<String> staticResourceLocations(){
+    protected List<String> staticResourceLocations() {
         List<String> locations = new ArrayList<String>();
         locations.add("/build/");
         locations.add("/deploy/");
@@ -137,4 +156,24 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         return locations;
     }
 
+    static class JacksonObjectMapperRenew implements Runnable {
+        private final AbstractJackson2HttpMessageConverter jacksonConverter;
+
+        public JacksonObjectMapperRenew(AbstractJackson2HttpMessageConverter jacksonConverter) {
+            this.jacksonConverter = jacksonConverter;
+        }
+
+        @Override
+        public void run() {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                try {
+                    Thread.sleep(DateUtils.MILLIS_PER_MINUTE);
+                } catch (InterruptedException e) {
+                    //skip any sleep exception
+                }
+                jacksonConverter.setObjectMapper(Jackson2ObjectMapperBuilder.json().build());
+            }
+        }
+    }
 }

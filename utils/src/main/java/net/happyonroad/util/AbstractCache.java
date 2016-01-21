@@ -3,10 +3,7 @@ package net.happyonroad.util;
 import net.happyonroad.spring.ApplicationSupportBean;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -86,13 +83,18 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
         objectCache.put(key, value);
     }
 
+    public void cache(V value){
+        K key = parseKey(value);
+        cache(key, value);
+    }
+
     /**
      * <h2>获取当前缓存的所有对象实例</h2>
      *
      * @return 对象实例集合
      */
-    protected Collection<V> cachedValues() {
-        return objectCache.values();
+    protected List<V> cachedValues() {
+        return new ArrayList<V>(objectCache.values());
     }
 
     /**

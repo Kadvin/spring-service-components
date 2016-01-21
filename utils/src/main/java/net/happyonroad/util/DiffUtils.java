@@ -63,7 +63,7 @@ public class DiffUtils {
                 Object anotherProperty;
                 try {
                     anotherProperty = MiscUtils.getProperty(another, entry.getKey());
-                } catch (NoSuchMethodException e) {
+                } catch (Exception e) {
                     anotherProperty = null;
                 }
                 if (anotherProperty != null && anotherProperty.getClass().isArray()) {

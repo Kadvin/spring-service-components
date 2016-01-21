@@ -40,6 +40,25 @@ public final class ConditionBuilder {
         return builder.toString();
     }
 
+    public static Predicate buildPredicate(final Class klass){
+        return new Predicate() {
+            @Override
+            public boolean evaluate(Object challenge) {
+                //noinspection unchecked
+                return klass.isAssignableFrom(challenge.getClass());
+            }
+        };
+    }
+
+    public static Predicate and(final Predicate p1, final Predicate p2){
+        return new Predicate() {
+            @Override
+            public boolean evaluate(Object challenge) {
+                return p1.evaluate(challenge) && p2.evaluate(challenge);
+            }
+        };
+    }
+
     public static Predicate buildPredicate(final Object...pairs){
         if (pairs.length % 2 != 0)
             throw new IllegalArgumentException("The pairs number should be even, but I got "

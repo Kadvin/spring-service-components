@@ -1,6 +1,7 @@
 package net.happyonroad.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.happyonroad.model.PropertiesSupportRecord;
 import net.happyonroad.model.Record;
 
 import java.lang.reflect.Constructor;
@@ -38,6 +39,15 @@ public class BroadcastEvent<Model> extends AbstractEvent<Model> {
     //为了防止直接将Mybatis Enhancer传入
     static <M> M process(M instance){
         Class<?> klass = instance.getClass();
+        if( instance instanceof PropertiesSupportRecord ){
+            try {
+                //避免同步修改导致的错误
+                //noinspection unchecked
+                return (M)((PropertiesSupportRecord)instance).clone();
+            } catch (CloneNotSupportedException e) {
+                //skip
+            }
+        }
         if(!isProxied(klass))
             return instance;
         try {

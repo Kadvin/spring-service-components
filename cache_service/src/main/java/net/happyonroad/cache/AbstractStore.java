@@ -54,9 +54,6 @@ public abstract class AbstractStore<K, V> extends AbstractCache<K,V> {
      * @return 加载的对象实例
      */
     protected V load(K key) {
-        //TO AVOID JsonMappingException: Already had POJO for id
-        // because of ParseUtils reuse mapper
-        ParseUtils.refreshMapper();
         if (isBinaryMode()) {
             byte[] bytes = container.getBinary(key.toString());
             if (bytes == null) return null;
