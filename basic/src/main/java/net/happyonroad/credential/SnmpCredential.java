@@ -9,9 +9,7 @@ import net.happyonroad.type.TimeInterval;
 import java.util.Collections;
 import java.util.Map;
 
-import static net.happyonroad.util.ParseUtils.parseBoolean;
-import static net.happyonroad.util.ParseUtils.parseInt;
-import static net.happyonroad.util.ParseUtils.parseString;
+import static net.happyonroad.util.ParseUtils.*;
 
 /**
  * <h1>SNMP Credential Parameters</h1>
@@ -39,14 +37,9 @@ public class SnmpCredential extends AbstractCredential {
         this(Collections.emptyMap());
     }
 
-    @JsonIgnore
-    @Override
-    public int getOrder() {
-        return 10;
-    }
-
     @SuppressWarnings("unchecked")
     public SnmpCredential(Map map) {
+        setOrder(10);
         setType(Snmp);
         setName(parseString(map.get("name"), getType()));
         setEnabled(parseBoolean(map.get("enabled"), true));

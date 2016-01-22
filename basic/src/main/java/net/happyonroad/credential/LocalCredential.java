@@ -1,7 +1,5 @@
 package net.happyonroad.credential;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * <h1>本机监控方式，只能监控与监控引擎部署在一起的资源</h1>
  *
@@ -14,12 +12,6 @@ public class LocalCredential extends AbstractCredential implements CliCredential
     public LocalCredential() {
         setType(Local);
         setName(Local);
-    }
-
-    @JsonIgnore
-    @Override
-    public int getOrder() {
-        return 0;
     }
 
     public String toString(){

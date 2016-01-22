@@ -3,7 +3,6 @@
  */
 package net.happyonroad.credential;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -34,17 +33,12 @@ public class WindowsCredential extends AbstractCredential implements WmiCredenti
     }
 
     public WindowsCredential(Map map) {
+        setOrder(20);
         setName ((String) map.get("name"));
         if( getName() == null ) setName(Windows);
         setEnabled(parseBoolean(map.get("enabled"), true));
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
-    }
-
-    @JsonIgnore
-    @Override
-    public int getOrder() {
-        return 20;
     }
 
     public String getDomain() {

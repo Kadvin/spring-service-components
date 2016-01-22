@@ -8,9 +8,12 @@ import net.happyonroad.model.Credential;
  * @author Jay Xiong
  */
 public abstract class AbstractCredential implements Credential {
-    private String  name;
-    private String  type;
+    private static final long serialVersionUID = -5470080193523796203L;
+
+    private String name;
+    private String type;
     private boolean enabled = true;
+    private int order;
 
     @Override
     public String getName() {
@@ -37,5 +40,14 @@ public abstract class AbstractCredential implements Credential {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

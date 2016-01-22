@@ -42,6 +42,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
     }
 
     public SshCredential(String user, String password) {
+        setOrder(20);
         setType(Ssh);
         setUser(user);
         setAuthenticateMethod(AUTH_PASSWORD);
@@ -51,6 +52,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
     }
 
     public SshCredential(String user, File permFile) {
+        setOrder(20);
         setType(Ssh);
         setUser(user);
         setAuthenticateMethod(AUTH_PUBLICKEY);
@@ -60,6 +62,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
     }
 
     public SshCredential(Map map) {
+        setOrder(20);
         setType(Ssh);
         setName((String) map.get("name"));
         if (getName() == null) setName(getType());
@@ -73,12 +76,6 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         }
         setPort(ParseUtils.parseInt(map.get("port"), 22));
         setTimeout(ParseUtils.parseString(map.get("timeout"), DEFAULT_TIMEOUT));
-    }
-
-    @JsonIgnore
-    @Override
-    public int getOrder() {
-        return 20;
     }
 
     public String getUser() {
@@ -147,20 +144,28 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         if (this == o) return true;
         if (!(o instanceof SshCredential)) return false;
 
-        SshCredential sshAccess = (SshCredential) o;
+        SshCredential that = (SshCredential) o;
 
-        if (!timeout.equals(sshAccess.timeout)) return false;
-        if (password != null ? !password.equals(sshAccess.password) : sshAccess.password != null) return false;
-        if (!user.equals(sshAccess.user)) return false;
+        if (port != that.port) return false;
+        if (!authenticateMethod.equals(that.authenticateMethod)) return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) return false;
+        if (permFile != null ? !permFile.equals(that.permFile) : that.permFile != null) return false;
+        if (privateKey != null ? !privateKey.equals(that.privateKey) : that.privateKey != null) return false;
+        if (timeout != null ? !timeout.equals(that.timeout) : that.timeout != null) return false;
+        if (!user.equals(that.user)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = user.hashCode();
+        int result = authenticateMethod.hashCode();
+        result = 31 * result + user.hashCode();
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + timeout.hashCode();
+        result = 31 * result + (permFile != null ? permFile.hashCode() : 0);
+        result = 31 * result + (privateKey != null ? privateKey.hashCode() : 0);
+        result = 31 * result + port;
+        result = 31 * result + (timeout != null ? timeout.hashCode() : 0);
         return result;
     }
 

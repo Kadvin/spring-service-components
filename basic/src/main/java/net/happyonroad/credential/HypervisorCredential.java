@@ -3,9 +3,6 @@
  */
 package net.happyonroad.credential;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.happyonroad.model.Credential;
-
 import java.util.Collections;
 import java.util.Map;
 
@@ -26,6 +23,7 @@ public class HypervisorCredential extends AbstractCredential {
     }
 
     public HypervisorCredential(Map map) {
+        setOrder(30);
         setType(Hypervisor);
         if (map.containsKey("https")) {
             https = (Boolean) map.get("https");
@@ -34,12 +32,6 @@ public class HypervisorCredential extends AbstractCredential {
         setEnabled(parseBoolean(map.get("enabled"), true));
         this.user = (String) map.get("user");
         this.password = (String) map.get("password");
-    }
-
-    @JsonIgnore
-    @Override
-    public int getOrder() {
-        return 30;
     }
 
     public boolean isHttps() {
