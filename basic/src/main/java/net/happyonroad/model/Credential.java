@@ -17,6 +17,7 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface Credential extends Serializable, PriorityOrdered {
     String Snmp       = "snmp";
+    String CLI        = "cli";
     String Ssh        = "ssh";
     String Telnet     = "telnet";
     String Windows    = "windows";

@@ -7,17 +7,28 @@ package net.happyonroad.credential;
  */
 public class TelnetCredential extends AbstractCredential implements CliCredential {
     private static final long serialVersionUID = 1200524055861549577L;
+    private String term = "VT100";
     //用户名是可选的，密码也是可选的
-    private String user, password, superPassword;
-    //普通提示符
-    private String promotion = ">", superPromotion = "#";
+    private String user, password;
+    //从普通用户变为超级用户的命令，以及超级用户密码
+    private String changeSuper = "su", superPassword;
     //Telnet的端口
     private int    port    = 23;
+    //命令超时
     private String timeout = "30s";
     private String charset = "utf8";
+    private String promotions = "\\$>#%";
 
     public TelnetCredential() {
         setName(Telnet);
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     public String getUser() {
@@ -44,20 +55,20 @@ public class TelnetCredential extends AbstractCredential implements CliCredentia
         this.superPassword = superPassword;
     }
 
-    public String getPromotion() {
-        return promotion;
+    public String getChangeSuper() {
+        return changeSuper;
     }
 
-    public void setPromotion(String promotion) {
-        this.promotion = promotion;
+    public void setChangeSuper(String changeSuper) {
+        this.changeSuper = changeSuper;
     }
 
-    public String getSuperPromotion() {
-        return superPromotion;
+    public String getPromotions() {
+        return promotions;
     }
 
-    public void setSuperPromotion(String superPromotion) {
-        this.superPromotion = superPromotion;
+    public void setPromotions(String promotions) {
+        this.promotions = promotions;
     }
 
     public int getPort() {
