@@ -20,6 +20,7 @@ public class TelnetCredential extends AbstractCredential implements CliCredentia
     private String promotions = "\\$>#%";
 
     public TelnetCredential() {
+        setType(Telnet);
         setName(Telnet);
     }
 

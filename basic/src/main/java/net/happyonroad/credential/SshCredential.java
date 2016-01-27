@@ -43,6 +43,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
 
     public SshCredential(String user, String password) {
         setOrder(20);
+        setName(Ssh);
         setType(Ssh);
         setUser(user);
         setAuthenticateMethod(AUTH_PASSWORD);
@@ -53,6 +54,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
 
     public SshCredential(String user, File permFile) {
         setOrder(20);
+        setName(Ssh);
         setType(Ssh);
         setUser(user);
         setAuthenticateMethod(AUTH_PUBLICKEY);
@@ -63,6 +65,7 @@ public class SshCredential extends AbstractCredential implements CliCredential {
 
     public SshCredential(Map map) {
         setOrder(20);
+        setName(Ssh);
         setType(Ssh);
         setName((String) map.get("name"));
         if (getName() == null) setName(getType());
