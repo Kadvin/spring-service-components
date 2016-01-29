@@ -30,12 +30,12 @@
         <module>utils</module>
         <module>message_bus</module>
         <module>cache_service</module>
-        <module>redis</module>
+        <module>redis_service</module>
         <module>remoting</module>
         <module>database</module>
         <module>webapp</module>
         <module>menu</module>
-        <module>system-script</module>
+        <module>system_script</module>
     </modules>
 
     <dependencies>
@@ -94,7 +94,7 @@
             </dependency>
             <dependency>
                 <groupId>net.happyonroad</groupId>
-                <artifactId>redis</artifactId>
+                <artifactId>redis_service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
