@@ -206,4 +206,15 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
             return MainClassLoader.getInstance();
         return instance.parentFor(component);
     }
+
+    public ClassLoader classLoaderFor(String componentId) {
+        if( container == null ) return this;
+        List<Component> components = container.getExtensions();
+        for (Component component : components) {
+            if( component.getId().equals(componentId)){
+                return component.getClassLoader();
+            }
+        }
+        return this;
+    }
 }

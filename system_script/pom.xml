@@ -10,7 +10,7 @@
         <version>2.0.1</version>
     </parent>
 
-    <artifactId>system-script</artifactId>
+    <artifactId>system_script</artifactId>
 
     <name>System Script</name>
     <description>
