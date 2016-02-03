@@ -36,6 +36,13 @@ public class DefaultGeneralMap<K,V> extends HashMap<K,V> implements GeneralMap<K
     }
 
     @Override
+    public V remove(Object key) {
+        //noinspection unchecked
+        key = convertKey((K) key);
+        return super.remove(key);
+    }
+
+    @Override
     public V put(K key, V value) {
         key = convertKey(key);
         return super.put(key, value);

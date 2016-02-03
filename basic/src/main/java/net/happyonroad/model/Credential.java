@@ -18,6 +18,7 @@ import java.io.Serializable;
 public interface Credential extends Serializable, PriorityOrdered {
     String Snmp       = "snmp";
     String CLI        = "cli";
+    String CLI_SQL    = "cli_sql";
     String Ssh        = "ssh";
     String Telnet     = "telnet";
     String Windows    = "windows";
