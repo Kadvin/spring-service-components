@@ -41,6 +41,17 @@ public class DefaultGeneralMap<V> extends HashMap<String, V> implements GeneralM
         return super.put(key, value);
     }
 
+    /**
+     * <h2>更改key的名称</h2>
+     *
+     * @param oldKey 原有的key
+     * @param newKey 新的key
+     */
+    public void rename(String oldKey, String newKey) {
+        V value = remove(oldKey);
+        put(newKey, value);
+    }
+
     @Override
     public String getString(String key) {
         V v = get(key);
