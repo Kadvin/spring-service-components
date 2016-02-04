@@ -5,7 +5,6 @@ import net.happyonroad.support.DefaultGeneralMap;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,7 +46,7 @@ public class AbstractEvent<Model> extends ApplicationEvent {
     }
 
     public void setAttribute(String key, Object value) {
-        if(attributes == null ) attributes = new DefaultGeneralMap<String, Object>();
+        if(attributes == null ) attributes = new DefaultGeneralMap<Object>();
         attributes.put(key, value);
     }
 
