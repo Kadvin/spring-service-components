@@ -8,9 +8,9 @@
         <version>2.0.1</version>
     </parent>
 
-    <artifactId>redis</artifactId>
+    <artifactId>redis_service</artifactId>
 
-    <name>Redis Component</name>
+    <name>Redis Service</name>
 
     <properties>
         <version.redis>2.2.1</version.redis>
