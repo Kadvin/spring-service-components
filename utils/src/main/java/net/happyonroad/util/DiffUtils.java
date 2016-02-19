@@ -7,6 +7,7 @@ package net.happyonroad.util;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 
 import java.beans.PropertyDescriptor;
@@ -56,7 +57,7 @@ public class DiffUtils {
                 if (Arrays.binarySearch(ignores, entry.getKey()) >= 0) continue;
                 Object oneProperty = MiscUtils.getProperty(one, entry.getKey());
                 if (oneProperty != null && oneProperty.getClass().isArray()) {
-                    oneProperties.put(entry.getKey(), Arrays.asList((Object[]) oneProperty));
+                    oneProperties.put(entry.getKey(), ArrayUtils.toString(oneProperty));
                 } else {
                     oneProperties.put(entry.getKey(), oneProperty);
                 }
@@ -67,7 +68,7 @@ public class DiffUtils {
                     anotherProperty = null;
                 }
                 if (anotherProperty != null && anotherProperty.getClass().isArray()) {
-                    anotherProperties.put(entry.getKey(), Arrays.asList((Object[]) anotherProperty));
+                    anotherProperties.put(entry.getKey(), ArrayUtils.toString(anotherProperty));
                 } else {
                     anotherProperties.put(entry.getKey(), anotherProperty);
                 }
