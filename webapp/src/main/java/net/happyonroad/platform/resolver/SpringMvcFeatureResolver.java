@@ -43,7 +43,7 @@ public class SpringMvcFeatureResolver extends AbstractFeatureResolver {
         super.applyDefaults(component);
         String webRepository = component.getManifestAttribute(WEB_REPOSITORY);
         if( webRepository == null && readComponentDefaultConfig(component, "W").contains("W")){
-            webRepository = System.getProperty("default.web.repository", "dnt.*.web.controller");
+            webRepository = System.getProperty("default.web.repository", "com.itsnow.*.web.controller");
         }
         component.setManifestAttribute(WEB_REPOSITORY, webRepository);
     }

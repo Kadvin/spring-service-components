@@ -13,7 +13,7 @@ import org.junit.Test;
  */
 public class SshCredentialTest {
     public static final String        JSON =
-            "{\"@class\":\"net.happyonroad.credential.SshCredential\",\"name\":\"ssh\",\"type\":\"ssh\",\"enabled\":true,\"authenticateMethod\":\"password\",\"user\":\"root\",\"password\":\"secret\",\"permFile\":null,\"privateKey\":null,\"port\":22,\"timeout\":\"30s\"}";
+            "{\"@class\":\"net.happyonroad.credential.SshCredential\",\"name\":\"ssh\",\"type\":\"ssh\",\"enabled\":true,\"order\":20,\"authenticateMethod\":\"password\",\"user\":\"root\",\"password\":\"secret\",\"permFile\":null,\"privateKey\":null,\"port\":22,\"timeout\":\"30s\"}";
     static              SshCredential SSH  = new SshCredential("root", "secret");
 
     static {

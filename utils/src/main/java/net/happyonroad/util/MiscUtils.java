@@ -9,11 +9,11 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -176,6 +176,19 @@ public final class MiscUtils {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (bean == null)
             throw new NullPointerException();
+        //special treat for array length
+
+        if ("length".equals(property)) {
+            if (bean instanceof Object[]) {
+                int length = ((Object[]) bean).length;
+                //noinspection unchecked
+                return (T) new Integer(length);
+            } else if (ClassUtils.isPrimitiveArray(bean.getClass())) {
+                //noinspection unchecked
+                return (T) new Integer(Array.getLength(bean));
+            }
+
+        }
         String key = bean.getClass().getName() + "#" + property;
         PropertyDescriptor descriptor = descriptorMap.get(key);
         if (descriptor == null) {
@@ -204,10 +217,10 @@ public final class MiscUtils {
             throw new IllegalArgumentException(key + " without read method");
         }
         //noinspection unchecked
-        return (T)descriptor.getReadMethod().invoke(bean);
+        return (T) descriptor.getReadMethod().invoke(bean);
     }
 
-    static class Unknown{
+    static class Unknown {
         private boolean unknown;
 
         public boolean isUnknown() {

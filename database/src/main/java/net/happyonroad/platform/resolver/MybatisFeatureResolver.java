@@ -55,7 +55,7 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
         super.applyDefaults(component);
         String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
         if( dbRepository == null && readComponentDefaultConfig(component, "D").contains("D")){
-            dbRepository = System.getProperty("default.db.repository", "dnt.*.repository");
+            dbRepository = System.getProperty("default.db.repository", "com.itsnow.*.repository");
         }
         component.setManifestAttribute(DB_REPOSITORY, dbRepository);
     }

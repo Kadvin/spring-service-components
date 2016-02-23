@@ -16,7 +16,7 @@ public class TempFile {
     //Clean my temp dir
     static {
         String folderPath = System.getProperty("java.io.tmpdir");
-        File tmpdir = new File(folderPath, "dnt");
+        File tmpdir = new File(folderPath, "itsnow");
         try {
             FileUtils.deleteDirectory(tmpdir);
             if (!tmpdir.mkdirs()) {
@@ -45,7 +45,7 @@ public class TempFile {
      */
     public static File tempFolder() {
         String folderPath = System.getProperty("java.io.tmpdir");
-        File tmpdir = new File(folderPath, "dnt");
+        File tmpdir = new File(folderPath, "itsnow");
         File folder = new File(tmpdir, generateSeed());
         if (folder.exists()) {
             try {

@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class SnmpCredentialTest {
     public static final String JSON =
-            "{\"@class\":\"net.happyonroad.credential.SnmpCredential\",\"name\":\"snmp\",\"type\":\"snmp\",\"enabled\":true,\"version\":\"v3\",\"community\":\"public\",\"port\":161,\"timeout\":\"10s\",\"retries\":3,\"passport\":{\"authenticateMethod\":\"MD5\",\"encryptMethod\":\"DES\",\"privateKey\":null,\"userName\":\"admin\",\"password\":\"secret\",\"context\":null}}";
+            "{\"@class\":\"net.happyonroad.credential.SnmpCredential\",\"name\":\"snmp\",\"type\":\"snmp\",\"enabled\":true,\"order\":10,\"version\":\"v3\",\"community\":\"public\",\"port\":161,\"timeout\":\"10s\",\"retries\":3,\"passport\":{\"authenticateMethod\":\"MD5\",\"encryptMethod\":\"DES\",\"privateKey\":null,\"userName\":\"admin\",\"password\":\"secret\",\"context\":null}}";
     private static SnmpCredential SNMP;
 
     static {
