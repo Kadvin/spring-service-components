@@ -7,11 +7,13 @@ import net.happyonroad.platform.web.interceptor.AfterFilterInterceptor;
 import net.happyonroad.platform.web.interceptor.BeforeFilterInterceptor;
 import net.happyonroad.platform.web.support.ExtendedRequestMappingHandlerMapping;
 import net.happyonroad.platform.web.support.PageRequestResponseBodyMethodProcessor;
+import net.happyonroad.platform.web.util.ResourceRedirectHandlerMapping;
 import org.apache.commons.lang.reflect.FieldUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +24,16 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.config.annotation.*;
+
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 
+import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +48,8 @@ import java.util.List;
 public class SpringMvcConfig extends WebMvcConfigurationSupport
         implements InitializingBean {
     public static final Log logger = LogFactory.getLog(SpringMvcConfig.class);
+    protected ApplicationContext applicationCtx;
+    protected ServletContext     servletCtx;
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -132,6 +141,10 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         logger.debug("Add Before/After Filter Interceptors");
     }
 
+    //如果系统配置了 http.url， 这些静态资源的访问，也是要在http.url之下
+    // 因为这些静态资源的映射实现(HandlerMapping) 作为 Spring DispatcherServlet#handlerMappings中的一员
+    // 而Spring DispatcherServlet由FrameworkServlet转发, FrameworkServlet具体能映射哪些url，
+    // 由 SpringMvcLoader#getServletMappings() 限制
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //前端的静态资源映射
@@ -140,12 +153,39 @@ public class SpringMvcConfig extends WebMvcConfigurationSupport
         registration.addResourceLocations(locations.toArray(new String[locations.size()]));
         int oneYear = (int) (DateUtils.MILLIS_PER_DAY / 1000 * 365);
         registration.setCachePeriod(oneYear);
-        //favicon映射
-        registration = registry.addResourceHandler("/favicon.ico");
-        registration.addResourceLocations("/build/assets/favicon.ico",
-                                          "/deploy/images/favicon.ico",
-                                          "/public/images/favicon.ico");
-        registration.setCachePeriod(oneYear);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        super.setApplicationContext(applicationContext);
+        this.applicationCtx = applicationContext;
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        super.setServletContext(servletContext);
+        this.servletCtx = servletContext;
+    }
+
+    @Bean
+    public HandlerMapping resourceRedirectHandleMapping() {
+        ResourceRedirectHandlerMapping handlerMapping = new ResourceRedirectHandlerMapping(this.applicationCtx, this.servletCtx);
+        redirect(handlerMapping);
+        handlerMapping.setPathMatcher(mvcPathMatcher());
+        handlerMapping.setUrlPathHelper(mvcUrlPathHelper());
+        HandlerInterceptor interceptor = new ResourceUrlProviderExposingInterceptor(mvcResourceUrlProvider());
+        handlerMapping.setInterceptors(new HandlerInterceptor[]{interceptor});
+        return handlerMapping;
+
+    }
+
+    protected void redirect(ResourceRedirectHandlerMapping mapping) {
+        // like nginx try_files
+        mapping.tryFiles("/favicon.ico",
+                         "/build/assets/favicon.ico",
+                         "/deploy/assets/favicon.ico",
+                         "/public/images/favicon.ico");
+
     }
 
     protected List<String> staticResourceLocations() {
