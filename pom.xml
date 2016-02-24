@@ -7,14 +7,13 @@
     <parent>
         <groupId>com.itsnow</groupId>
         <artifactId>parent</artifactId>
-        <version>25</version>
+        <version>26</version>
         <relativePath>parent/pom.xml</relativePath>
     </parent>
+
     <groupId>net.happyonroad</groupId>
     <artifactId>spring-service-components</artifactId>
     <version>2.1.0</version>
-
-
 
     <name>Spring Service Components</name>
     <url>https://github.com/Kadvin/spring-service-components</url>
@@ -31,6 +30,7 @@
         <module>message_bus</module>
         <module>cache_service</module>
         <module>redis_service</module>
+        <module>mongo_service</module>
         <module>remoting</module>
         <module>database</module>
         <module>webapp</module>
@@ -77,6 +77,11 @@
             </dependency>
 
             <!-- Components DEPENDENCIES -->
+            <dependency>
+                <groupId>net.happyonroad</groupId>
+                <artifactId>basic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>net.happyonroad</groupId>
                 <artifactId>utils</artifactId>

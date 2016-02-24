@@ -8,7 +8,7 @@ import java.util.Properties;
 /**
  * 支持扩展属性的记录
  */
-public class PropertiesSupportRecord extends Record{
+public class PropertiesSupportRecord<T> extends Record<T>{
 
     private static final long serialVersionUID = -8053789424127958797L;
     // 扩展属性

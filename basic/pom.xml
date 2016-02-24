@@ -16,6 +16,10 @@
     <description>Basic data types be used in any module</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
         <!--Replace json smart with jackson-->
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>

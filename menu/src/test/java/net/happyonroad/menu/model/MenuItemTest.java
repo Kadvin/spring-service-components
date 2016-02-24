@@ -9,7 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -31,7 +31,7 @@ public class MenuItemTest {
         this.menuItem.setPosition(0L);
         this.menuItem.setShortcut("Shift+Ctrl+A");
         this.menuItem.setDescription("This is a test.");
-        this.menuItem.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        this.menuItem.setCreatedAt(new Date(System.currentTimeMillis()));
         this.menuItem.setUpdatedAt(this.menuItem.getCreatedAt());
     }
 

@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
@@ -52,7 +52,7 @@ public class MenuItemsControllerTest {
         this.menuItem.setPosition(0L);
         this.menuItem.setShortcut("Shift+Ctrl+A");
         this.menuItem.setDescription("This is a test.");
-        this.menuItem.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        this.menuItem.setCreatedAt(new Date(System.currentTimeMillis()));
         this.menuItem.setUpdatedAt(this.menuItem.getCreatedAt());
         menuItemList.add(menuItem);
 

@@ -8,9 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.springframework.data.annotation.Transient;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,22 +22,22 @@ import java.util.Map;
  * 在数据库中以主表的形式出现（而不是关联表）
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
-public class Record implements Cloneable, Serializable{
+public class Record<T> implements Cloneable, Serializable{
 
     private static final long serialVersionUID = 3209170950751539327L;
 
     protected static ObjectMapper mapper = new ObjectMapper();
 
-    private Long      id;
-    private Timestamp createdAt, updatedAt;
+    private T id;
+    private Date createdAt, updatedAt;
     @JsonIgnore
     private boolean cascadeDeleting, cascadeCreating, hierarchyDeleting, cascadeUpdating;
 
-    public Long getId() {
+    public T getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(T id) {
         this.id = id;
     }
 
@@ -43,19 +45,19 @@ public class Record implements Cloneable, Serializable{
         creating();
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt == null ? new Timestamp(System.currentTimeMillis()) : createdAt;
+    public Date getCreatedAt() {
+        return createdAt == null ? new Date(System.currentTimeMillis()) : createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt == null ? new Timestamp(System.currentTimeMillis()) : updatedAt;
+    public Date getUpdatedAt() {
+        return updatedAt == null ? new Date(System.currentTimeMillis()) : updatedAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -63,7 +65,7 @@ public class Record implements Cloneable, Serializable{
      * 标记本对象正在本创建
      */
     public void creating(){
-        setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        setCreatedAt(new Date(System.currentTimeMillis()));
         setUpdatedAt(getCreatedAt());
     }
 
@@ -116,8 +118,9 @@ public class Record implements Cloneable, Serializable{
     }
 
     @JsonIgnore
+    @Transient
     public boolean isNew() {
-        return id == null || id <= 0 ;
+        return id == null || id.hashCode() <= 0 ;
     }
 
 
@@ -130,11 +133,13 @@ public class Record implements Cloneable, Serializable{
     }
 
     @JsonIgnore
+    @Transient
     public boolean isCascadeCreating(){
         return cascadeCreating;
     }
 
     @JsonIgnore
+    @Transient
     public boolean isCascadeDeleting(){
         return cascadeDeleting;
     }
@@ -144,6 +149,7 @@ public class Record implements Cloneable, Serializable{
     }
 
     @JsonIgnore
+    @Transient
     public boolean isHierarchyDeleting() {
         return hierarchyDeleting;
     }
@@ -153,6 +159,7 @@ public class Record implements Cloneable, Serializable{
     }
 
     @JsonIgnore
+    @Transient
     public boolean isCascadeUpdating() {
         return cascadeUpdating;
     }
@@ -169,11 +176,13 @@ public class Record implements Cloneable, Serializable{
     }
 
     @JsonIgnore
+    @Transient
     public String getClassName() {
         return reduceCglibName(getClass().getName());
     }
 
     @JsonIgnore
+    @Transient
     public String getSimpleName() {
         return reduceCglibName(getClass().getSimpleName());
     }

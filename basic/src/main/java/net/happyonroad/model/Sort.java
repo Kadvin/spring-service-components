@@ -95,7 +95,7 @@ public class Sort implements Iterable<Sort.Order>, Serializable {
 	 * ones.
 	 *
 	 * @param sort can be {@literal null}.
-	 * @return
+	 * @return new sort
 	 */
 	public Sort and(Sort sort) {
 
