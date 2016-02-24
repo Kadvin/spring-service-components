@@ -8,7 +8,7 @@
 
     <groupId>com.itsnow</groupId>
     <artifactId>parent</artifactId>
-    <version>24</version>
+    <version>25</version>
 
     <name>Itsnow Pom Parent</name>
     <description>
