@@ -19,8 +19,8 @@
     <url>https://github.com/Kadvin/spring-service-components</url>
 
     <properties>
-        <version.component-framework>[2.8.0,)</version.component-framework>
-        <version.strict.component-framework>2.8.0</version.strict.component-framework>
+        <version.component-framework>[2.9.0,)</version.component-framework>
+        <version.strict.component-framework>2.9.0</version.strict.component-framework>
         <version.guava>10.0.1</version.guava>
     </properties>
 
