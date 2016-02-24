@@ -81,7 +81,7 @@ class RedisFactory extends BasePoolableObjectFactory {
         if (obj instanceof Jedis) {
             final Jedis jedis = (Jedis) obj;
             try {
-                return jedis.isConnected() && jedis.ping().equals("PONG");
+                return jedis.isConnected() && jedis.ping().equalsIgnoreCase("PONG");
             } catch (final Exception e) {
                 return false;
             }

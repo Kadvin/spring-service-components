@@ -7,6 +7,7 @@ import net.happyonroad.cache.CacheClient;
 import net.happyonroad.cache.CacheListener;
 import net.happyonroad.cache.MutableCacheService;
 import net.happyonroad.spring.Bean;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
@@ -77,6 +78,7 @@ class RedisCache extends Bean implements MutableCacheService {
                 } catch (InterruptedException e1) {
                     //skip
                 }
+                logger.error(ExceptionUtils.getRootCauseMessage(e));
             }
         }
         if( resource != null ) pool.returnResource(resource);
