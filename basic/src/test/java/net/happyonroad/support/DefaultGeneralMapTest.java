@@ -3,7 +3,7 @@ package net.happyonroad.support;
 import net.happyonroad.model.GeneralMap;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("unchecked")
 public class DefaultGeneralMapTest {

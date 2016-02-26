@@ -3,10 +3,10 @@
  */
 package net.happyonroad.platform.web.model;
 
-import net.happyonroad.model.Page;
 import net.happyonroad.platform.web.annotation.Description;
 import net.happyonroad.util.StringUtils;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;

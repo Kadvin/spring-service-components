@@ -4,7 +4,6 @@
 package net.happyonroad.concurrent;
 
 import junit.framework.Assert;
-import net.happyonroad.concurrent.StrategyExecutorService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

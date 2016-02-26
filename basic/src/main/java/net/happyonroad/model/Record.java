@@ -22,7 +22,13 @@ import java.util.Map;
  * 在数据库中以主表的形式出现（而不是关联表）
  */
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class )
-public class Record<T> implements Cloneable, Serializable{
+public class Record<T extends Serializable> implements Cloneable, Serializable{
+    public static final String TOTAL  = "total";
+    public static final String PAGES  = "pages";
+    public static final String NUMBER = "number";
+    public static final String REAL   = "real";
+    public static final String SORT   = "sort";
+    public static final String COUNT  = "count";
 
     private static final long serialVersionUID = 3209170950751539327L;
 

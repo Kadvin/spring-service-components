@@ -3,7 +3,6 @@
  */
 package net.happyonroad.credential;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.happyonroad.model.Credential;
 
 import java.util.Properties;
@@ -14,10 +13,19 @@ import java.util.Properties;
 public class CredentialProperties extends Properties implements Credential {
     private static final long serialVersionUID = -5943166126247555544L;
 
-    @JsonIgnore
+    public CredentialProperties() {
+        //for mongo db
+        setProperty("_class", getClass().getName());
+    }
+
     @Override
+
     public int getOrder() {
         return 40;
+    }
+
+    public void setOrder(int order) {
+        setProperty("order", String.valueOf(order));
     }
 
     @Override
@@ -25,7 +33,7 @@ public class CredentialProperties extends Properties implements Credential {
         return getProperty("name");
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         setProperty("name", name);
     }
 
@@ -34,7 +42,7 @@ public class CredentialProperties extends Properties implements Credential {
         return getProperty("type");
     }
 
-    public void setType(String type){
+    public void setType(String type) {
         setProperty("type", type);
     }
 
@@ -43,7 +51,7 @@ public class CredentialProperties extends Properties implements Credential {
         return Boolean.valueOf(getProperty("enabled", "true"));
     }
 
-    public void setEnabled(boolean enabled){
+    public void setEnabled(boolean enabled) {
         setProperty("enabled", String.valueOf(enabled));
     }
 }

@@ -1,6 +1,5 @@
 package net.happyonroad.jar;
 
-import net.happyonroad.jar.JarResource;
 import net.happyonroad.test.TestSupport;
 
 import java.io.File;

@@ -3,12 +3,12 @@
  */
 package net.happyonroad.test;
 
-import java.lang.reflect.Modifier;
-
 import org.junit.Assume;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import java.lang.reflect.Modifier;
 
 public class ConditionalIgnoreRule implements MethodRule {
 

@@ -5,7 +5,6 @@ package net.happyonroad.service;
 
 import net.happyonroad.component.core.Component;
 import net.happyonroad.exception.ExtensionException;
-import net.happyonroad.extension.GlobalClassLoader;
 
 import java.io.File;
 import java.util.List;

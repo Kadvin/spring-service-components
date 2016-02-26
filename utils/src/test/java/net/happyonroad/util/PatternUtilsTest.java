@@ -4,7 +4,6 @@
 package net.happyonroad.util;
 
 import junit.framework.Assert;
-import net.happyonroad.util.PatternUtils;
 import org.junit.Test;
 
 /**

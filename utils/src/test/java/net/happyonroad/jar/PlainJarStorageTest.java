@@ -3,7 +3,6 @@
  */
 package net.happyonroad.jar;
 
-import net.happyonroad.jar.PlainJarStorage;
 import net.happyonroad.test.TestSupport;
 
 import java.io.File;

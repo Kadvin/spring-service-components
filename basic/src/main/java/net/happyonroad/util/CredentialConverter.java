@@ -4,12 +4,8 @@
 package net.happyonroad.util;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
-import net.happyonroad.credential.HypervisorCredential;
-import net.happyonroad.credential.SnmpCredential;
-import net.happyonroad.credential.SshCredential;
-import net.happyonroad.credential.WindowsCredential;
+import net.happyonroad.credential.*;
 import net.happyonroad.model.Credential;
-import net.happyonroad.credential.CredentialProperties;
 
 import java.util.HashMap;
 import java.util.Map;

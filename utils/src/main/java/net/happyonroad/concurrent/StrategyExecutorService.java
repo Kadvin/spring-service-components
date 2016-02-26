@@ -3,8 +3,8 @@
  */
 package net.happyonroad.concurrent;
 
-import net.happyonroad.util.NamedThreadFactory;
 import net.happyonroad.type.TimeInterval;
+import net.happyonroad.util.NamedThreadFactory;
 import net.happyonroad.util.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.jmx.export.annotation.ManagedAttribute;

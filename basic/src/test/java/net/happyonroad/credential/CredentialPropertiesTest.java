@@ -3,8 +3,6 @@ package net.happyonroad.credential;
 import net.happyonroad.util.ParseUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class CredentialPropertiesTest {
     CredentialProperties credential = new CredentialProperties();
 

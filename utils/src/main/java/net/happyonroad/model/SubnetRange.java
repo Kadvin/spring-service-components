@@ -6,6 +6,7 @@ package net.happyonroad.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.net.util.SubnetUtils;
+import org.springframework.data.annotation.Transient;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +17,7 @@ import java.io.ObjectInputStream;
 public class SubnetRange extends IpRange {
 
     private static final long serialVersionUID = -50738278123230056L;
+    @Transient
     private transient SubnetUtils.SubnetInfo info;
     private           String                 address, mask;
 
@@ -36,6 +38,10 @@ public class SubnetRange extends IpRange {
         this.info = new SubnetUtils(address, mask).getInfo();
     }
 
+    @SuppressWarnings("UnusedDeclaration for mongo db")
+    SubnetRange() {
+    }
+
     /**
      * <h2>根据notation格式构建子网对象</h2>
      *
@@ -52,7 +58,7 @@ public class SubnetRange extends IpRange {
 
     @Override
     public boolean include(String ip) {
-        return info.isInRange(ip);
+        return info().isInRange(ip);
     }
 
     public String getAddress() {
@@ -69,13 +75,19 @@ public class SubnetRange extends IpRange {
     }
 
     public String toString() {
-        return info.getCidrSignature();
+        return info().getCidrSignature();
     }
 
     private void readObject(ObjectInputStream s)
             throws IOException, ClassNotFoundException {
         s.defaultReadObject();
         this.info = new SubnetUtils(this.address, mask).getInfo();
+    }
+
+    public SubnetUtils.SubnetInfo info() {
+        if( this.info == null )
+            this.info = new SubnetUtils(this.address, mask).getInfo();
+        return info;
     }
 
     @Override

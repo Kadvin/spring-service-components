@@ -8,7 +8,7 @@ import net.happyonroad.exception.SystemInvokeException;
 import net.happyonroad.model.LocalInvocation;
 import net.happyonroad.model.RemoteInvocation;
 import net.happyonroad.model.SystemInvocation;
-import net.happyonroad.system.*;
+import net.happyonroad.system.AbstractProcessTest;
 import net.happyonroad.system.Process;
 import org.junit.Assert;
 import org.junit.Ignore;

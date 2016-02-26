@@ -7,7 +7,10 @@ import net.happyonroad.cache.*;
 import net.happyonroad.spring.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /** 最简单的Cache实现 */
 @Component

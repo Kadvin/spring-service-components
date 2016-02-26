@@ -3,8 +3,9 @@
  */
 package net.happyonroad.platform.web.support;
 
-import net.happyonroad.model.Page;
+import net.happyonroad.model.Record;
 import org.springframework.core.MethodParameter;
+import org.springframework.data.domain.Page;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.accept.ContentNegotiationManager;
@@ -41,12 +42,12 @@ public class PageRequestResponseBodyMethodProcessor extends RequestResponseBodyM
         Page page = (Page)returnValue;
         ServletWebRequest request = (ServletWebRequest) webRequest;
         HttpServletResponse response = request.getResponse();
-        response.setHeader(Page.TOTAL, String.valueOf(page.getTotalElements()));
-        response.setHeader(Page.PAGES, String.valueOf(page.getTotalPages()));
-        response.setHeader(Page.NUMBER, String.valueOf(page.getNumber() + 1));
-        response.setHeader(Page.REAL, String.valueOf(page.getNumberOfElements()));
-        response.setHeader(Page.SORT, String.valueOf(page.getSort()));
-        response.setHeader(Page.COUNT, String.valueOf(page.getSize()));
+        response.setHeader(Record.TOTAL, String.valueOf(page.getTotalElements()));
+        response.setHeader(Record.PAGES, String.valueOf(page.getTotalPages()));
+        response.setHeader(Record.NUMBER, String.valueOf(page.getNumber() + 1));
+        response.setHeader(Record.REAL, String.valueOf(page.getNumberOfElements()));
+        response.setHeader(Record.SORT, String.valueOf(page.getSort()));
+        response.setHeader(Record.COUNT, String.valueOf(page.getSize()));
         super.handleReturnValue(page.getContent(), returnType, mavContainer, webRequest);
     }
 }

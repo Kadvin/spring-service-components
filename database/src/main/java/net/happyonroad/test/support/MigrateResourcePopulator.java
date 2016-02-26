@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <h1>能够识别 Mybatis Migrate资源，并根据up/down方向决定执行哪个部分script populator</h1>

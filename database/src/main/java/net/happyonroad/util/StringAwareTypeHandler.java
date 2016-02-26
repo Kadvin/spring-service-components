@@ -1,6 +1,9 @@
 package net.happyonroad.util;
 
-import org.apache.ibatis.type.*;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
+import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
