@@ -10,6 +10,8 @@ import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.LongTypeHandler;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
@@ -24,6 +26,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -44,6 +47,15 @@ public class MybatisRepositoryScanner extends Bean implements RepositoryScanner 
         this.applicationContext = context;
         this.sqlSessionFactory = applicationContext.getBean(SqlSessionFactory.class);
         this.packages = packages;
+        Configuration configuration = applicationContext.getBean(Configuration.class);
+        initConfiguration(configuration);
+    }
+
+    void initConfiguration(Configuration configuration) {
+        //Record的子类/Long类型
+        LongTypeHandler handler = new LongTypeHandler();
+        configuration.getTypeHandlerRegistry().register(Serializable.class, JdbcType.BIGINT, handler);
+        configuration.getTypeHandlerRegistry().register(Serializable.class, null, handler);
     }
 
     @Override

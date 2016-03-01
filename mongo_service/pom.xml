@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>net.happyonroad</groupId>
-            <artifactId>basic</artifactId>
+            <artifactId>utils</artifactId>
         </dependency>
         <dependency>
             <groupId>net.happyonroad</groupId>

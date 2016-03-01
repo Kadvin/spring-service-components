@@ -9,6 +9,8 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +35,8 @@ import static java.lang.String.format;
  */
 @Configuration
 public class DatabaseConfig implements InitializingBean {
+    Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
+
     //在被测试程序使用时，无需对外注册服务
     @Autowired(required = false)
     ServiceExporter exporter;
@@ -62,6 +66,7 @@ public class DatabaseConfig implements InitializingBean {
         dataSource.setUrl(dbUrl);
         dataSource.setUsername(dbUser);
         dataSource.setPassword(dbPass);
+        logger.info("Connect to mysql {}:{}/{}, identified as {}", dbHost, dbPort, dbName, dbUser);
         return dataSource;
     }
 

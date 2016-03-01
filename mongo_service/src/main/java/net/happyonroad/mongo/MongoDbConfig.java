@@ -4,7 +4,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import net.happyonroad.mongo.convert.DBObject2Properties;
+import net.happyonroad.mongo.convert.Properties2DBObject;
 import net.happyonroad.type.TimeInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -12,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +28,8 @@ import java.util.List;
  */
 @Configuration
 public class MongoDbConfig {
+    Logger logger = LoggerFactory.getLogger(MongoDbConfig.class);
+
     @Bean
     MongoClientOptions mongoClientOptions() {
         MongoClientOptions.Builder builder = new MongoClientOptions.Builder();
@@ -47,9 +54,7 @@ public class MongoDbConfig {
 
     @Bean
     MongoClient mongo() throws Exception {
-        String host = System.getProperty("mongo.host", "localhost");
-        int port = parseInt("mongo.port", 27017);
-        ServerAddress address = new ServerAddress(host, port);
+        ServerAddress address = serverAddress();
         List<MongoCredential> credentials = new ArrayList<MongoCredential>(1);
         String user = System.getProperty("mongo.user");
         if (user != null) {
@@ -62,13 +67,25 @@ public class MongoDbConfig {
     }
 
     @Bean
+    ServerAddress serverAddress() throws UnknownHostException {
+        String host = System.getProperty("mongo.host", "localhost");
+        int port = parseInt("mongo.port", 27017);
+        return new ServerAddress(host, port);
+    }
+
+    @Bean
     MongoTemplate mongoTemplate() throws Exception {
         String database = System.getProperty("mongo.database");
+        logger.info("Connecting to mongodb {}/{}", serverAddress(), database);
         MongoTemplate template = new MongoTemplate(mongo(), database);
         MappingMongoConverter converter = (MappingMongoConverter) template.getConverter();
-        List<Converter> conversions = new LinkedList<Converter>();
-        CustomConversions cc = new CustomConversions(conversions);
+        List<Converter> converters = new LinkedList<Converter>();
+        converters.add(new Properties2DBObject());
+        converters.add(new DBObject2Properties());
+        CustomConversions cc = new CustomConversions(converters);
         converter.setCustomConversions(cc);
+        converter.afterPropertiesSet();
+        logger.info("Connected  to mongodb {}/{}", serverAddress(), database);
         return template;
     }
 

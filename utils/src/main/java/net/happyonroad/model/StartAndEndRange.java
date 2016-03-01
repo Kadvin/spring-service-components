@@ -12,17 +12,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class StartAndEndRange extends IpRange {
     private static final long serialVersionUID = 1116632019398537876L;
     /* the start ip, can be null*/
-    private String startIp;
+    private String start;
     /* the end ip, can be null*/
-    private String endIp;
+    private String end;
 
     @JsonCreator
-    public StartAndEndRange(@JsonProperty("start") String startIp,
-                            @JsonProperty("end") String endIp) {
-        this.startIp = startIp;
-        this.endIp = endIp;
-        if (this.startIp == null && this.endIp == null)
+    public StartAndEndRange(@JsonProperty("start") String start,
+                            @JsonProperty("end") String end) {
+        this.start = start;
+        this.end = end;
+        if (this.start == null && this.end == null)
             throw new IllegalArgumentException("You must specify a start or end ip for the range");
+    }
+
+    @SuppressWarnings("UnusedDeclaration for mongodb")
+    StartAndEndRange() {
     }
 
     /**
@@ -49,11 +53,11 @@ public class StartAndEndRange extends IpRange {
     }
 
     public String getStart() {
-        return startIp;
+        return start;
     }
 
     public String getEnd() {
-        return endIp;
+        return end;
     }
 
     @Override
@@ -85,16 +89,16 @@ public class StartAndEndRange extends IpRange {
 
         StartAndEndRange that = (StartAndEndRange) o;
 
-        if (!endIp.equals(that.endIp)) return false;
-        if (!startIp.equals(that.startIp)) return false;
+        if (!end.equals(that.end)) return false;
+        if (!start.equals(that.start)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = startIp.hashCode();
-        result = 31 * result + endIp.hashCode();
+        int result = start.hashCode();
+        result = 31 * result + end.hashCode();
         return result;
     }
 }

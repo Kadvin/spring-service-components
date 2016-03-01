@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.happyonroad.menu.repository.MenuItemRepository">
+    <insert id="create" useGeneratedKeys="true" keyColumn="id">
+        INSERT INTO menu_items (parent_id, name, label, state, css, position, shortcut, description) VALUES
+            (#{parentId}, #{name}, #{label}, #{state}, #{css}, #{position}, #{shortcut}, #{description})
+    </insert>
+    <delete id="delete">
+        DELETE FROM menu_items
+        <where>id = #{id}</where>
+    </delete>
+    <update id="update">
+        UPDATE menu_items SET
+        parent_id = #{parentId},
+        `name` = #{name},
+        label = #{label},
+        state = #{state},
+        css = #{css},
+        position = #{position},
+        shortcut = #{shortcut},
+        description = #{description}
+        <where>id = #{id}</where>
+    </update>
+    <select id="findById" resultMap="MenuItemResult">
+        SELECT * FROM menu_items
+        <where>id = #{id}</where>
+    </select>
+
+    <select id="findAll" resultMap="MenuItemResult">
+        SELECT * FROM menu_items
+    </select>
+
+    <resultMap id="MenuItemResult" type="net.happyonroad.menu.model.MenuItem" autoMapping="true">
+        <id column="id" property="id" javaType="Long" jdbcType="BIGINT"/>
+    </resultMap>
+</mapper>
