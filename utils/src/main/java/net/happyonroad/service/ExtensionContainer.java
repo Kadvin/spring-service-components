@@ -5,7 +5,6 @@ package net.happyonroad.service;
 
 import net.happyonroad.component.core.Component;
 import net.happyonroad.exception.ExtensionException;
-import net.happyonroad.extension.GlobalClassLoader;
 
 import java.io.File;
 import java.util.List;
@@ -43,6 +42,11 @@ public interface ExtensionContainer {
      * @param file 扩展包
      */
     void unloadExtension(File file) throws ExtensionException;
+
+    /**
+     * <h2>判断某个组件是否已经被成功加载</h2>
+     */
+    boolean isLoaded(String componentId);
 
     /**
      * <h2> Add a observer </h2>

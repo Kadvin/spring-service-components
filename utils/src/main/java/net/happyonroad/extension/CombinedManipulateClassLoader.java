@@ -17,6 +17,9 @@ public class CombinedManipulateClassLoader extends ManipulateClassLoader {
     public CombinedManipulateClassLoader(ManipulateClassLoader parent, List<ExtensionClassLoader> depends) {
         super(parent);
         this.depends = depends;
+        for (ExtensionClassLoader depend : depends) {
+            innerAddURL(depend.getComponent().getURL());
+        }
     }
 
     @Override
