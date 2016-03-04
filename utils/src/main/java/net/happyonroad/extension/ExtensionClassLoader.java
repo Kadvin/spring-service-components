@@ -21,7 +21,6 @@ import java.util.Set;
  */
 public class ExtensionClassLoader extends ManipulateClassLoader {
     Component component;
-
     public ExtensionClassLoader(ManipulateClassLoader parent) {
         this(parent, null);
     }

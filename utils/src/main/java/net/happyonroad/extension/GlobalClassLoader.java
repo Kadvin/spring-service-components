@@ -113,6 +113,8 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
 
     @Override
     public synchronized void update(Observable o, Object arg) {
+        //更新 各个线程所能看到的 global class loader
+        instances = new ThreadLocal<GlobalClassLoader>();
         List<ExtensionClassLoader> ecls;
         List<Component> components = container.getExtensions();
         if (!components.isEmpty()) {

@@ -44,6 +44,11 @@ public interface ExtensionContainer {
     void unloadExtension(File file) throws ExtensionException;
 
     /**
+     * <h2>判断某个组件是否已经被成功加载</h2>
+     */
+    boolean isLoaded(String componentId);
+
+    /**
      * <h2> Add a observer </h2>
      * @param observer observer the extension changed by lightweight events
      */

@@ -156,15 +156,15 @@ public class ExtensionManager extends ApplicationSupportBean
             logger.info("Loading extension: {}", componentId);
             long start = System.currentTimeMillis();
             Dependency dependency = Dependency.parse(componentId);
-            if( !componentRepository.cached(file) ){
-                 componentRepository.cache(file);
+            if (!componentRepository.cached(file)) {
+                componentRepository.cache(file);
             }
             component = componentRepository.resolveComponent(dependency);
-            if( !componentLoader.isLoaded(componentId) ){
+            if (!componentLoader.isLoaded(componentId)) {
                 ManipulateClassLoader parent = GlobalClassLoader.parentClassLoad(component);
                 ecl = ecl.derive(parent, component);
                 Thread.currentThread().setContextClassLoader(ecl);
-                ((DefaultComponent)component).setClassLoader(ecl);
+                ((DefaultComponent) component).setClassLoader(ecl);
                 //仅发给容器
                 publishEvent(new ExtensionLoadingEvent(component));
                 componentLoader.load(component);
@@ -174,14 +174,14 @@ public class ExtensionManager extends ApplicationSupportBean
                 DefaultComponent comp = (DefaultComponent) component;
                 registerMbean(comp, comp.getObjectName());
                 publishEvent(new ExtensionLoadedEvent(component));
-            }else{
+            } else {
                 loadedExtensions.add(component);
                 publishEvent(new ExtensionLoadedEvent(component));
             }
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
         } catch (Exception e) {
-            if( component != null ) {
+            if (component != null) {
                 componentLoader.unload(component);
             }
             throw new ExtensionException("Can't load extension: " + componentId, e);
@@ -200,7 +200,7 @@ public class ExtensionManager extends ApplicationSupportBean
         }
     }
 
-    public void unloadExtension(File file) throws ExtensionException{
+    public void unloadExtension(File file) throws ExtensionException {
         try {
             Dependency dependency = Dependency.parse(file);
             Component component = componentRepository.resolveComponent(dependency);
@@ -212,20 +212,29 @@ public class ExtensionManager extends ApplicationSupportBean
         }
     }
 
+    public boolean isLoaded(String componentId) {
+        for (Component component : loadedExtensions) {
+            if (StringUtils.equals(component.getId(), componentId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void unloadExtension(Component component) {
         logger.info("Unloading extension: {}", component);
         long start = System.currentTimeMillis();
-        if( componentLoader.isLoaded(component) ){
+        if (componentLoader.isLoaded(component)) {
             publishEvent(new ExtensionUnloadingEvent(component));
             componentLoader.quickUnload(component);
             loadedExtensions.remove(component);
             notifyObservers();
             //这个事件就仅发给容器
             publishEvent(new ExtensionUnloadedEvent(component));
-        }else{
+        } else {
             loadedExtensions.remove(component);
         }
-        logger.info("Unloaded  extension: {}({})", component, formatDurationHMS(System.currentTimeMillis()-start));
+        logger.info("Unloaded  extension: {}({})", component, formatDurationHMS(System.currentTimeMillis() - start));
     }
 
 }
