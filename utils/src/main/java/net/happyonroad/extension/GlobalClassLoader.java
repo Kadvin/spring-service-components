@@ -26,27 +26,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * 默认的类加载器(platform class loader)无法加载到这些类
  * 即便是总体的类加载器(release class loader)也无法加载到这些类
  */
-public class GlobalClassLoader extends ClassLoader implements Observer {
+public class GlobalClassLoader extends ClassLoader {
     private static GlobalClassLoader instance;
-    private static ThreadLocal<GlobalClassLoader> instances  = new ThreadLocal<GlobalClassLoader>();
-    private static Map<String, Class>             classCache = new ConcurrentHashMap<String, Class>(5000);
+    private final Map<String, Class> classCache = new ConcurrentHashMap<String, Class>(5000);
 
-    private final ExtensionContainer         container;
+    private final     ExtensionContainer         container;
     //按照依赖关系倒序排列
     //  依赖别人最多的最先被检查
-    private       List<ExtensionClassLoader> ecls;
+    private final List<ExtensionClassLoader> ecls;
 
     public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
-        this.container.addObserver(this);
+        // Keep track with the container's extended class loaders
+        this.ecls = container.getExtensionClassLoaders();
         instance = this;
-    }
-
-    public GlobalClassLoader(GlobalClassLoader prototype) {
-        super(prototype.getParent());
-        this.container = prototype.container;
-        this.ecls = new ArrayList<ExtensionClassLoader>(prototype.ecls());
     }
 
     public static GlobalClassLoader getInstance() {
@@ -54,14 +48,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     }
 
     public static synchronized ClassLoader getDefaultClassLoader() {
-        GlobalClassLoader gcl = getInstance();
-        if (gcl == null)
-            return MainClassLoader.getInstance();
-        if (instances.get() == null) {
-            instances.set(new GlobalClassLoader(gcl));
-        }
-        // in order to avoid the system wide lock on the same class loader instance
-        return instances.get();
+        return getInstance();
     }
 
     @Override
@@ -106,32 +93,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     }
 
     protected List<ExtensionClassLoader> ecls() {
-        if (ecls == null) {
-            return Collections.emptyList();
-        }
         return ecls;
-    }
-
-    @Override
-    public synchronized void update(Observable o, Object arg) {
-        //更新 各个线程所能看到的 global class loader
-        instances = new ThreadLocal<GlobalClassLoader>();
-        List<ExtensionClassLoader> ecls;
-        List<Component> components = container.getExtensions();
-        if (!components.isEmpty()) {
-            ecls = new ArrayList<ExtensionClassLoader>(components.size());
-            for (Component component : components) {
-                if (component.getClassLoader() instanceof ExtensionClassLoader)
-                    ecls.add((ExtensionClassLoader) component.getClassLoader());
-            }
-            Collections.reverse(ecls);
-        } else {
-            //noinspection unchecked
-            ecls = Collections.EMPTY_LIST;
-        }
-        synchronized (this) {
-            this.ecls = ecls;
-        }
     }
 
     public String getClassPath() {
@@ -277,6 +239,6 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
 
     @Override
     public String toString() {
-        return "GlobalClassLoader( extensions size = "+ ecls.size() + ')';
+        return "GlobalClassLoader( extensions size = " + ecls.size() + ')';
     }
 }

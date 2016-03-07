@@ -50,6 +50,8 @@ public class ExtensionManager extends ApplicationSupportBean
     //  最被依赖的最先被加载，排在最前面
     List<Component> loadedExtensions = new LinkedList<Component>();
 
+    List<ExtensionClassLoader> ecls = new LinkedList<ExtensionClassLoader>();
+
     ExtensionObservable observable = new ExtensionObservable();
 
     public ExtensionManager() {
@@ -58,6 +60,11 @@ public class ExtensionManager extends ApplicationSupportBean
 
     public List<Component> getExtensions() {
         return Collections.unmodifiableList(loadedExtensions);
+    }
+
+    @Override
+    public List<ExtensionClassLoader> getExtensionClassLoaders() {
+        return ecls;
     }
 
     @Override
@@ -172,6 +179,7 @@ public class ExtensionManager extends ApplicationSupportBean
                 componentLoader.load(component);
                 Thread.currentThread().setContextClassLoader(legacy);
                 loadedExtensions.add(component);
+                ecls.add(ecl);
                 notifyObservers();
                 DefaultComponent comp = (DefaultComponent) component;
                 registerMbean(comp, comp.getObjectName());
@@ -230,6 +238,8 @@ public class ExtensionManager extends ApplicationSupportBean
             publishEvent(new ExtensionUnloadingEvent(component));
             componentLoader.quickUnload(component);
             loadedExtensions.remove(component);
+            //noinspection SuspiciousMethodCalls
+            ecls.remove(component.getClassLoader());
             notifyObservers();
             //这个事件就仅发给容器
             publishEvent(new ExtensionUnloadedEvent(component));

@@ -5,6 +5,7 @@ package net.happyonroad.service;
 
 import net.happyonroad.component.core.Component;
 import net.happyonroad.exception.ExtensionException;
+import net.happyonroad.extension.ExtensionClassLoader;
 
 import java.io.File;
 import java.util.List;
@@ -21,6 +22,13 @@ public interface ExtensionContainer {
      * @return 所有已经加载的扩展的组件对象
      */
     List<Component> getExtensions();
+
+    /**
+     * <h2>获取所有已经加载的扩展的Class Loaders</h2>
+     *
+     * @return 所有已经加载的扩展的Class Loaders
+     */
+    List<ExtensionClassLoader> getExtensionClassLoaders();
 
     /**
      * <h2>加载一批指定文件中的扩展包</h2>
