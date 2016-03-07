@@ -146,6 +146,7 @@ public class ExtensionManager extends ApplicationSupportBean
 
     public Component loadExtension(File file) throws ExtensionException {
         ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+        //这个extension class loader此时只是用于辅助解析组件
         ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
         Thread.currentThread().setContextClassLoader(ecl);
         Component component = null;
@@ -161,10 +162,11 @@ public class ExtensionManager extends ApplicationSupportBean
             }
             component = componentRepository.resolveComponent(dependency);
             if (!componentLoader.isLoaded(componentId)) {
+                //以下extension class loader才是实际用于加载的
                 ManipulateClassLoader parent = GlobalClassLoader.parentClassLoad(component);
                 ecl = ecl.derive(parent, component);
                 Thread.currentThread().setContextClassLoader(ecl);
-                ((DefaultComponent) component).setClassLoader(ecl);
+                component.setClassLoader(ecl);
                 //仅发给容器
                 publishEvent(new ExtensionLoadingEvent(component));
                 componentLoader.load(component);

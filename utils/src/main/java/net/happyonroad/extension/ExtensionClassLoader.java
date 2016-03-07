@@ -21,6 +21,7 @@ import java.util.Set;
  */
 public class ExtensionClassLoader extends ManipulateClassLoader {
     Component component;
+
     public ExtensionClassLoader(ManipulateClassLoader parent) {
         this(parent, null);
     }
@@ -30,6 +31,7 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
         this.component = component;
     }
 
+    @Override
     public void addURL(URL url) {
         //本组件url自己留下
         super.innerAddURL(url);
@@ -39,6 +41,18 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
     public void addURLs(Set<URL> urls) {
         //所有第三方url都提交给parent
         ((ManipulateClassLoader) getParent()).addURLs(urls);
+    }
+
+    @Override
+    protected ClassLoader[] getExtraClassLoaders() {
+        ClassLoader cl = component.getClassLoader();
+        //但组件可能是动态类，其class为class pool里面的，所以
+        // 通过class pool重新寻找下,这里为了避免依赖，直接用类名称来判断
+        if ("javassist.Loader".equals(cl.getClass().getName())) {
+            return new ClassLoader[]{cl};
+        } else {
+            return new ClassLoader[0];
+        }
     }
 
     public Component getComponent() {
@@ -57,5 +71,10 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
             derived.addURL(url);
         }
         return derived;
+    }
+
+    @Override
+    public String toString() {
+        return "ExtensionClassLoader(" + component + ')';
     }
 }

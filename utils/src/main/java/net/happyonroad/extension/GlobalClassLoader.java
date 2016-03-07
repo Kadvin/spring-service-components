@@ -10,6 +10,7 @@ import net.happyonroad.component.core.support.ComponentURLStreamHandlerFactory;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,8 +66,8 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class found =  classCache.get(name);
-        if( found != null ){
+        Class found = classCache.get(name);
+        if (found != null) {
             return found;
         }
         // find in parent class loader first
@@ -82,7 +83,7 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
                     if (ecl == null) continue;
                     found = ecl.loadClass(name);
                     classCache.put(name, found);
-                    return found ;
+                    return found;
                 } catch (ClassNotFoundException ex) {
                     //try next
                 }
@@ -94,18 +95,18 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     @Override
     public URL getResource(String name) {
         URL url = super.getResource(name);
-        if( url == null ){
+        if (url == null) {
             for (ExtensionClassLoader ecl : ecls()) {
                 if (ecl == null) continue;
                 url = ecl.getResource(name);
-                if(url != null ) return url;
+                if (url != null) return url;
             }
         }
         return url;
     }
 
     protected List<ExtensionClassLoader> ecls() {
-        if (ecls == null ) {
+        if (ecls == null) {
             return Collections.emptyList();
         }
         return ecls;
@@ -120,15 +121,15 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
         if (!components.isEmpty()) {
             ecls = new ArrayList<ExtensionClassLoader>(components.size());
             for (Component component : components) {
-                if( component.getClassLoader() instanceof ExtensionClassLoader )
+                if (component.getClassLoader() instanceof ExtensionClassLoader)
                     ecls.add((ExtensionClassLoader) component.getClassLoader());
             }
             Collections.reverse(ecls);
-        }else{
+        } else {
             //noinspection unchecked
             ecls = Collections.EMPTY_LIST;
         }
-        synchronized (this){
+        synchronized (this) {
             this.ecls = ecls;
         }
     }
@@ -136,10 +137,10 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     public String getClassPath() {
         Set<URL> urls = new LinkedHashSet<URL>();
         ClassLoader parent = getParent();
-        if( parent instanceof MainClassLoader){
+        if (parent instanceof MainClassLoader) {
             urls.addAll(((MainClassLoader) parent).getSysUrls());
             urls.addAll(((MainClassLoader) parent).getMainUrls());
-        }else if( parent instanceof URLClassLoader){
+        } else if (parent instanceof URLClassLoader) {
             urls.addAll(Arrays.asList(((URLClassLoader) parent).getURLs()));
         }
         for (ExtensionClassLoader loader : ecls()) {
@@ -165,38 +166,38 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
 
     private ManipulateClassLoader parentFor(Component component) {
         List<ExtensionClassLoader> depends = findDepends(component);
-        if( depends.isEmpty() )
+        if (depends.isEmpty())
             return MainClassLoader.getInstance();
-        if(depends.size() == 1 ){
+        if (depends.size() == 1) {
             return depends.get(0);
-        }else {
+        } else {
             return new CombinedManipulateClassLoader(MainClassLoader.getInstance(), depends);
         }
     }
 
     private List<ExtensionClassLoader> findDepends(Component component) {
         List<ExtensionClassLoader> found = new ArrayList<ExtensionClassLoader>();
-        for (ExtensionClassLoader cl: ecls()) {
+        for (ExtensionClassLoader cl : ecls()) {
             Component checking = cl.getComponent();
-            if( checking == null ) continue;
-            if(component.dependsOn(checking)) {
+            if (checking == null) continue;
+            if (component.dependsOn(checking)) {
                 boolean depended = false;
                 //将这个被依赖的组件和已经找到的依赖进行比较
                 Iterator<ExtensionClassLoader> it = found.iterator();
                 while (it.hasNext()) {
                     ExtensionClassLoader exist = it.next();
                     Component existComponent = exist.getComponent();
-                    if( existComponent.dependsOn(checking)){
+                    if (existComponent.dependsOn(checking)) {
                         //在依赖链里面了，就不用添加进去
                         depended = true;
                         break;
-                    } else if (checking.dependsOn(existComponent)){
+                    } else if (checking.dependsOn(existComponent)) {
                         //已有组件被它依赖，把已有组件移除掉，待会儿添加它
                         depended = false;
                         it.remove();
                     }
                 }
-                if( !depended )
+                if (!depended)
                     found.add(cl);
             }
         }
@@ -204,19 +205,78 @@ public class GlobalClassLoader extends ClassLoader implements Observer {
     }
 
     public static ManipulateClassLoader parentClassLoad(Component component) {
-        if( instance == null )
+        if (instance == null)
             return MainClassLoader.getInstance();
         return instance.parentFor(component);
     }
 
     public ClassLoader classLoaderFor(String componentId) {
-        if( container == null ) return this;
+        if (container == null) return this;
         List<Component> components = container.getExtensions();
         for (Component component : components) {
-            if( component.getId().equals(componentId)){
+            if (component.getId().equals(componentId)) {
                 return component.getClassLoader();
             }
         }
         return this;
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        try {
+            //先通过url class loader的，快速url方式寻找类
+            return super.findClass(name);
+        } catch (ClassNotFoundException e) {
+            //再判断额外的class loaders
+            ClassLoader[] extras = getExtraClassLoaders();
+            if (extras == null) throw e;
+            for (ClassLoader extra : extras) {
+                try {
+                    return extra.loadClass(name);
+                } catch (ClassNotFoundException e1) {
+                    //continue to try next
+                }
+            }
+            throw e;
+        }
+
+    }
+
+    private ClassLoader[] getExtraClassLoaders() {
+        List<ClassLoader> extras = new ArrayList<ClassLoader>();
+        for (ExtensionClassLoader depend : ecls()) {
+            extras.addAll(Arrays.asList(depend.getExtraClassLoaders()));
+        }
+        return extras.toArray(new ClassLoader[extras.size()]);
+
+    }
+
+    /**
+     * <h2> 先用 当前上下文 class loader 加载类， 如果不成，用全局class loader加载</h2>
+     *
+     * @param className 需要加载的类名
+     * @return 加载的类
+     */
+    public static Class loadClassIfPossible(String className) throws ClassNotFoundException {
+        ClassLoader ctx = Thread.currentThread().getContextClassLoader();
+        ClassLoader global = getDefaultClassLoader();
+        try {
+            // using context class loader first
+            return Class.forName(className, true, ctx);
+        } catch (ClassNotFoundException ex) {
+            //needn't try again
+            if (ctx == global) throw ex;
+            //then global
+            try {
+                return ClassUtils.forName(className, global);
+            } catch (ClassNotFoundException e) {
+                throw new ClassNotFoundException("Can't load " + className + " by " + ctx + " or " + global);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "GlobalClassLoader( extensions size = "+ ecls.size() + ')';
     }
 }
