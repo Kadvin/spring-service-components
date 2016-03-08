@@ -43,18 +43,6 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
         ((ManipulateClassLoader) getParent()).addURLs(urls);
     }
 
-    @Override
-    protected ClassLoader[] getExtraClassLoaders() {
-        ClassLoader cl = component.getClassLoader();
-        //但组件可能是动态类，其class为class pool里面的，所以
-        // 通过class pool重新寻找下,这里为了避免依赖，直接用类名称来判断
-        if ("javassist.Loader".equals(cl.getClass().getName())) {
-            return new ClassLoader[]{cl};
-        } else {
-            return new ClassLoader[0];
-        }
-    }
-
     public Component getComponent() {
         return component;
     }

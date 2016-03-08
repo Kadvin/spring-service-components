@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <h1>能够从所有的组件中加载类的加载器</h1>
@@ -28,18 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class GlobalClassLoader extends ClassLoader {
     private static GlobalClassLoader instance;
-    private final Map<String, Class> classCache = new ConcurrentHashMap<String, Class>(5000);
-
-    private final     ExtensionContainer         container;
-    //按照依赖关系倒序排列
-    //  依赖别人最多的最先被检查
-    private final List<ExtensionClassLoader> ecls;
+    //private final Logger logger = LoggerFactory.getLogger(GlobalClassLoader.class);
+    //private final Map<String, Class> classCache = new ConcurrentHashMap<String, Class>(5000);
+    private final ExtensionContainer         container;
 
     public GlobalClassLoader(ClassLoader parent, ExtensionContainer container) {
         super(parent);
         this.container = container;
-        // Keep track with the container's extended class loaders
-        this.ecls = container.getExtensionClassLoaders();
         instance = this;
     }
 
@@ -52,31 +46,17 @@ public class GlobalClassLoader extends ClassLoader {
     }
 
     @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        Class found = classCache.get(name);
-        if (found != null) {
-            return found;
-        }
-        // find in parent class loader first
-        try {
-            found = super.loadClass(name, resolve);
-            classCache.put(name, found);
-            return found;
-        } catch (ClassNotFoundException e) {
-            //skip
-
-            for (ExtensionClassLoader ecl : ecls()) {
-                try {
-                    if (ecl == null) continue;
-                    found = ecl.loadClass(name);
-                    classCache.put(name, found);
-                    return found;
-                } catch (ClassNotFoundException ex) {
-                    //try next
-                }
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        for (ExtensionClassLoader ecl : ecls()) {
+            try {
+                if (ecl == null) continue;
+                Class found = ecl.loadClass(name);
+                if( found != null ) return found;
+            } catch (ClassNotFoundException ex) {
+                //try next
             }
-            throw e;
         }
+        throw new ClassNotFoundException(name);
     }
 
     @Override
@@ -93,7 +73,7 @@ public class GlobalClassLoader extends ClassLoader {
     }
 
     protected List<ExtensionClassLoader> ecls() {
-        return ecls;
+        return container.getExtensionClassLoaders();
     }
 
     public String getClassPath() {
@@ -183,36 +163,6 @@ public class GlobalClassLoader extends ClassLoader {
         return this;
     }
 
-    @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        try {
-            //先通过url class loader的，快速url方式寻找类
-            return super.findClass(name);
-        } catch (ClassNotFoundException e) {
-            //再判断额外的class loaders
-            ClassLoader[] extras = getExtraClassLoaders();
-            if (extras == null) throw e;
-            for (ClassLoader extra : extras) {
-                try {
-                    return extra.loadClass(name);
-                } catch (ClassNotFoundException e1) {
-                    //continue to try next
-                }
-            }
-            throw e;
-        }
-
-    }
-
-    private ClassLoader[] getExtraClassLoaders() {
-        List<ClassLoader> extras = new ArrayList<ClassLoader>();
-        for (ExtensionClassLoader depend : ecls()) {
-            extras.addAll(Arrays.asList(depend.getExtraClassLoaders()));
-        }
-        return extras.toArray(new ClassLoader[extras.size()]);
-
-    }
-
     /**
      * <h2> 先用 当前上下文 class loader 加载类， 如果不成，用全局class loader加载</h2>
      *
@@ -239,6 +189,6 @@ public class GlobalClassLoader extends ClassLoader {
 
     @Override
     public String toString() {
-        return "GlobalClassLoader( extensions size = " + ecls.size() + ')';
+        return "GlobalClassLoader( extensions size = " + ecls().size() + ')';
     }
 }
