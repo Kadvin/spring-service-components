@@ -25,11 +25,11 @@ public interface Credential extends Serializable, PriorityOrdered {
     String Agent      = "agent";
     String Hypervisor = "hypervisor";
 
-    String Local      = "local";
+    String Local = "local";
 
-    String Webem      = "webem";
-    String Jdbc       = "jdbc";
-    String Jmx        = "jmx";
+    String Webem = "webem";
+    String Jdbc  = "jdbc";
+    String Jmx   = "jmx";
 
     /**
      * <h2>返回本认证方式的实际名称</h2>
@@ -47,7 +47,23 @@ public interface Credential extends Serializable, PriorityOrdered {
 
     /**
      * 返回本认证是否生效
+     *
      * @return 是否生效
      */
     boolean isEnabled();
+
+    /**
+     * <h2>判断本认证信息，是否可以用于特定采集方式</h2>
+     * 所谓的采集方式，指的是一种engine到被管对象之间的协议交互方式，如:
+     * <ul>
+     * <li>cli 是指 执行命令
+     * <li>snmp 是指 执行snmp get/walk
+     * <li>jdbc 是指 执行 sql
+     * <li>jmx 是指 执行 jmx
+     * </ul>
+     *
+     * @param type 采集方式
+     * @return 是否可用
+     */
+    boolean support(String type);
 }

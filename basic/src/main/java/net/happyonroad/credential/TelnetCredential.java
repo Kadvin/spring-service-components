@@ -95,4 +95,9 @@ public class TelnetCredential extends AbstractCredential implements CliCredentia
     public void setCharset(String charset) {
         this.charset = charset;
     }
+
+    @Override
+    public boolean support(String type) {
+        return super.support(type) || CLI.equals(type);
+    }
 }

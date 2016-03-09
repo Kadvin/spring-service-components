@@ -176,6 +176,11 @@ public class SshCredential extends AbstractCredential implements CliCredential {
         return "SshCredential(" + user + ")";
     }
 
+    @Override
+    public boolean support(String type) {
+        return super.support(type) || CLI.equals(type);
+    }
+
     @JsonIgnore
     public boolean isAuthByPassword() {
         return AUTH_PASSWORD.equals(this.authenticateMethod);

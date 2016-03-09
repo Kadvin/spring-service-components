@@ -14,6 +14,11 @@ public class LocalCredential extends AbstractCredential implements CliCredential
         setName(Local);
     }
 
+    @Override
+    public boolean support(String type) {
+        return super.support(type) || CLI.equals(type);
+    }
+
     public String toString(){
         return "LocalCredential";
     }

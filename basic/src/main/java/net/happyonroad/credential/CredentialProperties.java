@@ -4,6 +4,7 @@
 package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Properties;
 
@@ -53,5 +54,10 @@ public class CredentialProperties extends Properties implements Credential {
 
     public void setEnabled(boolean enabled) {
         setProperty("enabled", String.valueOf(enabled));
+    }
+
+    @Override
+    public boolean support(String type) {
+        return StringUtils.equalsIgnoreCase(type, getType());
     }
 }

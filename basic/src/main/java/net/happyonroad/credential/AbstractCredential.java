@@ -1,6 +1,7 @@
 package net.happyonroad.credential;
 
 import net.happyonroad.model.Credential;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * <h1>抽象的认证信息</h1>
@@ -49,5 +50,10 @@ public abstract class AbstractCredential implements Credential {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    @Override
+    public boolean support(String type) {
+        return StringUtils.equalsIgnoreCase(type, getType());
     }
 }

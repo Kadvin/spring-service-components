@@ -54,5 +54,10 @@ public class AgentCredential extends AbstractCredential implements CliCredential
         this.timeout = timeout;
     }
 
+    @Override
+    public boolean support(String type) {
+        return super.support(type) || CLI.equals(type);
+    }
+
     private static final long serialVersionUID = -3218259110326361407L;
 }
