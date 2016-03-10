@@ -38,6 +38,13 @@ public interface ExtensionContainer {
     Component[] loadExtensions(File[] files) throws ExtensionException;
 
     /**
+     * <h2>解析指定文件中的扩展包为组件(并不加载)</h2>
+     *
+     * @param file 扩展包
+     */
+    Component resolve(File file) throws ExtensionException;
+
+    /**
      * <h2>加载指定文件中的扩展包</h2>
      *
      * @param file 扩展包

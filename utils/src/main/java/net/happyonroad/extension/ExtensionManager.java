@@ -151,13 +151,31 @@ public class ExtensionManager extends ApplicationSupportBean
         }
     }
 
-    public Component loadExtension(File file) throws ExtensionException {
+    public Component resolve(File file) throws ExtensionException {
         ClassLoader legacy = Thread.currentThread().getContextClassLoader();
         //这个extension class loader此时只是用于辅助解析组件
         ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
         Thread.currentThread().setContextClassLoader(ecl);
-        Component component = null;
+        Component component;
         String componentId = file.getParentFile().getName() + "/" + file.getName();
+        try {
+            Dependency dependency = Dependency.parse(componentId);
+            if (!componentRepository.cached(file)) {
+                componentRepository.cache(file);
+            }
+            component = componentRepository.resolveComponent(dependency);
+            return component;
+        } catch (Exception e) {
+            throw new ExtensionException("Can't resolve extension: " + componentId + " from " + file.getPath(), e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(legacy);
+        }
+    }
+
+    public Component loadExtension(File file) throws ExtensionException {
+        ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+        Component component = resolve(file);
+        String componentId = component.getId();
         try {
             //由于现在将扩展统一放在 repository 目录，其实有些系统依赖的组件已经加载过了
             // 现在这样只是提示下，让外部用户以为我们将其当做扩展加载
@@ -171,6 +189,7 @@ public class ExtensionManager extends ApplicationSupportBean
             if (!componentLoader.isLoaded(componentId)) {
                 //以下extension class loader才是实际用于加载的
                 ManipulateClassLoader parent = GlobalClassLoader.parentClassLoad(component);
+                ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
                 ecl = ecl.derive(parent, component);
                 Thread.currentThread().setContextClassLoader(ecl);
                 component.setClassLoader(ecl);
