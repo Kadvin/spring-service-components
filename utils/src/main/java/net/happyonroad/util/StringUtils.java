@@ -131,7 +131,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
             String variable = m.group(1);
             Object replacement = resolver.resolve(variable);
             if (replacement == null) {
-                throw new IllegalArgumentException("Can't find " + variable + " by " + resolver);
+                throw new IllegalArgumentException("Can't find `" + variable + "` by " + resolver);
             }
             String value = replacement.toString();
             //解析出来的变量可能还需要再解析
@@ -142,7 +142,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 value = value.replaceAll("[$]", "\\\\\\$");
                 m.appendReplacement(sb, value);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();//just for catch it to debug
+                //e.printStackTrace();//just for catch it to debug
                 throw e;
             }
         }

@@ -52,4 +52,10 @@ public class PropertiesSupportRecord<T extends Serializable> extends Record<T>{
         }
         return cloned;
     }
+
+    public void removeProperty(String name) {
+        if( this.properties != null ){
+            this.properties.remove(name);
+        }
+    }
 }

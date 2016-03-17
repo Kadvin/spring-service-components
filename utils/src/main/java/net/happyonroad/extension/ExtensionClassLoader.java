@@ -58,6 +58,7 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
         for (URL url : ucp.getURLs()) {
             derived.addURL(url);
         }
+        derived.addURL(component.getURL());
         return derived;
     }
 
