@@ -3,7 +3,6 @@ package net.happyonroad.util;
 import net.happyonroad.component.container.AppLauncher;
 import net.happyonroad.extension.GlobalClassLoader;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ResourceUtils;
@@ -13,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -64,7 +64,7 @@ public final class MiscUtils {
         String value;
         if (rawValue.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             String path = rawValue.substring(ResourceUtils.CLASSPATH_URL_PREFIX.length());
-            InputStream stream;
+            InputStream stream = null;
             try {
                 if (path.startsWith("./")) {//relative path
                     path = klass.getPackage().getName().replaceAll("\\.", "/") + path.substring(1);
@@ -83,10 +83,13 @@ public final class MiscUtils {
                         stream = new ClassPathResource(path, classLoader).getInputStream();
                     }
                 }
-                List<String> strings = IOUtils.readLines(stream);
-                value = StringUtils.join(strings, SystemUtils.LINE_SEPARATOR);
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(stream, writer);
+                value = writer.toString();
             } catch (IOException e) {
                 throw new IllegalStateException("Can't convert " + rawValue, e);
+            } finally {
+                IOUtils.closeQuietly(stream);
             }
             //TODO support other form content, such as file:// in monitor system storage
         } else {
