@@ -21,7 +21,7 @@ public interface Credential extends Serializable, PriorityOrdered {
     String CLI_SQL    = "cli_sql";
     String Ssh        = "ssh";
     String Telnet     = "telnet";
-    String Windows    = "windows";
+    String Windows    = "wmi";
     String Agent      = "agent";
     String Hypervisor = "hypervisor";
 

@@ -60,4 +60,9 @@ public class CredentialProperties extends Properties implements Credential {
     public boolean support(String type) {
         return StringUtils.equalsIgnoreCase(type, getType());
     }
+
+    @Override
+    public String toString() {
+        return "CredentialProperties(" + getName() + ")";
+    }
 }
