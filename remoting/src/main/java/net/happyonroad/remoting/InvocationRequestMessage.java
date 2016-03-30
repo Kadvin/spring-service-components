@@ -9,13 +9,16 @@ import com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer;
 import net.happyonroad.util.ParseUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.remoting.support.RemoteInvocation;
+import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 发起调用的消息 */
+/**
+ * 发起调用的消息
+ */
 public class InvocationRequestMessage extends InvocationMessage {
     private static final long serialVersionUID = 7093541768647287416L;
     private String                    serviceName;
@@ -45,7 +48,7 @@ public class InvocationRequestMessage extends InvocationMessage {
     }
 
     public void populateArguments(Class[] argTypes, Object[] arguments) {
-        if( this.arguments == null ){
+        if (this.arguments == null) {
             this.arguments = new ClassAndValue[argTypes.length];
         }
         for (int i = 0; i < argTypes.length; i++) {
@@ -95,10 +98,40 @@ public class InvocationRequestMessage extends InvocationMessage {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("serviceName", this.serviceName)
-                .append("methodName", this.methodName)
-                .toString();
+        StringBuilder strArgs = new StringBuilder();
+        for (ClassAndValue argument : arguments) {
+            Class klass = argument.getKlass();
+            if (klass == String.class) {
+                strArgs.append("\"").append(argument.value).append("\"");
+            } else {
+                if (klass.isArray()) {
+                    if(klass.getComponentType() == int.class){
+                        strArgs.append(Arrays.toString((int[]) argument.value));
+                    }else if (klass.getComponentType() == short.class){
+                        strArgs.append(Arrays.toString((short[]) argument.value));
+                    }else if (klass.getComponentType() == byte.class){
+                        strArgs.append(Arrays.toString((byte[]) argument.value));
+                    }else if (klass.getComponentType() == char.class){
+                        strArgs.append(Arrays.toString((char[]) argument.value));
+                    }else if (klass.getComponentType() == boolean.class){
+                        strArgs.append(Arrays.toString((boolean[]) argument.value));
+                    }else if (klass.getComponentType() == long.class){
+                        strArgs.append(Arrays.toString((long[]) argument.value));
+                    }else if (klass.getComponentType() == float.class){
+                        strArgs.append(Arrays.toString((float[]) argument.value));
+                    }else if (klass.getComponentType() == double.class){
+                        strArgs.append(Arrays.toString((double[]) argument.value));
+                    }else{
+                        strArgs.append(Arrays.toString((Object[]) argument.value));
+                    }
+                } else {
+                    strArgs.append(argument.value);
+                }
+            }
+            strArgs.append(",");
+        }
+        if (strArgs.length() > 0) strArgs.deleteCharAt(strArgs.length() - 1);
+        return String.format("%s#%s(%s)", ClassUtils.getShortName(serviceName), methodName, strArgs);
     }
 
     public RemoteInvocation asInvocation() {
@@ -106,7 +139,7 @@ public class InvocationRequestMessage extends InvocationMessage {
         return new RemoteInvocation(this.getMethodName(), this.fetchArgumentTypes(), this.fetchArgumentValues());
     }
 
-    private Class<?>[] fetchArgumentTypes(){
+    private Class<?>[] fetchArgumentTypes() {
         Class<?>[] argTypes = new Class[this.arguments.length];
         for (int i = 0; i < arguments.length; i++) {
             ClassAndValue pair = arguments[i];
