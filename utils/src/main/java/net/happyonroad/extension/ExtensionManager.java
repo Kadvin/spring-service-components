@@ -238,6 +238,13 @@ public class ExtensionManager extends ApplicationSupportBean
             throw new ExtensionException("The extension file path is illegal", e);
         } catch (DependencyNotMeetException e) {
             throw new ExtensionException("There is some other depends is not meet", e);
+        }  finally {
+            try {
+                componentRepository.uncache(file);
+            } catch (InvalidComponentNameException e) {
+                //skip it
+            }
+
         }
     }
 
@@ -265,6 +272,7 @@ public class ExtensionManager extends ApplicationSupportBean
         } else {
             loadedExtensions.remove(component);
         }
+        componentRepository.remove(component);
         logger.info("Unloaded  extension: {}({})", component, formatDurationHMS(System.currentTimeMillis() - start));
     }
 
