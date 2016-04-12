@@ -6,6 +6,7 @@ package net.happyonroad.platform.resolver;
 import net.happyonroad.component.container.RepositoryScanner;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
 import net.happyonroad.component.core.Component;
+import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.util.StringUtils;
 import org.apache.ibatis.io.Resources;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +34,10 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
     public static final String FEATURE   = "mybatis";
     public static final String DB_CONFIG = "DB-Config";
     public static final String DB_REPOSITORY = "DB-Repository";
+    static {
+        DefaultComponent.MANIFEST_ATTRS.add(DB_CONFIG);
+        DefaultComponent.MANIFEST_ATTRS.add(DB_REPOSITORY);
+    }
     private transient ClassLoader legacyClassLoader;
     ApplicationContext platformApplication;
 

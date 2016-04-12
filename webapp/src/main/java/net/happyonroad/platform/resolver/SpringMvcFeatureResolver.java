@@ -6,6 +6,7 @@ package net.happyonroad.platform.resolver;
 import net.happyonroad.component.container.feature.AbstractFeatureResolver;
 import net.happyonroad.component.container.feature.ApplicationFeatureResolver;
 import net.happyonroad.component.core.Component;
+import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.util.StringUtils;
 
 /**
@@ -25,6 +26,9 @@ import net.happyonroad.util.StringUtils;
 public class SpringMvcFeatureResolver extends AbstractFeatureResolver {
     public static final String FEATURE        = "spring-mvc";
     public static final String WEB_REPOSITORY = "Web-Repository";
+    static {
+        DefaultComponent.MANIFEST_ATTRS.add(WEB_REPOSITORY);
+    }
 
     public SpringMvcFeatureResolver() {
         //35： Spring Application Context之前(30)，加载
