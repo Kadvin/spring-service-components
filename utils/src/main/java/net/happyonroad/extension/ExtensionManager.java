@@ -22,6 +22,7 @@ import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
 import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.access.BootstrapException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContextException;
@@ -136,7 +137,8 @@ public class ExtensionManager extends ApplicationSupportBean
             try {
                 components[i] = loadExtension(file);
             } catch (ExtensionException e) {
-                logger.error("Failed to load {}, because of {}, ignore it", file.getName(), describeException(e));
+                logger.error("Failed to load {}, because of {}, ignore it",
+                             file.getName(), ExceptionUtils.getRootCauseMessage(e));
             }
         }
         return components;

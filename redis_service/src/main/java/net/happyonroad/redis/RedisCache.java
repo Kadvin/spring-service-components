@@ -93,7 +93,7 @@ class RedisCache extends Bean implements MutableCacheService {
                 try {
                     jedis.save();
                 } catch (Exception e) {
-                    logger.warn("Failed to save redis will stop: " + e.getMessage());
+                    logger.warn("Failed to save redis before stop: {} ", ExceptionUtils.getRootCauseMessage(e));
                 }
             }
         });
