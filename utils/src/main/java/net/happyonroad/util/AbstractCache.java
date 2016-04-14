@@ -71,6 +71,7 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
 
     /**
      * <h2>在object cache中缓存对象</h2>
+     * 这个操作仅针对内存，不针对外部持久化空间
      *
      * @param key   被缓存的对象key
      * @param value 被缓存的对象实例
@@ -83,9 +84,23 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
         objectCache.put(key, value);
     }
 
+    /**
+     * <h2>在object cache中缓存对象</h2>
+     * 这个操作仅针对内存，不针对外部持久化空间
+     *
+     * @param value 被缓存的对象实例
+     */
     public void cache(V value){
         K key = parseKey(value);
         cache(key, value);
+    }
+
+    /**
+     * <h2>从内存中移除对象</h2>
+     * @param key 对象的key
+     */
+    public void uncache(K key){
+        objectCache.remove(key);
     }
 
     /**
@@ -106,25 +121,45 @@ public abstract class AbstractCache<K, V> extends ApplicationSupportBean {
         return objectCache.keySet();
     }
 
+    /**
+     * <h2>添加对象</h2>
+     * 这个操作仅不仅仅针对内存，还要操作外部持久化空间，只是不发出事件，类似于 addSilently
+     * 备注：AbstractCache的默认行为仅为操作内存
+     *
+     * @param value 被缓存的对象实例
+     */
     protected void innerAdd(V value) {
         K key = parseKey(value);
         cache(key, value);
     }
 
+    /**
+     * <h2>更新对象</h2>
+     * 这个操作仅不仅仅针对内存，还要操作外部持久化空间，只是不发出事件，类似于 updateSilently
+     * 备注：AbstractCache的默认行为仅为操作内存
+     *
+     * @param value 被缓存的对象实例
+     */
     protected void innerUpdate(V value) {
         K key = parseKey(value);
         cache(key, value);
     }
 
+    /**
+     * <h2>移除对象</h2>
+     * 这个操作仅不仅仅针对内存，还要操作外部持久化空间，只是不发出事件，类似于 removeSilently
+     * 备注：AbstractCache的默认行为仅为操作内存
+     *
+     * @param value 被缓存的对象实例
+     */
     protected void innerRemove(V value) {
         K key = parseKey(value);
         uncache(key);
     }
 
-    public void uncache(K key){
-        objectCache.remove(key);
-    }
-
+    /**
+     * <h2>清除内存中的缓存</h2>
+     */
     protected void purgeCache() {
         objectCache.clear();
     }

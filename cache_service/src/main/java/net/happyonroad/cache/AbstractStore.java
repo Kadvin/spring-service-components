@@ -1,5 +1,6 @@
 package net.happyonroad.cache;
 
+import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.util.AbstractCache;
 import net.happyonroad.util.ParseUtils;
 import net.happyonroad.view.WebSocketView;
@@ -13,7 +14,7 @@ import static net.happyonroad.support.BinarySupport.toBinary;
  *
  * @author Jay Xiong
  */
-public abstract class AbstractStore<K, V> extends AbstractCache<K,V> {
+public abstract class AbstractStore<K, V> extends AbstractCache<K, V> {
     @Autowired
     protected CacheService cacheService;
     // 原始缓存，json/binary形式
@@ -61,11 +62,30 @@ public abstract class AbstractStore<K, V> extends AbstractCache<K,V> {
         } else {
             String json = container.get(key.toString());
             if (json == null) return null;
-            if( viewClass() == null )
-                return ParseUtils.parseJson(json, getObjectClass());
-            else
-                return ParseUtils.parseJson(json, getObjectClass(), viewClass());
+            try {
+                //先用当前class loader解析
+                return parseObject(json);
+            } catch (RuntimeException ex) {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                GlobalClassLoader gcl = GlobalClassLoader.getInstance();
+                if (gcl == cl) {
+                    throw ex;
+                }
+                Thread.currentThread().setContextClassLoader(gcl);
+                try {
+                    return parseObject(json);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(cl);
+                }
+            }
         }
+    }
+
+    private V parseObject(String json) {
+        if (viewClass() == null)
+            return ParseUtils.parseJson(json, getObjectClass());
+        else
+            return ParseUtils.parseJson(json, getObjectClass(), viewClass());
     }
 
     protected K persist(V value) {
@@ -78,31 +98,30 @@ public abstract class AbstractStore<K, V> extends AbstractCache<K,V> {
         return key;
     }
 
-    protected void purgeContainer(){
+    protected void purgeContainer() {
         container.clear();
     }
 
     @Override
     protected void innerAdd(V value) {
         persist(value);
-        super.innerAdd(value);
-
+        cache(value);
     }
 
     @Override
-    protected void innerUpdate(V value ){
+    protected void innerUpdate(V value) {
         persist(value);
-        super.innerUpdate(value);
+        cache(value);
     }
 
     @Override
     protected void innerRemove(V value) {
         K key = parseKey(value);
-        super.innerRemove(value);
+        uncache(key);
         container.remove(String.valueOf(key));
     }
 
-    protected Class viewClass(){
+    protected Class viewClass() {
         return WebSocketView.class;
     }
 }
