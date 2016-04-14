@@ -3,6 +3,7 @@
  */
 package net.happyonroad.extension;
 
+import net.happyonroad.extension.ExtensionClassLoader;
 import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.container.ComponentLoader;
@@ -31,7 +32,6 @@ import org.springframework.context.ApplicationListener;
 import java.io.File;
 import java.util.*;
 
-import static net.happyonroad.util.MiscUtils.describeException;
 import static org.apache.commons.lang.time.DurationFormatUtils.formatDurationHMS;
 
 /**
@@ -212,6 +212,7 @@ public class ExtensionManager extends ApplicationSupportBean
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
         } catch (Exception e) {
+            logger.error(ExceptionUtils.getRootCauseMessage(e));
             if (component != null) {
                 componentLoader.unload(component);
             }

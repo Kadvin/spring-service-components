@@ -1,5 +1,6 @@
 package net.happyonroad.extension;
 
+import net.happyonroad.extension.ExtensionClassLoader;
 import net.happyonroad.component.classworld.ManipulateClassLoader;
 
 import java.net.URL;

@@ -96,17 +96,35 @@ public class ApplyToSystemProperties implements Lifecycle, FilenameFilter {
         File[] propertyFiles = config.listFiles(this);
         for (File propertyFile : propertyFiles) {
             try {
-                FileInputStream fis = new FileInputStream(propertyFile);
-                try {
-                    properties.load(fis);
-                } finally {
-                    fis.close();
+                load(properties, propertyFile);
+                String imports = properties.getProperty("import");
+                if( StringUtils.isBlank(imports)) continue;
+                String[] others = imports.split(",");
+                for (String other : others) {
+                    File otherFile = relative(propertyFile, other.trim());
+                    if( otherFile.exists() )
+                        load(properties, otherFile);
+                    else
+                        logger.warn("importing {} doesn't exist", other);
                 }
             } catch (IOException e) {
                 logger.error("Can't load properties from: " + propertyFile.getPath(), e);
             }
         }
         return properties;
+    }
+
+    void load(Properties properties, File file) throws IOException {
+        FileInputStream fis = new FileInputStream(file);
+        try {
+            properties.load(fis);
+        } finally {
+            fis.close();
+        }
+    }
+
+    File relative(File file, String path) {
+        return new File(file.getParent(), path).getAbsoluteFile();
     }
 
     @ManagedAttribute

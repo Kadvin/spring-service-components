@@ -5,10 +5,14 @@ package net.happyonroad.extension;
 
 import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.core.Component;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 import sun.misc.URLClassPath;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Set;
 
 /**
@@ -45,6 +49,19 @@ public class ExtensionClassLoader extends ManipulateClassLoader {
 
     public Component getComponent() {
         return component;
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            //通过hacking的方式，关闭扩展的class loader
+            Field field = URLClassLoader.class.getDeclaredField("ucp");
+            field.setAccessible(true);
+            URLClassPath ucp = (URLClassPath) field.get(this);
+            ucp.closeLoaders();
+        } catch (Exception e) {
+            logger.error("Can't close {}, because of {}", this, ExceptionUtils.getRootCauseMessage(e));
+        }
     }
 
     public ExtensionClassLoader derive(ManipulateClassLoader parent, Component component) {
