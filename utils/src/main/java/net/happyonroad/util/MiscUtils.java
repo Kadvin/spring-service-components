@@ -221,11 +221,21 @@ public final class MiscUtils {
         if (descriptor.getReadMethod() == null) {
             throw new IllegalArgumentException(key + " without read method");
         }
-        //noinspection unchecked
-        return (T) descriptor.getReadMethod().invoke(bean);
+        try {
+            //noinspection unchecked
+            return (T) descriptor.getReadMethod().invoke(bean);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().startsWith(ClassCastException.class.getName())) {
+                //类动态加载时，这里会抛出异常, 需要删除descriptor，重新取值
+                descriptorMap.remove(key);
+                return getProperty(bean, property);
+            } else {
+                throw e;
+            }
+        }
     }
 
-    public static void runWithClassLoader(ClassLoader cl, Runnable job){
+    public static void runWithClassLoader(ClassLoader cl, Runnable job) {
         Thread thread = Thread.currentThread();
         ClassLoader legacy = thread.getContextClassLoader();
         try {
@@ -247,7 +257,7 @@ public final class MiscUtils {
         }
     }
 
-    public static <T> T callWithClassLoaderSilently(ClassLoader cl, Callable<T> job)  {
+    public static <T> T callWithClassLoaderSilently(ClassLoader cl, Callable<T> job) {
         try {
             return callWithClassLoader(cl, job);
         } catch (Exception e) {
