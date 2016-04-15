@@ -3,7 +3,6 @@
  */
 package net.happyonroad.extension;
 
-import net.happyonroad.extension.ExtensionClassLoader;
 import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.core.Component;

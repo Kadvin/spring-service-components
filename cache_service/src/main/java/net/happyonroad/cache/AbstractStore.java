@@ -2,9 +2,12 @@ package net.happyonroad.cache;
 
 import net.happyonroad.extension.GlobalClassLoader;
 import net.happyonroad.util.AbstractCache;
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.ParseUtils;
 import net.happyonroad.view.WebSocketView;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.concurrent.Callable;
 
 import static net.happyonroad.support.BinarySupport.parseBinary;
 import static net.happyonroad.support.BinarySupport.toBinary;
@@ -60,7 +63,7 @@ public abstract class AbstractStore<K, V> extends AbstractCache<K, V> {
             if (bytes == null) return null;
             return parseBinary(bytes, getObjectClass());
         } else {
-            String json = container.get(key.toString());
+            final String json = container.get(key.toString());
             if (json == null) return null;
             try {
                 //先用当前class loader解析
@@ -71,12 +74,12 @@ public abstract class AbstractStore<K, V> extends AbstractCache<K, V> {
                 if (gcl == cl) {
                     throw ex;
                 }
-                Thread.currentThread().setContextClassLoader(gcl);
-                try {
-                    return parseObject(json);
-                } finally {
-                    Thread.currentThread().setContextClassLoader(cl);
-                }
+                return MiscUtils.callWithClassLoaderSilently(gcl, new Callable<V>() {
+                    @Override
+                    public V call() throws Exception {
+                        return parseObject(json);
+                    }
+                });
             }
         }
     }

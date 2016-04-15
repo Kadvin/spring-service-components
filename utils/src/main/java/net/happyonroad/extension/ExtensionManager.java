@@ -3,7 +3,6 @@
  */
 package net.happyonroad.extension;
 
-import net.happyonroad.extension.ExtensionClassLoader;
 import net.happyonroad.component.classworld.MainClassLoader;
 import net.happyonroad.component.classworld.ManipulateClassLoader;
 import net.happyonroad.component.container.ComponentLoader;
@@ -21,6 +20,7 @@ import net.happyonroad.event.*;
 import net.happyonroad.exception.ExtensionException;
 import net.happyonroad.service.ExtensionContainer;
 import net.happyonroad.spring.ApplicationSupportBean;
+import net.happyonroad.util.MiscUtils;
 import net.happyonroad.util.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -31,6 +31,7 @@ import org.springframework.context.ApplicationListener;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 import static org.apache.commons.lang.time.DurationFormatUtils.formatDurationHMS;
 
@@ -153,24 +154,25 @@ public class ExtensionManager extends ApplicationSupportBean
         }
     }
 
-    public Component resolve(File file) throws ExtensionException {
-        ClassLoader legacy = Thread.currentThread().getContextClassLoader();
+    public Component resolve(final File file) throws ExtensionException {
         //这个extension class loader此时只是用于辅助解析组件
         ExtensionClassLoader ecl = new ExtensionClassLoader(MainClassLoader.getInstance());
-        Thread.currentThread().setContextClassLoader(ecl);
-        Component component;
-        String componentId = file.getParentFile().getName() + "/" + file.getName();
+        final String componentId = file.getParentFile().getName() + "/" + file.getName();
         try {
-            Dependency dependency = Dependency.parse(componentId);
-            if (!componentRepository.cached(file)) {
-                componentRepository.cache(file);
-            }
-            component = componentRepository.resolveComponent(dependency);
-            return component;
+            return MiscUtils.callWithClassLoader(ecl, new Callable<Component>() {
+                @Override
+                public Component call() throws Exception {
+                    Component component;
+                    Dependency dependency = Dependency.parse(componentId);
+                    if (!componentRepository.cached(file)) {
+                        componentRepository.cache(file);
+                    }
+                    component = componentRepository.resolveComponent(dependency);
+                    return component;
+                }
+            });
         } catch (Exception e) {
             throw new ExtensionException("Can't resolve extension: " + componentId + " from " + file.getPath(), e);
-        } finally {
-            Thread.currentThread().setContextClassLoader(legacy);
         }
     }
 
@@ -241,7 +243,7 @@ public class ExtensionManager extends ApplicationSupportBean
             throw new ExtensionException("The extension file path is illegal", e);
         } catch (DependencyNotMeetException e) {
             throw new ExtensionException("There is some other depends is not meet", e);
-        }  finally {
+        } finally {
             try {
                 componentRepository.uncache(file);
             } catch (InvalidComponentNameException e) {

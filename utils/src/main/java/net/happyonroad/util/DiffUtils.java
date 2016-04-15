@@ -136,7 +136,10 @@ public class DiffUtils {
             try {
                 while (it.hasNext()) {
                     T actual = it.next();
-
+                    if( actual == null ){
+                        it.remove();
+                        continue;
+                    }
                     boolean allNull = true;
                     for (String property : properties) {
                         Object propertyObj = MiscUtils.getProperty(actual, property);

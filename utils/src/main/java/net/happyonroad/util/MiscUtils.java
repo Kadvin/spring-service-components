@@ -17,7 +17,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 import static java.util.Locale.ENGLISH;
 
@@ -221,6 +223,36 @@ public final class MiscUtils {
         }
         //noinspection unchecked
         return (T) descriptor.getReadMethod().invoke(bean);
+    }
+
+    public static void runWithClassLoader(ClassLoader cl, Runnable job){
+        Thread thread = Thread.currentThread();
+        ClassLoader legacy = thread.getContextClassLoader();
+        try {
+            thread.setContextClassLoader(cl);
+            job.run();
+        } finally {
+            thread.setContextClassLoader(legacy);
+        }
+    }
+
+    public static <T> T callWithClassLoader(ClassLoader cl, Callable<T> job) throws Exception {
+        Thread thread = Thread.currentThread();
+        ClassLoader legacy = thread.getContextClassLoader();
+        try {
+            thread.setContextClassLoader(cl);
+            return job.call();
+        } finally {
+            thread.setContextClassLoader(legacy);
+        }
+    }
+
+    public static <T> T callWithClassLoaderSilently(ClassLoader cl, Callable<T> job)  {
+        try {
+            return callWithClassLoader(cl, job);
+        } catch (Exception e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 
     static class Unknown {
