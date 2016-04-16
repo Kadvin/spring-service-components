@@ -15,12 +15,23 @@ import java.io.InputStream;
  */
 public final class ParseUtils {
 
+    private static boolean ignoreUnknownAttr;
+
     private ParseUtils() {
+    }
+
+    /**
+     * 设置下次解析时，是否忽略不知道的属性错误
+     * @param ignore 是否忽略
+     */
+    public static void ignoreUnknownAttribute(boolean ignore){
+        ignoreUnknownAttr = ignore;
     }
 
     public static ExtendedMapper createMapper(){
         ExtendedMapper mapper = new ExtendedMapper();
         mapper.registerModule(new JacksonJmxModule());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, ignoreUnknownAttr);
         return mapper;
     }
 
