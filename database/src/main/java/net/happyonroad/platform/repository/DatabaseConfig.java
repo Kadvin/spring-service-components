@@ -35,7 +35,7 @@ import static java.lang.String.format;
  */
 @Configuration
 public class DatabaseConfig implements InitializingBean {
-    Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
+    static Logger logger = LoggerFactory.getLogger(DatabaseConfig.class);
 
     //在被测试程序使用时，无需对外注册服务
     @Autowired(required = false)
@@ -53,6 +53,10 @@ public class DatabaseConfig implements InitializingBean {
     @Bean
     @Profile("production")
     public DataSource dataSource() {
+        return createDataSource();
+    }
+
+    public static DataSource createDataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         String dbHost = System.getProperty("db.host", "localhost");
@@ -72,16 +76,22 @@ public class DatabaseConfig implements InitializingBean {
 
     @Bean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+        return sqlSessionFactoryBean(dataSource).getObject();
+    }
+
+
+//    @Bean
+    public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         //故意取名与应用模块的名称不一样，这样保证在测试等情况下，默认的平台配置不会被应用的遮盖
         factory.setConfigLocation(application.getResource("classpath:META-INF/mybatis@platform.xml"));
         factory.setDataSource(dataSource);
         factory.setPlugins(new Interceptor[]{statementInterceptor()});
-        return factory.getObject();
+        return factory;
     }
 
     @Bean
-    public org.apache.ibatis.session.Configuration configuration( SqlSessionFactory sqlSessionFactory){
+    public org.apache.ibatis.session.Configuration configuration(SqlSessionFactory sqlSessionFactory){
         return sqlSessionFactory.getConfiguration();
     }
 
@@ -111,12 +121,14 @@ public class DatabaseConfig implements InitializingBean {
         // 真实场景
         if( exporter == null ) return;
         //数据库模块暴露的服务由数据库模块自行负责
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource());
-        exporter.exports(DataSource.class, dataSource());
+        DataSource dataSource = dataSource();
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(dataSource);
+        exporter.exports(DataSource.class, dataSource);
         exporter.exports(SqlSessionFactory.class, sqlSessionFactory);
+//        exporter.exports(SqlSessionFactory.class, sqlSessionFactory);
         exporter.exports(JdbcTemplate.class, jdbcTemplate());
         // 被 activiti 使用
-        exporter.exports(PlatformTransactionManager.class, transactionManager(dataSource()));
+        exporter.exports(PlatformTransactionManager.class, transactionManager(dataSource));
         // 被 mybatis的config模块使用
         exporter.exports(org.apache.ibatis.session.Configuration.class, configuration(sqlSessionFactory));
         TypeHandlerRegistry registry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();

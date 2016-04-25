@@ -161,7 +161,7 @@ public abstract class RepositoryConfig extends AbstractTestExecutionListener
     @Bean
     public RepositoryScanner repositoryScanner(){
         BeanFilter repositoryFilter = repositoryFilter();
-        MybatisRepositoryScanner scanner = new MybatisRepositoryScanner(applicationContext);
+        MybatisRepositoryScanner scanner = new MybatisRepositoryScanner(null, applicationContext);
         scanner.setFilter(repositoryFilter);
         return scanner;
     }
