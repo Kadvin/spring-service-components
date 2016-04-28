@@ -29,4 +29,16 @@ public enum Severity {
     public int getValue() {
         return value;
     }
+
+    public static Severity valueOf(int severity){
+        switch (severity){
+            case 0: return CLEAR;
+            case 1: return INDETERMINATE;
+            case 2: return WARNING;
+            case 3: return MINOR;
+            case 4: return MAJOR;
+            case 5: return CRITICAL;
+            default: throw new IllegalArgumentException("Invalid severity value " + severity);
+        }
+    }
 }
