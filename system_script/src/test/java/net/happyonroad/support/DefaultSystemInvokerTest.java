@@ -27,7 +27,7 @@ import java.util.List;
 @ContextConfiguration(classes = SystemInvokeConfig.class)
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@Ignore("Need linux/osx, trusted by srv2.itsnow.com")
+@Ignore("Need linux/osx, trusted by srv2.happyonroad.cn")
 public class DefaultSystemInvokerTest extends AbstractProcessTest {
 
     @Autowired
@@ -43,7 +43,7 @@ public class DefaultSystemInvokerTest extends AbstractProcessTest {
         }.next(new RemoteInvocation(remoteHost, remoteDir) {
             @Override
             public int perform(Process process) throws Exception {
-                return process.run("./test.sh", "hi", "itsnow!");
+                return process.run("./test.sh", "hi", "monitor!");
             }
         });
         invocation.setId("two-ok");
@@ -51,7 +51,7 @@ public class DefaultSystemInvokerTest extends AbstractProcessTest {
 
         List<String> lines = invocation.getOutputs();
         Assert.assertEquals("hello world", lines.get(0));
-        Assert.assertEquals("hi itsnow!", lines.get(1));
+        Assert.assertEquals("hi monitor!", lines.get(1));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class DefaultSystemInvokerTest extends AbstractProcessTest {
         }.next(new RemoteInvocation(remoteHost, remoteDir) {
             @Override
             public int perform(Process process) throws Exception {
-                return process.run("./test.sh", "hi", "itsnow!");
+                return process.run("./test.sh", "hi", "monitor!");
             }
         });
         invocation.setId("bad-and-ok");
@@ -118,7 +118,7 @@ public class DefaultSystemInvokerTest extends AbstractProcessTest {
         }.next(new RemoteInvocation(remoteHost, remoteDir) {
             @Override
             public int perform(Process process) throws Exception {
-                return process.run("./shit.sh", "hi", "itsnow!");
+                return process.run("./shit.sh", "hi", "monitor!");
             }
         });
         invocation.setId("two-bad");

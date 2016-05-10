@@ -155,7 +155,7 @@ public abstract class RepositoryConfig extends AbstractTestExecutionListener
     }
 
     protected  String dbRepository() {
-        return "com.itsnow.*.repository";
+        return "cn.happyonroad.*.repository";
     }
 
     @Bean

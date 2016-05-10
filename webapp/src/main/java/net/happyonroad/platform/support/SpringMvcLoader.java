@@ -32,18 +32,18 @@ import java.util.Set;
  *
  * <ul>
  * <li> /*        ->  springSecurityFilterChain
- * <li> /*        ->  ItsNow.httpMethodFilter
- * <li> /*        ->  ItsNow.Dispatcher
- * <li> /views/*  ->  ItsNow.ScalateView
+ * <li> /*        ->  Monitor.httpMethodFilter
+ * <li> /*        ->  Monitor.Dispatcher
+ * <li> /views/*  ->  Monitor.ScalateView
  * </ul>
  */
-//@WebServlet(name = "ItsNow.Dispatcher")
+//@WebServlet(name = "Monitor.Dispatcher")
 public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletInitializer
     implements ServletContextListener{
-    public static final String READY_FILTER_NAME  = "ItsNow.readyFilter";
-    public static final String SHUTDOWN_FILTER_NAME  = "ItsNow.shutdownFilter";
-    public static final String METHOD_FILTER_NAME = "ItsNow.httpMethodFilter";
-    public static final String CSRF_FILTER_NAME = "ItsNow.csrfFilter";
+    public static final String READY_FILTER_NAME  = "Monitor.readyFilter";
+    public static final String SHUTDOWN_FILTER_NAME  = "Monitor.shutdownFilter";
+    public static final String METHOD_FILTER_NAME = "Monitor.httpMethodFilter";
+    public static final String CSRF_FILTER_NAME = "Monitor.csrfFilter";
 
     ApplicationContext    applicationContext;
     WebApplicationContext webAppContext, securityAppContext;
@@ -155,7 +155,7 @@ public class SpringMvcLoader extends AbstractAnnotationConfigDispatcherServletIn
 
     @Override
     protected String getServletName() {
-        return "ItsNow.Dispatcher";
+        return "Monitor.Dispatcher";
     }
 
     @Override

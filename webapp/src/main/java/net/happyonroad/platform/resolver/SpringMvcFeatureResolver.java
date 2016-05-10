@@ -10,7 +10,7 @@ import net.happyonroad.component.core.support.DefaultComponent;
 import net.happyonroad.util.StringUtils;
 
 /**
- * <h2>Itsnow平台上的服务模块扩展包</h2>
+ * <h2>Monitor平台上的服务模块扩展包</h2>
  *
  * 主要扩展内容有：
  *
@@ -47,7 +47,7 @@ public class SpringMvcFeatureResolver extends AbstractFeatureResolver {
         super.applyDefaults(component);
         String webRepository = component.getManifestAttribute(WEB_REPOSITORY);
         if( webRepository == null && readComponentDefaultConfig(component, "W").contains("W")){
-            webRepository = System.getProperty("default.web.repository", "com.itsnow.*.web.controller");
+            webRepository = System.getProperty("default.web.repository", "cn.happyonroad.*.web.controller");
         }
         component.setManifestAttribute(WEB_REPOSITORY, webRepository);
     }

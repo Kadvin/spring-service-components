@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * <h2>Itsnow平台上的服务模块扩展包</h2>
+ * <h2>Monitor平台上的服务模块扩展包</h2>
  * <p/>
  * 主要扩展内容有：
  * <p/>
@@ -67,7 +67,7 @@ public class MybatisFeatureResolver extends AbstractFeatureResolver {
         super.applyDefaults(component);
         String dbRepository = component.getManifestAttribute(DB_REPOSITORY);
         if (dbRepository == null && readComponentDefaultConfig(component, "D").contains("D")) {
-            dbRepository = System.getProperty("default.db.repository", "com.itsnow.*.repository");
+            dbRepository = System.getProperty("default.db.repository", "cn.happyonroad.*.repository");
         }
         component.setManifestAttribute(DB_REPOSITORY, dbRepository);
     }

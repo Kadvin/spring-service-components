@@ -56,7 +56,7 @@ public class InvocationRequestMessageTest {
     @Test
     @Ignore
     public void testWithMo() throws Exception{
-        String json = "{\"arguments\":[{\"klass\":\"com.itsnow.monitor.model.ManagedObject\",\"value\":{\"accesses\":{\"snmp\":{\"community\":\"public\",\"version\":\"v2c\"},\"ssh\":{\"user\":\"root\",\"password\":\"private\",\"timeout\":500}},\"address\":{\"port\":1008,\"host\":\"192.168.0.10\"},\"name\":\"Center Router\",\"attributes\":{\"test\":\"attribute\"},\"type\":\"NetworkDevice\",\"key\":\"b6c7dee8-ebb4-4f13-8b9c-d80996d7cb99\"}}],\"serviceName\":\"com.itsnow.dss.engine.ManagedObjectService\",\"attributes\":null,\"methodName\":\"assign\"]}";
+        String json = "{\"arguments\":[{\"klass\":\"cn.happyonroad.monitor.model.ManagedObject\",\"value\":{\"accesses\":{\"snmp\":{\"community\":\"public\",\"version\":\"v2c\"},\"ssh\":{\"user\":\"root\",\"password\":\"private\",\"timeout\":500}},\"address\":{\"port\":1008,\"host\":\"192.168.0.10\"},\"name\":\"Center Router\",\"attributes\":{\"test\":\"attribute\"},\"type\":\"NetworkDevice\",\"key\":\"b6c7dee8-ebb4-4f13-8b9c-d80996d7cb99\"}}],\"serviceName\":\"cn.happyonroad.dss.engine.ManagedObjectService\",\"attributes\":null,\"methodName\":\"assign\"]}";
         InvocationRequestMessage real = InvocationRequestMessage.parse(json);
         Assert.assertEquals("assign", real.getMethodName());
 

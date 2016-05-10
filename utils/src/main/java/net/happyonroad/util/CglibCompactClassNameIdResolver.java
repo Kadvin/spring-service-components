@@ -17,7 +17,7 @@ import java.util.EnumSet;
 /**
  * <h1>支持 CGLib的相关类的Class Name Id Resolver </h1>
   * 许多模型实例，经过Mybatis的查询出来，构建的实例类如：
-  * com.itsnow.monitor.model.MonitorEngine$$EnhancerByCGLIB$$18f0d220
+  * cn.happyonroad.monitor.model.MonitorEngine$$EnhancerByCGLIB$$18f0d220
   * 规避 CGLib 产生的代理类
  */
 @SuppressWarnings("UnusedDeclaration")

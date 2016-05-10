@@ -33,7 +33,7 @@
         <authentication-provider ref="defaultAdminDetailsManager"/>
     </authentication-manager>
 
-    <http realm="Itsnow Platform" authentication-manager-ref="authenticationManager">
+    <http realm="Monitor Platform" authentication-manager-ref="authenticationManager">
         <http-basic/>
         <csrf request-matcher-ref="csrfMatcher"/>
         <anonymous granted-authority="ROLE_ANONYMOUS" enabled="true" username="ANONYMOUS"/>

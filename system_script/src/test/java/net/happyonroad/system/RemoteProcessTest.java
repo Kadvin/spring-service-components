@@ -19,7 +19,7 @@ public class RemoteProcessTest extends AbstractProcessTest {
         RemoteInvocation invocation = new RemoteInvocation(remoteHost, remoteDir) {
             @Override
             public int perform(Process process) throws Exception {
-                return process.run("./test.sh", "hi", "itsnow");
+                return process.run("./test.sh", "hi", "monitor");
             }
         };
 
@@ -27,6 +27,6 @@ public class RemoteProcessTest extends AbstractProcessTest {
         RemoteProcess process = new RemoteProcess(invocation, broadcaster, executorService);
         int exitCode = invocation.perform(process);
         Assert.assertEquals(0, exitCode);
-        Assert.assertEquals("hi itsnow", invocation.getOutput());
+        Assert.assertEquals("hi monitor", invocation.getOutput());
     }
 }

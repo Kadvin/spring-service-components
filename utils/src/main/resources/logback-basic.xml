@@ -37,7 +37,7 @@
     <logger name="net.happyonroad.platform.services.SpringMvcFeatureResolver" level="WARN" />
     <logger name="net.happyonroad.spring.support.DefaultServiceRegistry" level="WARN" />
 
-    <logger name="com.itsnow.monitor.server.repository" level="DEBUG"/>
-    <logger name="com.itsnow.monitor.server.dynamic" level="DEBUG"/>
+    <logger name="cn.happyonroad.monitor.server.repository" level="DEBUG"/>
+    <logger name="cn.happyonroad.monitor.server.dynamic" level="DEBUG"/>
 
 </included>

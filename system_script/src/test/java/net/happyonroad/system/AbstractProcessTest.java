@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  */
 public abstract class AbstractProcessTest {
     protected ExecutorService executorService;
-    protected static String                     remoteHost  = "app2.dev.itsnow.com";
+    protected static String                     remoteHost  = "app2.dev.happyonroad.cn";
     protected static String                     remoteDir   = "/opt/system/test";
     protected        InvocationEventBroadcaster broadcaster = new InvocationEventBroadcaster() {
         @Override

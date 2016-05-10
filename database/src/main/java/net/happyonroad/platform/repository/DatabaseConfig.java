@@ -61,7 +61,7 @@ public class DatabaseConfig implements InitializingBean {
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         String dbHost = System.getProperty("db.host", "localhost");
         String dbPort = System.getProperty("db.port", "3306");
-        String dbUser = System.getProperty("db.user", "itsnow");
+        String dbUser = System.getProperty("db.user", "monitor");
         String dbPass = System.getProperty("db.password", "secret");
         String dbName = System.getProperty("db.name");
         //注意: 必须设置 allowMultiQueries=true，这样 mybatis 才能使用底层的MySQL Driver一次提交多个语句（如insert2张表)
