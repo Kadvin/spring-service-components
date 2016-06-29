@@ -214,9 +214,15 @@ public class ExtensionManager extends ApplicationSupportBean
             logger.info("Loaded  extension: {} ({})", component, formatDurationHMS(System.currentTimeMillis() - start));
             return component;
         } catch (Exception e) {
-            logger.error(ExceptionUtils.getRootCauseMessage(e));
+            logger.error(MiscUtils.describeException(e));
+            publishEvent(new ExtensionLoadFailedEvent(component));
             if (component != null) {
-                componentLoader.unload(component);
+                try {
+                    //不能unload, 否则会导致其依赖的底层库也被unload掉；应该quick unload，也就是仅仅unload其自身
+                    componentLoader.quickUnload(component);
+                } catch (Exception e1) {
+                    logger.error("Can't unload " + component, MiscUtils.describeException(e1));
+                }
             }
             throw new ExtensionException("Can't load extension: " + componentId, e);
         } finally {
