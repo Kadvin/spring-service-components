@@ -13,4 +13,6 @@ public interface BatchExecutor<T> {
 
     void submit(T task);
 
+    void submit(T[] tasks);
+
 }
