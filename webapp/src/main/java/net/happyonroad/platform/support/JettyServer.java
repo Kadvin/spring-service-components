@@ -36,10 +36,7 @@ import javax.servlet.ServletContainerInitializer;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /** The Jetty Server Instance */
 @Component
@@ -195,9 +192,10 @@ class JettyServer extends Bean {
         log.setRetainDays(1);
         log.setExtended(true);
         log.setAppend(true);
-        log.setLogTimeZone("CST");
+        log.setLogTimeZone("GMT+8:00");
         log.setLogLatency(true);
         log.setLogLocale(Locale.CHINA);
+        log.setLogDateFormat("dd HH:mm::ss.S");
         return log;
     }
 

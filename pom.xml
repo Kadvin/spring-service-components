@@ -13,7 +13,7 @@
 
     <groupId>net.happyonroad</groupId>
     <artifactId>spring-service-components</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 
     <name>Spring Service Components</name>
     <url>https://github.com/Kadvin/spring-service-components</url>

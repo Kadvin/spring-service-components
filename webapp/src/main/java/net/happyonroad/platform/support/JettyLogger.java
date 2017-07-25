@@ -14,7 +14,7 @@ import java.io.IOException;
 public class JettyLogger extends NCSARequestLog {
     @Override
     protected void logExtended(Request request, Response response, StringBuilder sb) throws IOException {
-        sb.append(" [").append(Thread.currentThread().getName()).append("] ");
+        sb.append("[").append(Thread.currentThread().getName()).append("] ");
         super.logExtended(request, response, sb);
     }
 }
