@@ -195,7 +195,7 @@ class JettyServer extends Bean {
         log.setLogTimeZone("GMT+8:00");
         log.setLogLatency(true);
         log.setLogLocale(Locale.CHINA);
-        log.setLogDateFormat("dd HH:mm::ss.S");
+        log.setLogDateFormat("mm/dd HH:mm::ss.S");
         return log;
     }
 
