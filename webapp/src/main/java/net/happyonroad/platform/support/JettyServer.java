@@ -39,6 +39,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /** The Jetty Server Instance */
 @Component
@@ -180,7 +181,7 @@ class JettyServer extends Bean {
     }
 
     private RequestLog createRequestLog() {
-        NCSARequestLog log = new NCSARequestLog();
+        JettyLogger log = new JettyLogger();
         int appIndex = AppLauncher.readSystemAppIndex();
         File logPath;
         if( appIndex == 0 ){
@@ -190,13 +191,13 @@ class JettyServer extends Bean {
         }
         //noinspection ResultOfMethodCallIgnored
         logPath.getParentFile().mkdirs();
-
         log.setFilename(logPath.getPath());
-        log.setRetainDays(30);
-        log.setExtended(false);
+        log.setRetainDays(1);
+        log.setExtended(true);
         log.setAppend(true);
-        log.setLogTimeZone("GMT");
+        log.setLogTimeZone("CST");
         log.setLogLatency(true);
+        log.setLogLocale(Locale.CHINA);
         return log;
     }
 

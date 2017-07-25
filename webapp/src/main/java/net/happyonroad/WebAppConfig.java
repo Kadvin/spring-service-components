@@ -31,7 +31,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
  * </pre>
  */
 @org.springframework.context.annotation.Configuration
-@Import({UtilUserConfig.class, DatabaseUserConfig.class})
+@Import({UtilUserConfig.class/*, DatabaseUserConfig.class*/})
 @ComponentScan({"net.happyonroad.platform.support", "net.happyonroad.platform.web.filter"})
 public class WebAppConfig extends AbstractAppConfig implements ApplicationListener<ComponentLoadedEvent> {
 

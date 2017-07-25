@@ -19,8 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
@@ -36,7 +34,8 @@ import java.util.Map;
  * The Rest Controller
  */
 @Scope(WebApplicationContext.SCOPE_REQUEST)
-@Transactional(noRollbackFor = HttpMediaTypeNotAcceptableException.class)
+// 现在，webapp依赖db，所以，所有关于db的事务控制特性，由应用层自行依赖、解决
+//@Transactional(noRollbackFor = HttpMediaTypeNotAcceptableException.class)
 public class ApplicationController<T extends Record> {
     // 父类内部使用的headers
     private static HttpHeaders headers = new HttpHeaders();
